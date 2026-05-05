@@ -3,68 +3,103 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reuben Decker</title>
+  <title>Reuben Decker | Data, Automation, Operations</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+  <nav>
+    <div class="logo">Reuben Decker</div>
+    <div>
+      <a href="#projects">Projects</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
   <header class="hero">
-    <h1>Reuben Decker</h1>
-    <p class="tagline">Simplifying complex workflows with data, automation, and practical analytics.</p>
-    <div class="links">
-      <a href="mailto:reubendecker@gmail.com">Email</a>
-      <a href="https://www.linkedin.com/in/reubendecker-data">LinkedIn</a>
-      <a href="https://github.com/dreubend">GitHub</a>
+    <p class="eyebrow">Reuben Decker LLC</p>
+    <h1>I simplify complex workflows with data, automation, and practical analytics.</h1>
+    <p class="subtitle">
+      I focus on reducing friction, improving operational processes, and turning messy data into useful decisions.
+    </p>
+    <div class="buttons">
+      <a class="button primary" href="#projects">View Projects</a>
+      <a class="button secondary" href="mailto:reubendecker@gmail.com">Contact Me</a>
     </div>
   </header>
 
   <main>
-    <section>
+
+    <section id="projects">
+      <h2>Featured Projects</h2>
+      <p class="section-intro">
+        A few examples of my work in predictive modeling, operational analytics, and workflow improvement.
+      </p>
+
+      <div class="project-grid">
+
+        <div class="card">
+          <h3>Account Closure Prediction</h3>
+          <p>
+            Integrated and cleaned multiple datasets to build an XGBoost model identifying accounts at higher risk of closure.
+          </p>
+          <p><strong>Tools:</strong> Python, Pandas, XGBoost, EDA</p>
+          <a href="https://github.com/dreubend" target="_blank">View GitHub →</a>
+        </div>
+
+        <div class="card">
+          <h3>Cost Optimization Analysis</h3>
+          <p>
+            Analyzed operational processes and identified inefficiencies tied to approximately $240,000 in annual savings.
+          </p>
+          <p><strong>Tools:</strong> Excel, Analytics, Process Improvement</p>
+          <a href="https://github.com/dreubend" target="_blank">View GitHub →</a>
+        </div>
+
+        <div class="card">
+          <h3>Trading Indicator System</h3>
+          <p>
+            Built Python workflows for forex indicator calculations, feature preparation, and signal-oriented analysis.
+          </p>
+          <p><strong>Tools:</strong> Python, Pandas, Time Series, Technical Indicators</p>
+          <a href="https://github.com/dreubend" target="_blank">View GitHub →</a>
+        </div>
+
+        <div class="card">
+          <h3>PDF Workflow Checker</h3>
+          <p>
+            Early concept for validating PDF forms, detecting missing information, and reducing manual review errors.
+          </p>
+          <p><strong>Status:</strong> In development</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="about">
       <h2>About</h2>
       <p>
-        I work at the intersection of data, operations, and process improvement.
-        My focus is reducing friction, improving workflows, and turning messy data into useful decisions.
+        I am currently completing a Master’s in Data Science and have experience in data preparation,
+        predictive modeling, SQL, Python, operational analytics, and process improvement.
       </p>
-    </section>
-
-    <section>
-      <h2>Featured Projects</h2>
-
-      <div class="project">
-        <h3>Account Closure Prediction</h3>
-        <p>
-          Built a predictive model using cleaned financial datasets to identify accounts at higher risk of closure.
-        </p>
-        <p><strong>Tools:</strong> Python, Pandas, XGBoost, EDA</p>
-      </div>
-
-      <div class="project">
-        <h3>Cost Optimization Analysis</h3>
-        <p>
-          Analyzed operational processes and identified changes tied to approximately $240,000 in annual savings.
-        </p>
-        <p><strong>Tools:</strong> Excel, Analytics, Process Improvement</p>
-      </div>
-
-      <div class="project">
-        <h3>PDF Workflow Checker</h3>
-        <p>
-          Early concept for validating forms, detecting missing information, and reducing manual review errors.
-        </p>
-        <p><strong>Status:</strong> In development</p>
-      </div>
-    </section>
-
-    <section>
-      <h2>What I’m Building</h2>
       <p>
-        Through Reuben Decker LLC, I am exploring tools that make work simpler:
-        cleaner data, fewer manual steps, better dashboards, and smarter workflows.
+        My work is guided by a simple idea: work should not be harder, slower, or more complicated than it needs to be.
       </p>
     </section>
+
+    <section id="contact">
+      <h2>Contact</h2>
+      <p>Email: <a href="mailto:reubendecker@gmail.com">reubendecker@gmail.com</a></p>
+      <p>LinkedIn: <a href="https://www.linkedin.com/in/reubendecker-data" target="_blank">linkedin.com/in/reubendecker-data</a></p>
+      <p>GitHub: <a href="https://github.com/dreubend" target="_blank">github.com/dreubend</a></p>
+    </section>
+
   </main>
 
   <footer>
     <p>© 2026 Reuben Decker LLC</p>
   </footer>
+
 </body>
 </html>
