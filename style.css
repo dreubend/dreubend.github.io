@@ -2,6 +2,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
@@ -14,16 +18,18 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 8%;
-  background: white;
+  padding: 22px 8%;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(8px);
   border-bottom: 1px solid #e5e7eb;
   position: sticky;
   top: 0;
+  z-index: 100;
 }
 
 .logo {
   font-weight: 700;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 nav a {
@@ -31,11 +37,16 @@ nav a {
   text-decoration: none;
   color: #374151;
   font-weight: 600;
+  transition: 0.2s ease;
+}
+
+nav a:hover {
+  color: #2563eb;
 }
 
 .hero {
-  padding: 90px 8%;
-  background: linear-gradient(135deg, #1e3a8a, #10b981);
+  padding: 110px 8%;
+  background: linear-gradient(135deg, #1e3a8a, #2563eb, #10b981);
   color: white;
 }
 
@@ -43,33 +54,34 @@ nav a {
   text-transform: uppercase;
   letter-spacing: 2px;
   font-size: 13px;
-  color: #cbd5e1;
+  color: #dbeafe;
 }
 
 .hero h1 {
-  max-width: 850px;
-  font-size: 48px;
-  line-height: 1.1;
-  margin: 10px 0 20px;
+  max-width: 900px;
+  font-size: 58px;
+  line-height: 1.05;
+  margin: 14px 0 22px;
 }
 
 .subtitle {
-  max-width: 700px;
-  font-size: 20px;
+  max-width: 760px;
+  font-size: 22px;
   color: #e5e7eb;
 }
 
 .buttons {
-  margin-top: 30px;
+  margin-top: 35px;
 }
 
 .button {
   display: inline-block;
-  padding: 12px 20px;
-  border-radius: 8px;
-  margin-right: 12px;
+  padding: 14px 24px;
+  border-radius: 10px;
+  margin-right: 14px;
   text-decoration: none;
   font-weight: 700;
+  transition: 0.25s ease;
 }
 
 .primary {
@@ -77,47 +89,87 @@ nav a {
   color: #111827;
 }
 
+.primary:hover {
+  transform: translateY(-2px);
+}
+
 .secondary {
   border: 1px solid white;
   color: white;
 }
 
+.secondary:hover {
+  background: rgba(255,255,255,0.12);
+}
+
+.stats {
+  display: flex;
+  gap: 22px;
+  margin-top: 60px;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  background: rgba(255,255,255,0.12);
+  padding: 24px;
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  flex: 1;
+  min-width: 240px;
+}
+
+.stat-card h3 {
+  margin-top: 0;
+  color: white;
+}
+
+.stat-card p {
+  color: #e5e7eb;
+}
+
 main {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 60px 8%;
+  padding: 70px 8%;
 }
 
 section {
-  margin-bottom: 70px;
+  margin-bottom: 90px;
 }
 
 h2 {
-  font-size: 32px;
-  margin-bottom: 10px;
+  font-size: 38px;
+  margin-bottom: 12px;
 }
 
 .section-intro {
   color: #4b5563;
-  margin-bottom: 28px;
+  margin-bottom: 32px;
 }
 
 .project-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 22px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 26px;
 }
 
 .card {
   background: white;
-  padding: 24px;
-  border-radius: 14px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+  padding: 30px;
+  border-radius: 18px;
+  border: 1px solid #dbeafe;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 38px rgba(0,0,0,0.12);
 }
 
 .card h3 {
   margin-top: 0;
+  font-size: 22px;
 }
 
 .card a {
@@ -126,29 +178,52 @@ h2 {
   text-decoration: none;
 }
 
+.card a:hover {
+  text-decoration: underline;
+}
+
 #contact a {
   color: #2563eb;
 }
 
 footer {
   text-align: center;
-  padding: 28px;
+  padding: 34px;
   color: #6b7280;
   background: white;
   border-top: 1px solid #e5e7eb;
 }
 
+@media (max-width: 900px) {
+  .hero h1 {
+    font-size: 44px;
+  }
+
+  .subtitle {
+    font-size: 20px;
+  }
+}
+
 @media (max-width: 700px) {
+
   nav {
     display: block;
   }
 
   nav a {
     display: inline-block;
-    margin: 10px 12px 0 0;
+    margin: 12px 14px 0 0;
+  }
+
+  .hero {
+    padding: 80px 8%;
   }
 
   .hero h1 {
     font-size: 36px;
+  }
+
+  .subtitle {
+    font-size: 18px;
   }
 }
