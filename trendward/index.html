@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Trendward — AI market intelligence for lower-priced U.S. equities." />
+  <title>Trendward | AI Market Intelligence</title>
+  <link rel="stylesheet" href="trendward.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-wrap">
+        <div class="brand-mark">T</div>
+        <div><div class="brand-name">Trendward</div><div class="brand-kicker">AI MARKET INTELLIGENCE</div></div>
+      </div>
+      <nav class="nav">
+        <button class="nav-item active" data-section="overview"><span>◫</span> Overview</button>
+        <button class="nav-item" data-section="scanner"><span>⌁</span> Scanner</button>
+        <button class="nav-item" data-section="watchlist"><span>◎</span> Watchlist</button>
+        <button class="nav-item" data-section="signals"><span>↗</span> Signals</button>
+        <button class="nav-item" data-section="journey"><span>⌘</span> Model Journey</button>
+        <button class="nav-item" data-section="pulse"><span>≋</span> Market Pulse</button>
+        <button class="nav-item" data-section="about"><span>i</span> About</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="accent-card">
+          <div class="accent-row"><span>Accent color</span><span id="accentValue">190°</span></div>
+          <input id="accentSlider" type="range" min="0" max="360" value="190" aria-label="Accent color" />
+          <div class="accent-spectrum"></div>
+        </div>
+        <a class="back-link" href="/">← reubendecker.com</a>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu" aria-label="Open menu">☰</button>
+        <div><div class="eyebrow">PRODUCT PREVIEW</div><h1>Market Intelligence Dashboard</h1></div>
+        <div class="top-actions"><div class="status-pill"><span class="live-dot"></span> Preview mode</div><div class="time-wrap"><div id="localTime" class="time"></div><div class="muted">Local time</div></div></div>
+      </header>
+      <section class="notice"><strong>Illustrative product preview.</strong> Values on this page are sample interface data and are not live trading signals or investment advice.</section>
+      <section class="market-strip" id="marketStrip"></section>
+      <section class="section active" id="section-overview">
+        <div class="hero-grid">
+          <article class="hero-panel panel">
+            <div class="panel-top"><div><div class="eyebrow">TRENDWARD</div><h2>See momentum forming before the story is obvious.</h2><p class="lead">A focused AI market-intelligence experience for lower-priced U.S. equities, built around scanner discovery, model progression, liquidity change, and historical outcome context.</p></div><div class="hero-orb"></div></div>
+            <div class="hero-actions"><button class="primary-btn" data-section-link="scanner">Open scanner preview</button><button class="ghost-btn" data-section-link="journey">See model journey</button></div>
+          </article>
+          <article class="panel score-panel"><div class="panel-label">Current preview state</div><div class="score-ring"><div><div class="score-number">82</div><div class="score-caption">Setup strength</div></div></div><div class="score-meta"><div><span>Liquidity</span><strong>High</strong></div><div><span>Price action</span><strong>Constructive</strong></div><div><span>Model state</span><strong>Developing</strong></div></div></article>
+        </div>
+        <div class="kpi-grid" id="kpiGrid"></div>
+        <div class="content-grid">
+          <article class="panel span-2"><div class="panel-header"><div><div class="panel-label">SCANNER</div><h3>Top candidates</h3></div><button class="text-btn" data-section-link="scanner">View scanner →</button></div><div class="table-wrap"><table><thead><tr><th>Rank</th><th>Symbol</th><th>Price</th><th>5m move</th><th>Vol accel.</th><th>Model</th><th>State</th></tr></thead><tbody id="candidateTable"></tbody></table></div></article>
+          <article class="panel"><div class="panel-header"><div><div class="panel-label">MODEL</div><h3>Probability profile</h3></div></div><div id="probabilityChart" class="chart"></div></article>
+        </div>
+        <div class="content-grid">
+          <article class="panel"><div class="panel-header"><div><div class="panel-label">WATCHLIST</div><h3>Developing setups</h3></div></div><div id="watchlistCards" class="stack-list"></div></article>
+          <article class="panel"><div class="panel-header"><div><div class="panel-label">SIGNALS</div><h3>Latest state changes</h3></div></div><div id="signalCards" class="stack-list"></div></article>
+          <article class="panel"><div class="panel-header"><div><div class="panel-label">CATALYSTS</div><h3>Why the scanner cares</h3></div></div><div id="catalystCards" class="stack-list"></div></article>
+        </div>
+      </section>
+      <section class="section" id="section-scanner"><div class="section-heading"><div><div class="eyebrow">SCANNER EXPERIENCE</div><h2>Focused on lower-priced momentum setups</h2><p>Trendward is intentionally narrow. The preview emphasizes discovery, early liquidity change, price confirmation, and model context instead of generic company research.</p></div><div class="filter-row"><button class="chip active">All</button><button class="chip">Under $2</button><button class="chip">$2–$5</button><button class="chip">$5–$20</button></div></div><div id="scannerCards" class="scanner-grid"></div></section>
+      <section class="section" id="section-watchlist"><div class="section-heading"><div><div class="eyebrow">WATCHLIST</div><h2>Setups worth continuing to watch</h2><p>A compact view of candidates that have not yet reached their strongest state.</p></div></div><div class="panel"><div id="watchlistFull" class="large-list"></div></div></section>
+      <section class="section" id="section-signals"><div class="section-heading"><div><div class="eyebrow">SIGNALS</div><h2>State changes, not trade instructions</h2><p>Trendward surfaces model and market-state changes. The customer experience remains read-only.</p></div></div><div id="signalsFull" class="timeline"></div></section>
+      <section class="section" id="section-journey">
+        <div class="section-heading"><div><div class="eyebrow">MODEL JOURNEY</div><h2>How a setup develops through time</h2><p>From first scanner appearance through stronger model confirmation and subsequent price-path context.</p></div></div>
+        <div class="journey-grid"><article class="panel span-2"><div class="panel-header"><div><div class="panel-label">PROGRESSION</div><h3>Model probability through the setup</h3></div></div><div id="journeyChart" class="chart large-chart"></div></article><article class="panel"><div class="panel-header"><div><div class="panel-label">MILESTONES</div><h3>Setup journey</h3></div></div><div class="journey-steps"><div class="journey-step complete"><span>1</span><div><strong>Discovered</strong><small>Abnormal liquidity appears</small></div></div><div class="journey-step complete"><span>2</span><div><strong>Ignition</strong><small>Price starts confirming</small></div></div><div class="journey-step complete"><span>3</span><div><strong>Promoted</strong><small>Model context strengthens</small></div></div><div class="journey-step"><span>4</span><div><strong>Outcome context</strong><small>Forward path is measured</small></div></div></div></article></div>
+        <div class="content-grid"><article class="panel span-2"><div class="panel-header"><div><div class="panel-label">FORWARD EXCURSION</div><h3>Illustrative MFE / MAE envelope</h3></div></div><div id="outcomeChart" class="chart"></div><div class="chart-note">Historical MFE/MAE describes price movement after a reference point; it is not realized P&amp;L.</div></article><article class="panel"><div class="panel-label">PROVENANCE</div><h3>Context matters</h3><div class="info-list"><div><span>Observation type</span><strong>Archived demo</strong></div><div><span>Model view</span><strong>Historical</strong></div><div><span>Execution</span><strong>None</strong></div><div><span>Purpose</span><strong>Research</strong></div></div></article></div>
+      </section>
+      <section class="section" id="section-pulse"><div class="section-heading"><div><div class="eyebrow">MARKET PULSE</div><h2>Scanner-universe conditions</h2><p>Instead of broad-index commentary, Trendward can summarize the state of the lower-priced universe it actually monitors.</p></div></div><div class="kpi-grid"><article class="kpi-card"><div class="kpi-label">Liquidity expansion</div><div class="kpi-value">31%</div><div class="kpi-sub">of preview universe</div></article><article class="kpi-card"><div class="kpi-label">Price confirming</div><div class="kpi-value">18%</div><div class="kpi-sub">above scanner threshold</div></article><article class="kpi-card"><div class="kpi-label">Developing setups</div><div class="kpi-value">7</div><div class="kpi-sub">illustrative candidates</div></article><article class="kpi-card"><div class="kpi-label">High conviction</div><div class="kpi-value">2</div><div class="kpi-sub">illustrative states</div></article></div><article class="panel"><div class="panel-header"><div><div class="panel-label">UNIVERSE STATE</div><h3>Momentum breadth</h3></div></div><div id="breadthChart" class="chart large-chart"></div></article></section>
+      <section class="section" id="section-about"><div class="section-heading"><div><div class="eyebrow">ABOUT TRENDWARD</div><h2>A specialized scanner, not a general stock portal</h2></div></div><div class="about-grid"><article class="panel"><h3>What it focuses on</h3><p>Trendward is being designed around lower-priced U.S.-listed equities where unusual liquidity, momentum, catalyst structure, and price confirmation can create large percentage repricing events.</p></article><article class="panel"><h3>What it does not do</h3><p>The public product is not intended to place trades, expose paper-trading activity, promise returns, or act as a generic research portal for every security.</p></article><article class="panel"><h3>Where it is going</h3><p>The current page is a public interface preview. Later versions can connect approved customer-safe APIs, subscription access, historical model context, and account features.</p></article></div></section>
+      <footer class="footer"><div><strong>Trendward</strong><span>by Reuben Decker LLC</span></div><div class="footer-links"><a href="#" aria-disabled="true">Terms</a><a href="#" aria-disabled="true">Privacy</a><a href="#" aria-disabled="true">Risk Disclosure</a><a href="#" aria-disabled="true">Billing &amp; Refunds</a></div><p>Preview only. Trendward provides analytical and research tools. Nothing on this page is investment advice, a recommendation, or a guarantee of future results.</p></footer>
+    </main>
+  </div>
+  <script src="trendward.js"></script>
+</body>
+</html>
