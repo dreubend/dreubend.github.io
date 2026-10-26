@@ -16,13 +16,13 @@
         <div><div class="brand-name">Trendward</div><div class="brand-kicker">AI MARKET INTELLIGENCE</div></div>
       </div>
       <nav class="nav">
-        <button class="nav-item active" data-section="overview"><span>◫</span> Overview</button>
-        <button class="nav-item" data-section="scanner"><span>⌁</span> Scanner</button>
-        <button class="nav-item" data-section="watchlist"><span>◎</span> Watchlist</button>
-        <button class="nav-item" data-section="signals"><span>↗</span> Signals</button>
-        <button class="nav-item" data-section="journey"><span>⌘</span> Model Journey</button>
-        <button class="nav-item" data-section="pulse"><span>≋</span> Market Pulse</button>
-        <button class="nav-item" data-section="settings"><span>⚙</span> Settings</button>
+        <a class="nav-item active" href="#overview" data-section="overview"><span>◫</span> Overview</a>
+        <a class="nav-item" href="#scanner" data-section="scanner"><span>⌁</span> Scanner</a>
+        <a class="nav-item" href="#watchlist" data-section="watchlist"><span>◎</span> Watchlist</a>
+        <a class="nav-item" href="#signals" data-section="signals"><span>↗</span> Signals</a>
+        <a class="nav-item" href="#journey" data-section="journey"><span>⌘</span> Model Journey</a>
+        <a class="nav-item" href="#pulse" data-section="pulse"><span>≋</span> Market Pulse</a>
+        <a class="nav-item" href="#settings" data-section="settings"><span>⚙</span> Settings</a>
       </nav>
       <div class="sidebar-bottom"><div class="tier-mini"><span>Preview tier</span><strong id="sidebarTier">FREE</strong></div><a class="back-link" href="/">← reubendecker.com</a>
       </div>
@@ -39,13 +39,13 @@
         <div class="hero-grid">
           <article class="hero-panel panel">
             <div class="panel-top"><div><div class="eyebrow">TRENDWARD</div><h2>See momentum forming before the story is obvious.</h2><p class="lead">A focused AI market-intelligence experience for lower-priced U.S. equities, built around scanner discovery, model progression, liquidity change, and historical outcome context.</p></div><div class="hero-orb"></div></div>
-            <div class="hero-actions"><button class="primary-btn" data-section-link="scanner">Open scanner preview</button><button class="ghost-btn" data-section-link="journey">See model journey</button></div>
+            <div class="hero-actions"><a class="primary-btn action-link" href="#scanner" data-section-link="scanner">Open scanner preview</a><a class="ghost-btn action-link" href="#journey" data-section-link="journey">See model journey</a></div>
           </article>
           <article class="panel score-panel"><div class="panel-label">Current preview state</div><div class="score-ring"><div><div class="score-number">82</div><div class="score-caption">Setup strength</div></div></div><div class="score-meta"><div><span>Liquidity</span><strong>High</strong></div><div><span>Price action</span><strong>Constructive</strong></div><div><span>Model state</span><strong>Developing</strong></div></div></article>
         </div>
         <div class="kpi-grid" id="kpiGrid"></div>
         <div class="content-grid">
-          <article class="panel span-2"><div class="panel-header"><div><div class="panel-label">SCANNER</div><h3>Top candidates</h3></div><button class="text-btn" data-section-link="scanner">View scanner →</button></div><div class="table-wrap"><table><thead><tr><th>Rank</th><th>Symbol</th><th>Price</th><th>5m move</th><th>Vol accel.</th><th>Model</th><th>State</th></tr></thead><tbody id="candidateTable"></tbody></table></div><div class="tier-lock" id="candidateLock"></div></article>
+          <article class="panel span-2"><div class="panel-header"><div><div class="panel-label">SCANNER</div><h3>Top candidates</h3></div><a class="text-btn action-link" href="#scanner" data-section-link="scanner">View scanner →</a></div><div class="table-wrap"><table><thead><tr><th>Rank</th><th>Symbol</th><th>Price</th><th>5m move</th><th>Vol accel.</th><th>Model</th><th>State</th></tr></thead><tbody id="candidateTable"></tbody></table></div><div class="tier-lock" id="candidateLock"></div></article>
           <article class="panel"><div class="panel-header"><div><div class="panel-label">MODEL</div><h3>Probability profile</h3></div></div><div id="probabilityChart" class="chart"></div><div class="tier-lock" id="probabilityLock"></div></article>
         </div>
         <div class="content-grid">

@@ -14,3 +14,23 @@ const legal={about:"<p>Trendward is a developing market-intelligence product fro
 (async()=>{const url=window.TRENDWARD_CONFIG?.liveDataUrl?.trim();if(!url)return;try{const r=await fetch(url,{cache:"no-store"});if(!r.ok)throw 0;const p=await r.json();if(p?.candidates){document.getElementById("dataStatus").innerHTML='<span class="live-dot"></span> Live customer-safe data'}}catch{document.getElementById("dataStatus").innerHTML='<span class="live-dot" style="background:var(--orange)"></span> Demo fallback'}})();
 
 applyFixedTierPage();
+
+
+// v5: real-link navigation support. This preserves browser behaviors such as
+// right-click/open-in-new-tab, middle-click, copy link, and bookmarking.
+(function(){
+  const validSections = new Set(["overview","scanner","watchlist","signals","journey","pulse","settings"]);
+  function sectionFromHash(){
+    const section = (window.location.hash || "#overview").slice(1).toLowerCase();
+    return validSections.has(section) ? section : "overview";
+  }
+  function openHashSection(){
+    const section = sectionFromHash();
+    if(typeof navTo === "function") navTo(section);
+  }
+  window.addEventListener("hashchange", openHashSection);
+  if(window.location.hash) {
+    if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", openHashSection, {once:true});
+    else openHashSection();
+  }
+})();

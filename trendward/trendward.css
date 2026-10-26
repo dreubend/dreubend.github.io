@@ -12,3 +12,10 @@
 .plan-links a{padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.025);text-decoration:none;color:#9fb1c2;font-size:11px;text-align:center}
 .plan-links a:hover,.plan-links a.active{border-color:hsl(var(--hue) 70% 50% / .35);background:var(--accent-soft);color:var(--accent)}
 @media(max-width:760px){.header-tier{font-size:8px;padding:6px 8px}}
+
+
+/* v5: anchors used for dashboard navigation retain button styling while
+   supporting native browser link actions (new tab, copy link, etc.). */
+.nav-item{text-decoration:none;cursor:pointer}
+.action-link{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.text-btn.action-link{text-decoration:none}

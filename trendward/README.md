@@ -11,3 +11,9 @@ The Settings page includes plan comparison links so the owner can test each expe
 
 This remains a static preview. Login is browser-only and live data is not yet connected.
 Do not expose private scanner APIs, credentials, paper trades, databases, or secrets.
+
+
+## v5 navigation
+Sidebar items and major in-dashboard navigation actions are now real anchor links.
+They support right-click / Open link in new tab, middle-click, Copy link, bookmarks, and direct hash URLs such as `/trendward/pro/#scanner`.
+Each tier remains locked by its route.

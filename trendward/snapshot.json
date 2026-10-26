@@ -1,6 +1,6 @@
 {
   "mode": "illustrative_preview",
-  "version": "4.0",
+  "version": "5.0",
   "generated_at": "2026-10-25",
   "live_data_configured": false,
   "auth_mode": "browser_preview_only",
@@ -22,5 +22,6 @@
     "BASIC": "/trendward/basic/",
     "PRO": "/trendward/pro/",
     "PREMIUM": "/trendward/premium/"
-  }
+  },
+  "navigation": "native_anchor_links_with_hash_routing"
 }
