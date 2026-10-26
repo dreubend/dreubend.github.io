@@ -1,10 +1,13 @@
 {
   "mode": "illustrative_preview",
-  "generated_at": "2026-10-24",
-  "notice": "Sample interface data only. Not live trading signals.",
-  "notes": [
-    "No private scanner files or credentials are included.",
-    "Public page is intended for GitHub Pages at /trendward/.",
-    "Later API wiring should use customer-safe endpoints only."
+  "version": "2.0",
+  "generated_at": "2026-10-25",
+  "live_data_configured": false,
+  "auth_mode": "browser_preview_only",
+  "tiers": [
+    "FREE",
+    "BASIC",
+    "PRO",
+    "PREMIUM"
   ]
 }
