@@ -89,6 +89,7 @@
         ? `Live data · ${when}`
         : `Customer-safe snapshot · ${when}`;
       setStatus(label, "ok");
+      window.dispatchEvent(new CustomEvent("trendward:data", {detail: payload}));
     } catch (err) {
       console.warn("Trendward public data fallback:", err);
       setStatus("Demo fallback", "warn");

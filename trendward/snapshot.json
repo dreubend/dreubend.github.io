@@ -1,6 +1,6 @@
 {
   "mode": "illustrative_preview",
-  "version": "9.0",
+  "version": "10.0",
   "generated_at": "2026-10-25",
   "live_data_configured": false,
   "auth_mode": "browser_preview_only",
@@ -29,5 +29,13 @@
   "security_note": "customer-safe schema only; production tier enforcement server-side",
   "routing": "robust_hash_startup",
   "responsive_navigation": "offcanvas_at_900px_with_44px_menu_target",
-  "narrow_window_menu": "fixed_48px_viewport_control_below_700px"
+  "narrow_window_menu": "fixed_48px_viewport_control_below_700px",
+  "market_strip_location": "market_pulse_only",
+  "tier_experience": {
+    "FREE": "snapshot",
+    "BASIC": "5m_scanner",
+    "PRO": "historical_journey",
+    "PREMIUM": "deep_plus_1m_evidence"
+  },
+  "visual_intelligence": true
 }

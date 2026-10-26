@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="Trendward — AI market intelligence for lower-priced U.S. equities." />
   <title>Trendward Basic | AI Market Intelligence</title>
-  <link rel="stylesheet" href="../trendward.css?v=9" />
+  <link rel="stylesheet" href="../trendward.css?v=10" />
 </head>
 <body>
   <div class="app-shell">
@@ -34,7 +34,7 @@
         <div class="top-actions"><span class="header-tier" id="headerTier">FREE</span><div class="status-pill" id="dataStatus"><span class="live-dot"></span> Demo data</div><span class="plan-badge" id="topPlanBadge">FREE</span><button class="ghost-btn auth-small" id="loginBtn">Log in</button><button class="primary-btn auth-small" id="signupBtn">Sign up</button></div>
       </header>
       <section class="notice"><strong>Illustrative product preview.</strong> Sample interface data is shown unless a customer-safe live feed is configured. This page does not place trades or provide investment advice.</section>
-      <section class="market-strip" id="marketStrip"></section>
+      
       <section class="section active" id="section-overview">
         <div class="hero-grid">
           <article class="hero-panel panel">
@@ -62,7 +62,7 @@
         <div class="journey-grid"><article class="panel span-2"><div class="panel-header"><div><div class="panel-label">PROGRESSION</div><h3>Model probability through the setup</h3></div></div><div id="journeyChart" class="chart large-chart"></div><div class="tier-lock" id="journeyLock"></div></article><article class="panel"><div class="panel-header"><div><div class="panel-label">MILESTONES</div><h3>Setup journey</h3></div></div><div class="journey-steps"><div class="journey-step complete"><span>1</span><div><strong>Discovered</strong><small>Abnormal liquidity appears</small></div></div><div class="journey-step complete"><span>2</span><div><strong>Ignition</strong><small>Price starts confirming</small></div></div><div class="journey-step complete"><span>3</span><div><strong>Promoted</strong><small>Model context strengthens</small></div></div><div class="journey-step"><span>4</span><div><strong>Outcome context</strong><small>Forward path is measured</small></div></div></div></article></div>
         <div class="content-grid"><article class="panel span-2"><div class="panel-header"><div><div class="panel-label">FORWARD EXCURSION</div><h3>Illustrative MFE / MAE envelope</h3></div></div><div id="outcomeChart" class="chart"></div><div class="tier-lock" id="outcomeLock"></div><div class="chart-note">Historical MFE/MAE describes price movement after a reference point; it is not realized P&amp;L.</div></article><article class="panel"><div class="panel-label">PROVENANCE</div><h3>Context matters</h3><div class="info-list"><div><span>Observation type</span><strong>Archived demo</strong></div><div><span>Model view</span><strong>Historical</strong></div><div><span>Execution</span><strong>None</strong></div><div><span>Purpose</span><strong>Research</strong></div></div></article></div>
       </section>
-      <section class="section" id="section-pulse"><div class="section-heading"><div><div class="eyebrow">MARKET PULSE</div><h2>Scanner-universe conditions</h2><p>Instead of broad-index commentary, Trendward can summarize the state of the lower-priced universe it actually monitors.</p></div></div><div class="kpi-grid"><article class="kpi-card"><div class="kpi-label">Liquidity expansion</div><div class="kpi-value">31%</div><div class="kpi-sub">of preview universe</div></article><article class="kpi-card"><div class="kpi-label">Price confirming</div><div class="kpi-value">18%</div><div class="kpi-sub">above scanner threshold</div></article><article class="kpi-card"><div class="kpi-label">Developing setups</div><div class="kpi-value">7</div><div class="kpi-sub">illustrative candidates</div></article><article class="kpi-card"><div class="kpi-label">High conviction</div><div class="kpi-value">2</div><div class="kpi-sub">illustrative states</div></article></div><article class="panel"><div class="panel-header"><div><div class="panel-label">UNIVERSE STATE</div><h3>Momentum breadth</h3></div></div><div id="breadthChart" class="chart large-chart"></div></article></section>
+      <section class="section" id="section-pulse"><div class="section-heading"><div><div class="eyebrow">MARKET PULSE</div><h2>Scanner-universe conditions</h2><p>Instead of broad-index commentary, Trendward can summarize the state of the lower-priced universe it actually monitors.</p></div></div><section class="market-strip pulse-market-strip" id="marketStrip"></section><div class="kpi-grid"><article class="kpi-card"><div class="kpi-label">Liquidity expansion</div><div class="kpi-value">31%</div><div class="kpi-sub">of preview universe</div></article><article class="kpi-card"><div class="kpi-label">Price confirming</div><div class="kpi-value">18%</div><div class="kpi-sub">above scanner threshold</div></article><article class="kpi-card"><div class="kpi-label">Developing setups</div><div class="kpi-value">7</div><div class="kpi-sub">illustrative candidates</div></article><article class="kpi-card"><div class="kpi-label">High conviction</div><div class="kpi-value">2</div><div class="kpi-sub">illustrative states</div></article></div><article class="panel"><div class="panel-header"><div><div class="panel-label">UNIVERSE STATE</div><h3>Momentum breadth</h3></div></div><div id="breadthChart" class="chart large-chart"></div></article></section>
       <section class="section" id="section-settings"><div class="section-heading"><div><div class="eyebrow">SETTINGS</div><h2>Personalize Trendward</h2><p>Account, display, and preview controls live here so the dashboard stays focused on market intelligence.</p></div></div><div class="settings-grid"><article class="panel plan-page-card">
   <div class="panel-label">SUBSCRIPTION</div>
   <h3 id="settingsPlanTitle">Current plan</h3>
@@ -80,7 +80,8 @@
   <div class="modal-backdrop" id="modalBackdrop" hidden><div class="modal" id="authModal"><button class="modal-close" data-close-modal>×</button><div class="eyebrow">PREVIEW ACCOUNT</div><h2 id="authTitle">Log in</h2><p class="modal-copy">Browser-only preview. No password is sent anywhere.</p><form id="authForm"><label>Email<input type="email" id="authEmail" required></label><label id="nameLabel" hidden>Name<input type="text" id="authName"></label><label>Password<input type="password" id="authPassword" minlength="4" required></label><button class="primary-btn full" id="authSubmit" type="submit">Log in</button></form><div class="modal-note">Production accounts will use real server-side authentication.</div></div><div class="modal legal-modal" id="legalModal" hidden><button class="modal-close" data-close-modal>×</button><div class="eyebrow">TRENDWARD</div><h2 id="legalTitle">About</h2><div id="legalBody" class="legal-body"></div></div></div>
   <script>window.TRENDWARD_FIXED_TIER = "BASIC";</script>
   <script src="../config.js"></script>
-  <script src="../trendward.js?v=9"></script>
-  <script src="../live-data.js?v=9"></script>
+  <script src="../trendward.js?v=10"></script>
+  <script src="../live-data.js?v=10"></script>
+  <script src="../tier-experience.js?v=10"></script>
 </body>
 </html>

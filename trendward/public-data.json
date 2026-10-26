@@ -1,7 +1,7 @@
 {
-  "schemaVersion": "1.0",
+  "schemaVersion": "1.1",
   "mode": "customer_safe_snapshot_demo",
-  "generatedAt": "2026-10-26T13:30:00Z",
+  "generatedAt": "2026-10-26T19:00:00Z",
   "marketStatus": "demo",
   "markets": [
     [
@@ -92,6 +92,60 @@
       "vol": 3.1,
       "model": 62,
       "state": "Watch"
+    },
+    {
+      "rank": 6,
+      "symbol": "ORBI",
+      "price": 2.41,
+      "move": 2.4,
+      "vol": 2.9,
+      "model": 59,
+      "state": "Watch"
+    },
+    {
+      "rank": 7,
+      "symbol": "KITE",
+      "price": 4.63,
+      "move": 2.1,
+      "vol": 2.7,
+      "model": 57,
+      "state": "Developing"
+    },
+    {
+      "rank": 8,
+      "symbol": "PICO",
+      "price": 1.22,
+      "move": 1.9,
+      "vol": 3.5,
+      "model": 55,
+      "state": "Liquidity"
+    },
+    {
+      "rank": 9,
+      "symbol": "RUNE",
+      "price": 6.84,
+      "move": 1.7,
+      "vol": 2.4,
+      "model": 52,
+      "state": "Watch"
+    },
+    {
+      "rank": 10,
+      "symbol": "ECHO",
+      "price": 9.14,
+      "move": 1.5,
+      "vol": 2.1,
+      "model": 49,
+      "state": "Early"
+    },
+    {
+      "rank": 11,
+      "symbol": "TIDE",
+      "price": 14.32,
+      "move": 1.3,
+      "vol": 1.9,
+      "model": 46,
+      "state": "Early"
     }
   ],
   "watchlist": [
