@@ -19,3 +19,270 @@
 .nav-item{text-decoration:none;cursor:pointer}
 .action-link{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
 .text-btn.action-link{text-decoration:none}
+
+
+/* ===== Trendward v8 responsive navigation fix ===== */
+
+/* Keep the header above page content and preserve a real click target. */
+.topbar{
+  position:relative;
+  z-index:20;
+}
+.mobile-menu{
+  position:relative;
+  z-index:120;
+  width:44px;
+  height:44px;
+  min-width:44px;
+  min-height:44px;
+  padding:0;
+  align-items:center;
+  justify-content:center;
+  border-radius:11px;
+  pointer-events:auto;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+.mobile-menu:hover,
+.mobile-menu:focus-visible{
+  background:rgba(255,255,255,.06);
+  outline:1px solid var(--border);
+}
+.top-actions{
+  min-width:0;
+}
+
+/* Use a real off-canvas menu once the viewport becomes tablet-sized.
+   This avoids the collapsed-sidebar/header overlap state. */
+@media(max-width:900px){
+  body.menu-open{
+    overflow:hidden;
+  }
+
+  .app-shell{
+    display:block;
+  }
+
+  .sidebar{
+    position:fixed !important;
+    top:0;
+    left:-280px;
+    width:260px !important;
+    height:100dvh;
+    padding:24px 16px 20px;
+    z-index:110;
+    transition:left .22s ease;
+    overflow-y:auto;
+    box-shadow:24px 0 60px rgba(0,0,0,.35);
+  }
+
+  .sidebar.open{
+    left:0;
+  }
+
+  .sidebar .brand-name,
+  .sidebar .brand-kicker,
+  .sidebar .nav-item:not(.active){
+    font-size:initial;
+  }
+
+  .sidebar .brand-wrap{
+    justify-content:flex-start;
+  }
+
+  .sidebar .nav-item{
+    justify-content:flex-start;
+  }
+
+  .sidebar .nav-item span{
+    width:20px;
+  }
+
+  .sidebar .tier-mini,
+  .sidebar .back-link{
+    display:flex;
+  }
+
+  .mobile-backdrop{
+    display:block;
+    position:fixed;
+    inset:0;
+    z-index:100;
+    background:rgba(0,0,0,.52);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .18s ease;
+  }
+
+  .mobile-backdrop.show{
+    opacity:1;
+    pointer-events:auto;
+  }
+
+  .main{
+    width:100%;
+    min-width:0;
+    padding-left:18px;
+    padding-right:18px;
+  }
+
+  .mobile-menu{
+    display:inline-flex !important;
+  }
+
+  .topbar{
+    gap:10px;
+  }
+
+  .topbar > div:nth-child(2){
+    min-width:0;
+  }
+
+  .topbar h1{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  .top-actions{
+    margin-left:auto;
+    gap:8px;
+    flex:0 1 auto;
+  }
+}
+
+/* Phone-specific simplification keeps the hamburger unobstructed. */
+@media(max-width:620px){
+  .main{
+    padding-left:12px;
+    padding-right:12px;
+  }
+
+  .topbar{
+    min-height:76px;
+  }
+
+  .topbar h1{
+    font-size:17px;
+    max-width:42vw;
+  }
+
+  .topbar .eyebrow{
+    font-size:8px;
+  }
+
+  .status-pill{
+    display:none;
+  }
+
+  .top-actions .ghost-btn{
+    display:none;
+  }
+
+  .top-actions{
+    gap:6px;
+  }
+
+  .auth-small{
+    padding:8px 9px !important;
+    font-size:10px !important;
+  }
+
+  .plan-badge,
+  .header-tier{
+    font-size:8px;
+    padding:6px 7px;
+  }
+}
+
+
+/* ===== Trendward v9 narrow-window hamburger fix ===== */
+
+/* At very narrow widths, completely detach the hamburger from the header's
+   flex layout so no title/auth element can cover its hit target. */
+@media(max-width:700px){
+  .mobile-menu{
+    display:flex !important;
+    position:fixed !important;
+    top:max(12px, env(safe-area-inset-top));
+    left:max(12px, env(safe-area-inset-left));
+    z-index:1000 !important;
+    width:48px !important;
+    height:48px !important;
+    min-width:48px !important;
+    min-height:48px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:1px solid var(--border) !important;
+    border-radius:13px !important;
+    background:rgba(7,16,24,.96) !important;
+    box-shadow:0 8px 28px rgba(0,0,0,.35) !important;
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    pointer-events:auto !important;
+  }
+
+  .top-left{
+    padding-left:58px;
+    min-width:0;
+  }
+
+  .topbar{
+    position:relative;
+    z-index:20;
+    overflow:visible !important;
+  }
+
+  .topbar h1{
+    max-width:calc(100vw - 190px);
+  }
+
+  .sidebar{
+    z-index:950 !important;
+  }
+
+  .mobile-backdrop{
+    z-index:900 !important;
+  }
+
+  /* Keep the hamburger available even while the drawer is open. */
+  body.menu-open .mobile-menu{
+    z-index:1001 !important;
+  }
+}
+
+/* Extra-small windows: reduce competing header controls further. */
+@media(max-width:480px){
+  .topbar{
+    min-height:72px;
+  }
+
+  .top-left{
+    padding-left:56px;
+  }
+
+  .topbar h1{
+    font-size:15px !important;
+    max-width:38vw;
+  }
+
+  .topbar .eyebrow{
+    display:none;
+  }
+
+  .header-tier,
+  .plan-badge{
+    display:none !important;
+  }
+
+  .top-actions{
+    margin-left:auto;
+    flex:0 0 auto;
+  }
+
+  .top-actions .primary-btn,
+  .auth-actions .primary-btn{
+    padding:8px 9px !important;
+    font-size:9px !important;
+  }
+}

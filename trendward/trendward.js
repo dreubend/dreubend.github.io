@@ -122,3 +122,69 @@ applyFixedTierPage();
   }, {once:true});
 })();
 
+
+
+// ===== Trendward v8 resilient mobile-menu controls =====
+(function(){
+  const button = document.getElementById("mobileMenu");
+  const sidebar = document.getElementById("sidebar");
+  const backdrop = document.getElementById("mobileBackdrop");
+  if (!button || !sidebar || !backdrop) return;
+
+  function isOpen(){
+    return sidebar.classList.contains("open");
+  }
+
+  function setOpen(open){
+    sidebar.classList.toggle("open", open);
+    backdrop.classList.toggle("show", open);
+    document.body.classList.toggle("menu-open", open);
+    button.setAttribute("aria-expanded", String(open));
+    button.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  }
+
+  // Capture-phase handler makes the control reliable even if older
+  // dashboard handlers are also present.
+  button.addEventListener("click", function(e){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    setOpen(!isOpen());
+  }, true);
+
+  button.addEventListener("pointerup", function(e){
+    e.stopPropagation();
+  });
+
+  backdrop.addEventListener("click", function(e){
+    e.preventDefault();
+    setOpen(false);
+  }, true);
+
+  window.addEventListener("resize", function(){
+    if (window.innerWidth > 900) setOpen(false);
+  });
+
+  button.setAttribute("aria-expanded", "false");
+})();
+
+
+// ===== Trendward v9 viewport-safe menu guard =====
+(function(){
+  const btn = document.getElementById("mobileMenu");
+  if (!btn) return;
+
+  function keepButtonUsable(){
+    if (window.innerWidth <= 700){
+      btn.style.pointerEvents = "auto";
+      btn.style.visibility = "visible";
+      btn.style.opacity = "1";
+    } else {
+      btn.style.removeProperty("visibility");
+      btn.style.removeProperty("opacity");
+    }
+  }
+
+  keepButtonUsable();
+  window.addEventListener("resize", keepButtonUsable, {passive:true});
+  window.addEventListener("orientationchange", keepButtonUsable, {passive:true});
+})();

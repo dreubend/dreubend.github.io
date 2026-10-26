@@ -1,23 +1,17 @@
-# Trendward public dashboard v7
+# Trendward public dashboard v9
 
 Cumulative build:
 - Separate Free / Basic / Pro / Premium routes
-- Native sidebar and action links
-- Right-click / middle-click / copy-link support
-- Robust startup routing for hash URLs
-- Customer-safe public data-feed foundation
+- Native links / right-click / new-tab support
+- Robust hash startup routing
+- Customer-safe data-feed foundation
+- Responsive off-canvas sidebar
+- Narrow-window fixed hamburger
 
-## Routing fix
-Opening a link such as `/trendward/#scanner` or `/trendward/pro/#journey`
-in a new tab now activates that section on the first page load. No refresh
-should be required.
+## v9 narrow-window fix
+At <= 700px the hamburger is detached from the header flex layout and fixed
+directly to the viewport at the top-left. It has a 48x48 hit target and a
+z-index above both the backdrop and drawer so title/auth/header elements
+cannot cover it.
 
-The router runs on DOMContentLoaded, load, hashchange, and browser back/forward.
-Normal left-clicks keep the smooth dashboard behavior while alternate browser
-navigation remains native.
-
-## Tier routes
-- Free: `/trendward/`
-- Basic: `/trendward/basic/`
-- Pro: `/trendward/pro/`
-- Premium: `/trendward/premium/`
+At <= 480px competing header UI is further reduced.
