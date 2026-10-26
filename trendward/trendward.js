@@ -34,3 +34,91 @@ applyFixedTierPage();
     else openHashSection();
   }
 })();
+
+
+// ===== Trendward v7 robust startup routing =====
+(function(){
+  const validSections = new Set([
+    "overview","scanner","watchlist","signals","journey","pulse","settings"
+  ]);
+
+  function sectionFromLocation(){
+    const raw = (window.location.hash || "").replace(/^#/, "").trim().toLowerCase();
+    return validSections.has(raw) ? raw : "overview";
+  }
+
+  function showSectionFromUrl(options = {}){
+    const section = sectionFromLocation();
+
+    document.querySelectorAll(".section").forEach(el => {
+      el.classList.toggle("active", el.id === `section-${section}`);
+    });
+
+    document.querySelectorAll(".nav-item").forEach(el => {
+      el.classList.toggle("active", el.dataset.section === section);
+      if (el.dataset.section === section) {
+        el.setAttribute("aria-current", "page");
+      } else {
+        el.removeAttribute("aria-current");
+      }
+    });
+
+    const sidebar = document.getElementById("sidebar");
+    const backdrop = document.getElementById("mobileBackdrop");
+    if (sidebar) sidebar.classList.remove("open");
+    if (backdrop) backdrop.classList.remove("show");
+    document.body.classList.remove("menu-open");
+
+    if (options.scrollTop !== false) {
+      window.scrollTo({top:0, left:0, behavior:"auto"});
+    }
+  }
+
+  // Normal left-click keeps the SPA feel, but because these are real <a>
+  // elements, browser-native right-click / middle-click / copy-link still work.
+  document.addEventListener("click", function(e){
+    const link = e.target.closest('a[data-section], a[data-section-link]');
+    if (!link) return;
+
+    // Preserve browser-native alternate navigation.
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (link.target && link.target !== "_self") return;
+
+    let url;
+    try { url = new URL(link.href, window.location.href); } catch { return; }
+
+    if (url.origin !== window.location.origin || url.pathname !== window.location.pathname) {
+      return;
+    }
+
+    const requested = (url.hash || "").replace(/^#/, "").toLowerCase();
+    if (!validSections.has(requested)) return;
+
+    e.preventDefault();
+
+    if (window.location.hash !== `#${requested}`) {
+      history.pushState(null, "", `#${requested}`);
+    }
+    showSectionFromUrl();
+  });
+
+  window.addEventListener("hashchange", () => showSectionFromUrl());
+  window.addEventListener("popstate", () => showSectionFromUrl());
+
+  // Run after DOM parsing, then once more after load to beat any older
+  // initialization code that might re-activate Overview.
+  function initialRoute(){
+    requestAnimationFrame(() => showSectionFromUrl({scrollTop:false}));
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initialRoute, {once:true});
+  } else {
+    initialRoute();
+  }
+
+  window.addEventListener("load", () => {
+    requestAnimationFrame(() => showSectionFromUrl({scrollTop:false}));
+  }, {once:true});
+})();
+
