@@ -334,3 +334,53 @@
   .candidate-viz-row{grid-template-columns:80px minmax(70px,1fr) 28px}
   .mini-ring{width:96px;height:96px}.mini-ring strong{font-size:22px}
 }
+
+
+/* ===== Trendward v11: genuinely different tier identities ===== */
+.static-tier-identity{
+  margin:0 0 14px;padding:12px 14px;border:1px solid var(--border);border-radius:14px;
+  display:flex;justify-content:space-between;align-items:center;gap:18px
+}
+.static-tier-identity div{display:grid;gap:3px}
+.static-tier-identity span{font-size:9px;letter-spacing:.14em;font-weight:850}
+.static-tier-identity strong{font-size:11px;color:#c6d3dd;font-weight:600}
+.static-tier-identity a{font-size:10px;text-decoration:none;white-space:nowrap}
+.tier-static-pulse{margin:0 0 14px;padding:14px 16px;border:1px solid var(--border);border-radius:14px;display:grid;grid-template-columns:180px 1fr;gap:18px;align-items:center}
+.tier-static-pulse span{display:block;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.tier-static-pulse strong{display:block;font-size:20px;margin-top:3px}
+.tier-static-pulse p{font-size:11px;color:var(--muted);margin:0;line-height:1.55}
+
+body.tier-free .static-tier-identity{background:rgba(255,255,255,.02)}
+body.tier-free .static-tier-identity span,body.tier-free .static-tier-identity a{color:var(--accent)}
+body.tier-free .hero-panel{min-height:250px}
+body.tier-free .hero-panel h2{max-width:620px}
+body.tier-free .kpi-card{min-height:92px}
+body.tier-free #section-scanner .scanner-grid{grid-template-columns:1fr}
+
+body.tier-basic{background:radial-gradient(circle at 85% 10%,hsl(var(--hue) 80% 50%/.12),transparent 28rem),linear-gradient(180deg,#07111a,#071018 70%,#050b10)}
+body.tier-basic .static-tier-identity{background:linear-gradient(90deg,var(--accent-soft),rgba(255,255,255,.018))}
+body.tier-basic .static-tier-identity span,body.tier-basic .static-tier-identity a{color:var(--accent)}
+body.tier-basic #section-scanner .scanner-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+body.tier-basic .hero-panel{border-color:hsl(var(--hue) 65% 55%/.18)}
+
+body.tier-pro{background:radial-gradient(circle at 72% 7%,rgba(113,103,255,.13),transparent 30rem),linear-gradient(180deg,#071019,#071018 65%,#050a11)}
+body.tier-pro .static-tier-identity{background:linear-gradient(90deg,rgba(112,96,255,.14),rgba(255,255,255,.018));border-color:rgba(130,116,255,.22)}
+body.tier-pro .static-tier-identity span,body.tier-pro .static-tier-identity a{color:#a99dff}
+body.tier-pro #section-journey .panel{border-color:rgba(130,116,255,.16)}
+body.tier-pro .journey-premium-viz{background:linear-gradient(180deg,rgba(34,29,65,.38),rgba(10,20,29,.94))}
+
+body.tier-premium{background:radial-gradient(circle at 78% 5%,rgba(228,93,255,.13),transparent 28rem),radial-gradient(circle at 15% 30%,hsl(var(--hue) 90% 55%/.08),transparent 28rem),linear-gradient(180deg,#071018,#060d15 68%,#04090e)}
+body.tier-premium .static-tier-identity{background:linear-gradient(90deg,rgba(228,93,255,.14),var(--accent-soft));border-color:rgba(228,93,255,.22)}
+body.tier-premium .static-tier-identity span,body.tier-premium .static-tier-identity a{color:#ec8cff}
+body.tier-premium .content-grid{gap:12px}
+body.tier-premium .kpi-grid{gap:9px}
+body.tier-premium #section-scanner .scanner-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+body.tier-premium .premium-banner{border-color:rgba(228,93,255,.22)}
+body.tier-premium .signal-visual,body.tier-premium .journey-premium-viz{border-color:rgba(228,93,255,.16)}
+
+@media(max-width:760px){
+  .static-tier-identity{align-items:flex-start;flex-direction:column}
+  .tier-static-pulse{grid-template-columns:1fr}
+  body.tier-basic #section-scanner .scanner-grid,
+  body.tier-premium #section-scanner .scanner-grid{grid-template-columns:1fr}
+}

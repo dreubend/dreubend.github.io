@@ -4,10 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="Trendward — AI market intelligence for lower-priced U.S. equities." />
-  <title>Trendward | AI Market Intelligence</title>
-  <link rel="stylesheet" href="trendward.css?v=10" />
+  <title>Trendward Free | Daily Market Snapshot</title>
+  <link rel="stylesheet" href="trendward.css?v=11" />
+  <link rel="canonical" href="https://reubendecker.com/trendward/" />
 </head>
-<body>
+<body class="tier-free">
   <div class="app-shell">
     <div class="mobile-backdrop" id="mobileBackdrop" aria-hidden="true"></div>
     <aside class="sidebar" id="sidebar">
@@ -30,20 +31,28 @@
     <main class="main">
       <header class="topbar">
         <button class="mobile-menu" id="mobileMenu" aria-label="Open menu">☰</button>
-        <div><div class="eyebrow">PRODUCT PREVIEW</div><h1>Market Intelligence Dashboard</h1></div>
+        <div><div class="eyebrow">FREE · DAILY SNAPSHOT</div><h1>Market Intelligence Dashboard</h1></div>
         <div class="top-actions"><span class="header-tier" id="headerTier">FREE</span><div class="status-pill" id="dataStatus"><span class="live-dot"></span> Demo data</div><span class="plan-badge" id="topPlanBadge">FREE</span><button class="ghost-btn auth-small" id="loginBtn">Log in</button><button class="primary-btn auth-small" id="signupBtn">Sign up</button></div>
       </header>
       <section class="notice"><strong>Illustrative product preview.</strong> Sample interface data is shown unless a customer-safe live feed is configured. This page does not place trades or provide investment advice.</section>
       
       <section class="section active" id="section-overview">
+      <div class="static-tier-identity tier-free">
+        <div>
+          <span>FREE EXPERIENCE</span>
+          <strong>Free is intentionally focused: one featured setup, a compact market read, and limited historical detail.</strong>
+        </div>
+        <a href="#scanner">Explore this tier →</a>
+      </div>
+    
         <div class="hero-grid">
           <article class="hero-panel panel">
-            <div class="panel-top"><div><div class="eyebrow">TRENDWARD</div><h2>See momentum forming before the story is obvious.</h2><p class="lead">A focused AI market-intelligence experience for lower-priced U.S. equities, built around scanner discovery, model progression, liquidity change, and historical outcome context.</p></div><div class="hero-orb"></div></div>
+            <div class="panel-top"><div><div class="eyebrow">TRENDWARD</div><h2>One strong setup. One clear read.</h2><p class="lead">A simple daily view of the strongest lower-priced setup Trendward is tracking, with only the context needed to understand why it matters.</p></div><div class="hero-orb"></div></div>
             <div class="hero-actions"><a class="primary-btn action-link" href="#scanner" data-section-link="scanner">Open scanner preview</a><a class="ghost-btn action-link" href="#journey" data-section-link="journey">See model journey</a></div>
           </article>
           <article class="panel score-panel"><div class="panel-label">Current preview state</div><div class="score-ring"><div><div class="score-number">82</div><div class="score-caption">Setup strength</div></div></div><div class="score-meta"><div><span>Liquidity</span><strong>High</strong></div><div><span>Price action</span><strong>Constructive</strong></div><div><span>Model state</span><strong>Developing</strong></div></div></article>
         </div>
-        <div class="kpi-grid" id="kpiGrid"></div>
+        <div class="kpi-grid" id="kpiGrid"><article class="kpi-card"><div class="kpi-label">Featured setups</div><div class="kpi-value">1</div><div class="kpi-sub">Focused daily view</div></article><article class="kpi-card"><div class="kpi-label">Model detail</div><div class="kpi-value">Snapshot</div><div class="kpi-sub">Current state only</div></article><article class="kpi-card"><div class="kpi-label">Journey depth</div><div class="kpi-value">Limited</div><div class="kpi-sub">Upgrade for history</div></article><article class="kpi-card"><div class="kpi-label">Research mode</div><div class="kpi-value">Simple</div><div class="kpi-sub">Low-noise experience</div></article></div>
         <div class="content-grid">
           <article class="panel span-2"><div class="panel-header"><div><div class="panel-label">SCANNER</div><h3>Top candidates</h3></div><a class="text-btn action-link" href="#scanner" data-section-link="scanner">View scanner →</a></div><div class="table-wrap"><table><thead><tr><th>Rank</th><th>Symbol</th><th>Price</th><th>5m move</th><th>Vol accel.</th><th>Model</th><th>State</th></tr></thead><tbody id="candidateTable"></tbody></table></div><div class="tier-lock" id="candidateLock"></div></article>
           <article class="panel"><div class="panel-header"><div><div class="panel-label">MODEL</div><h3>Probability profile</h3></div></div><div id="probabilityChart" class="chart"></div><div class="tier-lock" id="probabilityLock"></div></article>
@@ -54,16 +63,16 @@
           <article class="panel"><div class="panel-header"><div><div class="panel-label">CATALYSTS</div><h3>Why the scanner cares</h3></div></div><div id="catalystCards" class="stack-list"></div></article>
         </div>
       </section>
-      <section class="section" id="section-scanner"><div class="section-heading"><div><div class="eyebrow">SCANNER EXPERIENCE</div><h2>Focused on lower-priced momentum setups</h2><p>Trendward is intentionally narrow. The preview emphasizes discovery, early liquidity change, price confirmation, and model context instead of generic company research.</p></div><div class="filter-row"><button class="chip active">All</button><button class="chip">Under $2</button><button class="chip">$2–$5</button><button class="chip">$5–$20</button></div></div><div id="scannerCards" class="scanner-grid"></div></section>
-      <section class="section" id="section-watchlist"><div class="section-heading"><div><div class="eyebrow">WATCHLIST</div><h2>Setups worth continuing to watch</h2><p>A compact view of candidates that have not yet reached their strongest state.</p></div></div><div class="panel"><div id="watchlistFull" class="large-list"></div></div></section>
-      <section class="section" id="section-signals"><div class="section-heading"><div><div class="eyebrow">SIGNALS</div><h2>State changes, not trade instructions</h2><p>Trendward surfaces model and market-state changes. The customer experience remains read-only.</p></div></div><div id="signalsFull" class="timeline"></div></section>
+      <section class="section" id="section-scanner"><div class="section-heading"><div><div class="eyebrow">SCANNER EXPERIENCE</div><h2>Featured setup</h2><p>One current setup with price, liquidity, and a simple strength view.</p></div><div class="filter-row"><button class="chip active">All</button><button class="chip">Under $2</button><button class="chip">$2–$5</button><button class="chip">$5–$20</button></div></div><div id="scannerCards" class="scanner-grid"></div></section>
+      <section class="section" id="section-watchlist"><div class="section-heading"><div><div class="eyebrow">WATCHLIST</div><h2>One developing setup</h2><p>A single watch candidate so the experience stays concise.</p></div></div><div class="panel"><div id="watchlistFull" class="large-list"></div></div></section>
+      <section class="section" id="section-signals"><div class="section-heading"><div><div class="eyebrow">SIGNALS</div><h2>Latest important state change</h2><p>Only the most meaningful current change is shown.</p></div></div><div id="signalsFull" class="timeline"></div></section>
       <section class="section" id="section-journey">
-        <div class="section-heading"><div><div class="eyebrow">MODEL JOURNEY</div><h2>How a setup develops through time</h2><p>From first scanner appearance through stronger model confirmation and subsequent price-path context.</p></div></div>
+        <div class="section-heading"><div><div class="eyebrow">MODEL JOURNEY</div><h2>Snapshot, not full history</h2><p>See where the setup is now. Full progression and resolved outcomes are reserved for higher tiers.</p></div></div>
         <div class="journey-grid"><article class="panel span-2"><div class="panel-header"><div><div class="panel-label">PROGRESSION</div><h3>Model probability through the setup</h3></div></div><div id="journeyChart" class="chart large-chart"></div><div class="tier-lock" id="journeyLock"></div></article><article class="panel"><div class="panel-header"><div><div class="panel-label">MILESTONES</div><h3>Setup journey</h3></div></div><div class="journey-steps"><div class="journey-step complete"><span>1</span><div><strong>Discovered</strong><small>Abnormal liquidity appears</small></div></div><div class="journey-step complete"><span>2</span><div><strong>Ignition</strong><small>Price starts confirming</small></div></div><div class="journey-step complete"><span>3</span><div><strong>Promoted</strong><small>Model context strengthens</small></div></div><div class="journey-step"><span>4</span><div><strong>Outcome context</strong><small>Forward path is measured</small></div></div></div></article></div>
         <div class="content-grid"><article class="panel span-2"><div class="panel-header"><div><div class="panel-label">FORWARD EXCURSION</div><h3>Illustrative MFE / MAE envelope</h3></div></div><div id="outcomeChart" class="chart"></div><div class="tier-lock" id="outcomeLock"></div><div class="chart-note">Historical MFE/MAE describes price movement after a reference point; it is not realized P&amp;L.</div></article><article class="panel"><div class="panel-label">PROVENANCE</div><h3>Context matters</h3><div class="info-list"><div><span>Observation type</span><strong>Archived demo</strong></div><div><span>Model view</span><strong>Historical</strong></div><div><span>Execution</span><strong>None</strong></div><div><span>Purpose</span><strong>Research</strong></div></div></article></div>
       </section>
-      <section class="section" id="section-pulse"><div class="section-heading"><div><div class="eyebrow">MARKET PULSE</div><h2>Scanner-universe conditions</h2><p>Instead of broad-index commentary, Trendward can summarize the state of the lower-priced universe it actually monitors.</p></div></div><section class="market-strip pulse-market-strip" id="marketStrip"></section><div class="kpi-grid"><article class="kpi-card"><div class="kpi-label">Liquidity expansion</div><div class="kpi-value">31%</div><div class="kpi-sub">of preview universe</div></article><article class="kpi-card"><div class="kpi-label">Price confirming</div><div class="kpi-value">18%</div><div class="kpi-sub">above scanner threshold</div></article><article class="kpi-card"><div class="kpi-label">Developing setups</div><div class="kpi-value">7</div><div class="kpi-sub">illustrative candidates</div></article><article class="kpi-card"><div class="kpi-label">High conviction</div><div class="kpi-value">2</div><div class="kpi-sub">illustrative states</div></article></div><article class="panel"><div class="panel-header"><div><div class="panel-label">UNIVERSE STATE</div><h3>Momentum breadth</h3></div></div><div id="breadthChart" class="chart large-chart"></div></article></section>
-      <section class="section" id="section-settings"><div class="section-heading"><div><div class="eyebrow">SETTINGS</div><h2>Personalize Trendward</h2><p>Account, display, and preview controls live here so the dashboard stays focused on market intelligence.</p></div></div><div class="settings-grid"><article class="panel plan-page-card">
+      <section class="section" id="section-pulse"><div class="section-heading"><div><div class="eyebrow">MARKET PULSE</div><h2>Simple universe pulse</h2><p>A compact read on breadth and risk, without deeper historical context.</p></div></div><section class="market-strip pulse-market-strip" id="marketStrip"></section><div class="kpi-grid"><article class="kpi-card"><div class="kpi-label">Liquidity expansion</div><div class="kpi-value">31%</div><div class="kpi-sub">of preview universe</div></article><article class="kpi-card"><div class="kpi-label">Price confirming</div><div class="kpi-value">18%</div><div class="kpi-sub">above scanner threshold</div></article><article class="kpi-card"><div class="kpi-label">Developing setups</div><div class="kpi-value">7</div><div class="kpi-sub">illustrative candidates</div></article><article class="kpi-card"><div class="kpi-label">High conviction</div><div class="kpi-value">2</div><div class="kpi-sub">illustrative states</div></article></div><article class="panel"><div class="panel-header"><div><div class="panel-label">UNIVERSE STATE</div><h3>Momentum breadth</h3></div></div><div id="breadthChart" class="chart large-chart"></div></article></section>
+      <section class="section" id="section-settings"><div class="section-heading"><div><div class="eyebrow">SETTINGS</div><h2>Core preferences</h2><p>Appearance and account basics.</p></div></div><div class="settings-grid"><article class="panel plan-page-card">
   <div class="panel-label">SUBSCRIPTION</div>
   <h3 id="settingsPlanTitle">Current plan</h3>
   <p class="settings-copy">This preview page represents one subscription tier. Use the plan links below to compare the customer experience.</p>
@@ -80,8 +89,8 @@
   <div class="modal-backdrop" id="modalBackdrop" hidden><div class="modal" id="authModal"><button class="modal-close" data-close-modal>×</button><div class="eyebrow">PREVIEW ACCOUNT</div><h2 id="authTitle">Log in</h2><p class="modal-copy">Browser-only preview. No password is sent anywhere.</p><form id="authForm"><label>Email<input type="email" id="authEmail" required></label><label id="nameLabel" hidden>Name<input type="text" id="authName"></label><label>Password<input type="password" id="authPassword" minlength="4" required></label><button class="primary-btn full" id="authSubmit" type="submit">Log in</button></form><div class="modal-note">Production accounts will use real server-side authentication.</div></div><div class="modal legal-modal" id="legalModal" hidden><button class="modal-close" data-close-modal>×</button><div class="eyebrow">TRENDWARD</div><h2 id="legalTitle">About</h2><div id="legalBody" class="legal-body"></div></div></div>
   <script>window.TRENDWARD_FIXED_TIER = "FREE";</script>
   <script src="config.js"></script>
-  <script src="trendward.js?v=10"></script>
-  <script src="live-data.js?v=10"></script>
-  <script src="tier-experience.js?v=10"></script>
+  <script src="trendward.js?v=11"></script>
+  <script src="live-data.js?v=11"></script>
+  <script src="tier-experience.js?v=11"></script>
 </body>
 </html>

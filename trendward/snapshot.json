@@ -1,6 +1,6 @@
 {
   "mode": "illustrative_preview",
-  "version": "10.0",
+  "version": "11.0",
   "generated_at": "2026-10-25",
   "live_data_configured": false,
   "auth_mode": "browser_preview_only",
@@ -37,5 +37,11 @@
     "PRO": "historical_journey",
     "PREMIUM": "deep_plus_1m_evidence"
   },
-  "visual_intelligence": true
+  "visual_intelligence": true,
+  "tier_differentiation": "static_html_plus_visual_skin",
+  "crawler_discovery": [
+    "canonical",
+    "robots.txt",
+    "sitemap.xml"
+  ]
 }
