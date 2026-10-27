@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="Trendward — AI market intelligence for lower-priced U.S. equities." />
   <title>Trendward Free | Daily Market Snapshot</title>
-  <link rel="stylesheet" href="trendward.css?v=16" />
+  <link rel="stylesheet" href="trendward.css?v=17" />
   <link rel="canonical" href="https://reubendecker.com/trendward/" />
 </head>
 <body class="tier-free">
@@ -81,6 +81,7 @@
     <a href="/trendward/basic/" data-plan-link="BASIC">Basic</a>
     <a href="/trendward/pro/" data-plan-link="PRO">Pro</a>
     <a href="/trendward/premium/" data-plan-link="PREMIUM">Premium</a>
+    <a href="/trendward/premier/" data-plan-link="PREMIER">Premier · $75</a>
   </div>
 </article><article class="panel"><div class="panel-label">APPEARANCE</div><h3>Accent color</h3><p class="settings-copy">Move the slider to change the accent used across navigation, charts, highlights, and controls.</p><div class="accent-row"><span>Hue</span><strong id="accentValue">190°</strong></div><input id="accentSlider" type="range" min="0" max="360" value="190" aria-label="Accent color" /><div class="accent-spectrum"></div></article><article class="panel"><div class="panel-label">ACCOUNT</div><h3>Preview account</h3><p class="settings-copy">The current login is a browser-only preview for testing the experience before production authentication is connected.</p><div id="accountState" class="account-state">Not signed in</div><button class="ghost-btn" id="settingsLoginBtn">Open login</button></article><article class="panel"><div class="panel-label">DATA</div><h3>Live-data readiness</h3><p class="settings-copy">This build can fetch a future customer-safe JSON endpoint and otherwise falls back to demo data.</p><code class="config-code">window.TRENDWARD_CONFIG.liveDataUrl</code></article></div></section>
       <footer class="footer"><div><strong>Trendward</strong><span>by Reuben Decker LLC</span></div><div class="footer-links"><a href="#" data-footer-modal="about">About</a><a href="#" data-footer-modal="terms">Terms</a><a href="#" data-footer-modal="billing">Billing &amp; Refunds</a><a href="#" data-footer-modal="privacy">Privacy</a><a href="#" data-footer-modal="risk">Risk Disclosure</a></div><p>Preview only. Trendward provides analytical and research tools. Nothing on this page is investment advice, a recommendation, or a guarantee of future results.</p></footer>
@@ -89,8 +90,8 @@
   <div class="modal-backdrop" id="modalBackdrop" hidden><div class="modal" id="authModal"><button class="modal-close" data-close-modal>×</button><div class="eyebrow">PREVIEW ACCOUNT</div><h2 id="authTitle">Log in</h2><p class="modal-copy">Browser-only preview. No password is sent anywhere.</p><form id="authForm"><label>Email<input type="email" id="authEmail" required></label><label id="nameLabel" hidden>Name<input type="text" id="authName"></label><label>Password<input type="password" id="authPassword" minlength="4" required></label><button class="primary-btn full" id="authSubmit" type="submit">Log in</button></form><div class="modal-note">Production accounts will use real server-side authentication.</div></div><div class="modal legal-modal" id="legalModal" hidden><button class="modal-close" data-close-modal>×</button><div class="eyebrow">TRENDWARD</div><h2 id="legalTitle">About</h2><div id="legalBody" class="legal-body"></div></div></div>
   <script>window.TRENDWARD_FIXED_TIER = "FREE";</script>
   <script src="config.js"></script>
-  <script src="trendward.js?v=16"></script>
-  <script src="live-data.js?v=16"></script>
-  <script src="tier-experience.js?v=16"></script>
+  <script src="trendward.js?v=17"></script>
+  <script src="live-data.js?v=17"></script>
+  <script src="tier-experience.js?v=17"></script>
 </body>
 </html>

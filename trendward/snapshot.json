@@ -1,15 +1,16 @@
 {
   "mode": "illustrative_preview",
-  "version": "16.0",
+  "version": "17.0",
   "generated_at": "2026-10-25",
   "live_data_configured": false,
   "auth_mode": "browser_preview_only",
-  "tiers": [
-    "FREE",
-    "BASIC",
-    "PRO",
-    "PREMIUM"
-  ],
+  "tiers": {
+    "FREE": 0,
+    "BASIC": 20,
+    "PRO": 35,
+    "PREMIUM": 50,
+    "PREMIER": 75
+  },
   "changes": [
     "interactive_metric_chart",
     "metric_units",
@@ -65,5 +66,10 @@
     "BASIC": 6,
     "PRO": 10,
     "PREMIUM": "all approved public fields"
+  },
+  "premier": {
+    "route": "/trendward/premier/",
+    "feature": "1-Minute Intelligence",
+    "status": "UI ready; API fields pending"
   }
 }

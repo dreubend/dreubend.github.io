@@ -1,14 +1,15 @@
 (() => {
   const tier = String(window.TRENDWARD_FIXED_TIER || "FREE").toUpperCase();
-  const LIMITS = {FREE:1, BASIC:4, PRO:8, PREMIUM:11};
-  const WATCH_MAX = {FREE:1, BASIC:3, PRO:5, PREMIUM:10};
-  const AUTO_LIMIT = {FREE:0, BASIC:0, PRO:5, PREMIUM:10};
-  const UPGRADE_ORDER = ["FREE","BASIC","PRO","PREMIUM"];
+  const LIMITS = {FREE:1, BASIC:4, PRO:8, PREMIUM:11, PREMIER:11};
+  const WATCH_MAX = {FREE:1, BASIC:3, PRO:5, PREMIUM:10, PREMIER:10};
+  const AUTO_LIMIT = {FREE:0, BASIC:0, PRO:5, PREMIUM:10, PREMIER:10};
+  const UPGRADE_ORDER = ["FREE","BASIC","PRO","PREMIUM","PREMIER"];
   const PLAN_PATH = {
     FREE:"/trendward/",
     BASIC:"/trendward/basic/",
     PRO:"/trendward/pro/",
-    PREMIUM:"/trendward/premium/"
+    PREMIUM:"/trendward/premium/",
+    PREMIER:"/trendward/premier/"
   };
 
   let activePriceFilter = "ALL";
@@ -43,7 +44,8 @@
     FREE:["move","liquidity5","model25","price"],
     BASIC:["move","liquidity5","model25","price","vwap","fromHigh"],
     PRO:["move","liquidity5","model25","price","vwap","fromHigh","model10","model50","liquidity15","spread"],
-    PREMIUM:["move","liquidity5","model25","price","vwap","fromHigh","model10","model50","liquidity15","spread","dollar5","dollar15","rank10","rank25","rank50","firstPromotion"]
+    PREMIUM:["move","liquidity5","model25","price","vwap","fromHigh","model10","model50","liquidity15","spread","dollar5","dollar15","rank10","rank25","rank50","firstPromotion"],
+    PREMIER:["move","liquidity5","model25","price","vwap","fromHigh","model10","model50","liquidity15","spread","dollar5","dollar15","rank10","rank25","rank50","firstPromotion"]
   };
 
   function metricSpec(c,key){
@@ -69,7 +71,7 @@
   }
 
   function whySetup(c){
-    if(!(tier==="PRO"||tier==="PREMIUM")) return "";
+    if(!(tier==="PRO"||tier==="PREMIUM"||tier==="PREMIER")) return "";
     const parts=[];
     const m25=score(c), m50=num(c.model_scores?.score50), vwap=num(c.price_vs_vwap_pct), liq5=num(c.vol), liq15=num(c.volume_accel_15m), high=num(c.distance_from_high_pct), spr=num(c.spread_pct);
     if(m25!==null) parts.push(`25% model ${m25.toFixed(0)}/100`);
@@ -146,7 +148,7 @@
       const key=metricBySymbol[c.symbol] || keys[0];
       const specs=keys.map(k=>[k,metricSpec(c,k)]);
 
-      const metricHtml = tier==="PREMIUM"
+      const metricHtml = (tier==="PREMIUM" || tier==="PREMIER")
         ? ["Price & Structure","Liquidity","Model Intelligence"].map(group=>{
             const subset=specs.filter(([,s])=>s.group===group);
             if(!subset.length)return "";
@@ -224,7 +226,7 @@
   function setAuto(on){ localStorage.setItem(watchModeKey(),on?"auto":"manual"); }
 
   function watchedSymbols(){
-    if((tier==="PRO" || tier==="PREMIUM") && autoEnabled()){
+    if((tier==="PRO" || tier==="PREMIUM" || tier==="PREMIER") && autoEnabled()){
       return visibleRows().slice(0,AUTO_LIMIT[tier]).map(c=>c.symbol);
     }
     return loadManualWatch();
@@ -243,7 +245,7 @@
     }
 
     const isAuto=(tier==="PRO"||tier==="PREMIUM") && autoEnabled();
-    const canAuto=(tier==="PRO"||tier==="PREMIUM");
+    const canAuto=(tier==="PRO"||tier==="PREMIUM"||tier==="PREMIER");
     controls.innerHTML=`
       <span class="watch-mode">${isAuto?"AUTO-CURRENT":"MANUAL"}</span>
       ${canAuto?`<button class="chip ${isAuto?"active":""}" id="autoCurrentBtn">${isAuto?"Use manual":"Auto-current"}</button>`:""}
@@ -359,7 +361,7 @@
     pulse:"Market Pulse summarizes the scanner universe rather than one stock."
   };
   function renderHelp(){
-    if(!(tier==="PRO"||tier==="PREMIUM")) return;
+    if(!(tier==="PRO"||tier==="PREMIUM"||tier==="PREMIER")) return;
     Object.entries(HELP).forEach(([section,text])=>{
       const heading=document.querySelector(`#section-${section} .section-heading`);
       if(!heading)return;
@@ -383,6 +385,61 @@
     if(h) h.textContent=`One #1 selected/promoted setup from the 30-minute-delayed scanner snapshot${f?`: ${f.symbol}`:""}.`;
   }
 
+
+  function renderMinuteIntelligence(){
+    if(tier!=="PREMIER") return;
+    const live=document.getElementById("minuteLiveGrid");
+    const historical=document.getElementById("minuteHistoricalGrid");
+    const status=document.getElementById("minuteFeedStatus");
+    const minute=payload()?.oneMinute || payload()?.one_minute || null;
+
+    const plannedLive = [
+      ["1m price movement","Minute-by-minute price change and progress"],
+      ["1m liquidity acceleration","Whether trading activity is accelerating or cooling"],
+      ["VWAP / high retention","Whether price is holding important intraday structure"],
+      ["Re-acceleration","A renewed burst after a pause or pullback"],
+      ["Giveback / exhaustion","Loss of price progress despite continuing activity"],
+      ["Momentum state","Strengthening, holding, cooling, or fading"]
+    ];
+
+    const plannedHistorical = [
+      ["First 1m ignition","First archived minute where the setup visibly accelerated"],
+      ["VWAP holds / losses","Key structural holds and failures through the path"],
+      ["Breakout attempts","Archived attempts to extend through resistance or highs"],
+      ["Re-acceleration points","Later renewed activity after consolidation"],
+      ["MFE / MAE context","Forward favorable/adverse movement around key 1m states"],
+      ["5m ↔ 1m comparison","What the 5-minute scanner saw versus the minute-level path"]
+    ];
+
+    if(status){
+      status.innerHTML = minute
+        ? `<span class="live-dot"></span> 1-minute customer-safe feed detected`
+        : `<span class="minute-wait-dot"></span> 1-minute feed not connected yet`;
+    }
+
+    function renderList(el, items, kind){
+      if(!el) return;
+      if(minute && Array.isArray(minute[kind]) && minute[kind].length){
+        el.innerHTML=minute[kind].map(item=>`
+          <article class="minute-card">
+            <span>${esc(item.label || item.name || "1-minute metric")}</span>
+            <strong>${esc(item.value ?? "—")}</strong>
+            <small>${esc(item.note || item.detail || "")}</small>
+          </article>`).join("");
+      } else {
+        el.innerHTML=items.map(([title,note])=>`
+          <article class="minute-card minute-card-pending">
+            <span>${esc(title)}</span>
+            <strong>Pending feed</strong>
+            <small>${esc(note)}</small>
+          </article>`).join("");
+      }
+    }
+
+    renderList(live,plannedLive,"live");
+    renderList(historical,plannedHistorical,"historical");
+  }
+
   function renderEverything(){
     renderUpgradeMenu();
     renderCandidateTable();
@@ -392,6 +449,7 @@
     renderSignals();
     renderHelp();
     renderFreeCopy();
+    renderMinuteIntelligence();
 
     const badge=document.getElementById("topPlanBadge"); if(badge) badge.textContent=tier;
     const side=document.getElementById("sidebarTier"); if(side) side.textContent=tier;
