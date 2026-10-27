@@ -1,10 +1,4 @@
-# Trendward public dashboard v11
-
-v11 makes the subscription tiers different in the actual static HTML, not only after JavaScript runs.
-
-Free: low-noise daily snapshot.
-Basic: active 5-minute scanner workspace.
-Pro: historical/model intelligence.
-Premium: dense research cockpit with 1-minute evidence.
-
-Also adds canonical URLs, robots.txt, and sitemap.xml for better discovery of all four tier routes.
+# Trendward v12
+Fixes refresh/deep-link routing. The previous script called an undefined
+`applyFixedTierPage()` before the router initialized, so refreshes on URLs like
+`#scanner` showed Overview. v12 removes that call and makes the hash authoritative.

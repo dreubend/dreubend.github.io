@@ -13,9 +13,6 @@ const mb=document.getElementById("modalBackdrop"),am=document.getElementById("au
 const legal={about:"<p>Trendward is a developing market-intelligence product from Reuben Decker LLC focused on lower-priced U.S.-listed equities, liquidity acceleration, price confirmation, and historical model context.</p>",terms:"<p><strong>Lawyer review pending.</strong> Final Terms of Service will be published after professional review.</p>",billing:"<p><strong>Planning draft.</strong> Final pricing, renewal, cancellation, taxes, and refund terms will be shown before purchase and finalized after legal review.</p>",privacy:"<p><strong>Privacy review pending.</strong> Production authentication, analytics, payment processing, and data-retention practices will be finalized before publication.</p>",risk:"<p>Securities trading can result in substantial losses. Trendward outputs do not guarantee future performance. Historical MFE/MAE is not customer P&amp;L.</p>"};document.querySelectorAll("[data-footer-modal]").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();am.hidden=true;lm.hidden=false;mb.hidden=false;document.getElementById("legalTitle").textContent=a.textContent;document.getElementById("legalBody").innerHTML=legal[a.dataset.footerModal]}));
 (async()=>{const url=window.TRENDWARD_CONFIG?.liveDataUrl?.trim();if(!url)return;try{const r=await fetch(url,{cache:"no-store"});if(!r.ok)throw 0;const p=await r.json();if(p?.candidates){document.getElementById("dataStatus").innerHTML='<span class="live-dot"></span> Live customer-safe data'}}catch{document.getElementById("dataStatus").innerHTML='<span class="live-dot" style="background:var(--orange)"></span> Demo fallback'}})();
 
-applyFixedTierPage();
-
-
 // v5: real-link navigation support. This preserves browser behaviors such as
 // right-click/open-in-new-tab, middle-click, copy link, and bookmarking.
 (function(){
@@ -187,4 +184,27 @@ applyFixedTierPage();
   keepButtonUsable();
   window.addEventListener("resize", keepButtonUsable, {passive:true});
   window.addEventListener("orientationchange", keepButtonUsable, {passive:true});
+})();
+
+
+// ===== Trendward v12 refresh-safe route authority =====
+(function(){
+  const valid=new Set(["overview","scanner","watchlist","signals","journey","pulse","settings"]);
+  function applyRoute(){
+    const raw=(location.hash||"#overview").slice(1).trim().toLowerCase();
+    const section=valid.has(raw)?raw:"overview";
+    document.querySelectorAll(".section").forEach(el=>el.classList.toggle("active",el.id===`section-${section}`));
+    document.querySelectorAll(".nav-item").forEach(el=>{
+      const active=el.dataset.section===section;
+      el.classList.toggle("active",active);
+      if(active) el.setAttribute("aria-current","page"); else el.removeAttribute("aria-current");
+    });
+  }
+  applyRoute();
+  queueMicrotask(applyRoute);
+  requestAnimationFrame(applyRoute);
+  window.addEventListener("load",applyRoute);
+  window.addEventListener("hashchange",applyRoute);
+  window.addEventListener("popstate",applyRoute);
+  setTimeout(applyRoute,0);
 })();
