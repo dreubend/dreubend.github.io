@@ -39,59 +39,76 @@
     return d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});
   }
 
+  const METRIC_KEYS = {
+    FREE:["move","liquidity5","model25","price"],
+    BASIC:["move","liquidity5","model25","price","vwap","fromHigh"],
+    PRO:["move","liquidity5","model25","price","vwap","fromHigh","model10","model50","liquidity15","spread"],
+    PREMIUM:["move","liquidity5","model25","price","vwap","fromHigh","model10","model50","liquidity15","spread","dollar5","dollar15","rank10","rank25","rank50","firstPromotion"]
+  };
+
   function metricSpec(c,key){
     const specs = {
-      move: {
-        label:"Session move",
-        unit:"%",
-        value:num(c.move),
-        min:-100,
-        max:Math.max(100, Math.ceil(Math.abs(num(c.move)||0)/25)*25),
-        display:pct(c.move),
-        explain:"Captured percentage move for the stock in the scanner snapshot."
-      },
-      liquidity: {
-        label:"5m liquidity acceleration",
-        unit:"×",
-        value:num(c.vol),
-        min:0,
-        max:Math.max(6, Math.ceil((num(c.vol)||0)+1)),
-        display:num(c.vol)===null?"—":`${num(c.vol).toFixed(2)}×`,
-        explain:"Recent 5-minute trading activity relative to its baseline. 1× is the baseline."
-      },
-      model: {
-        label:"25% model score",
-        unit:"/100",
-        value:score(c),
-        min:0,
-        max:100,
-        display:score(c)===null?"—":`${score(c).toFixed(0)}/100`,
-        explain:"Approved 5-minute model evidence for the 25% move target. It is not a guarantee."
-      },
-      price: {
-        label:"Captured price",
-        unit:"$",
-        value:num(c.price),
-        min:0,
-        max:Math.max(20, Math.ceil((num(c.price)||0)/5)*5),
-        display:money(c.price),
-        explain:"Captured market price for this scanner snapshot."
-      }
+      move:{label:"Session move",short:"Session move",group:"Price & Structure",unit:"%",value:num(c.move),min:-100,max:Math.max(100,Math.ceil(Math.abs(num(c.move)||0)/25)*25),display:pct(c.move),explain:"Captured percentage move for the stock in this scanner snapshot."},
+      liquidity5:{label:"5m liquidity acceleration",short:"5m liquidity",group:"Liquidity",unit:"×",value:num(c.vol),min:0,max:Math.max(6,Math.ceil((num(c.vol)||0)+1)),display:num(c.vol)===null?"—":`${num(c.vol).toFixed(2)}×`,explain:"Recent 5-minute trading activity relative to its baseline. 1× is the baseline."},
+      model25:{label:"25% model score",short:"25% model",group:"Model Intelligence",unit:"/100",value:score(c),min:0,max:100,display:score(c)===null?"—":`${score(c).toFixed(0)}/100`,explain:"Approved 5-minute model evidence for the 25% move target. It is not a guarantee."},
+      price:{label:"Captured price",short:"Price",group:"Price & Structure",unit:"$",value:num(c.price),min:0,max:Math.max(20,Math.ceil((num(c.price)||0)/5)*5),display:money(c.price),explain:"Captured market price for this scanner snapshot."},
+      vwap:{label:"Price vs VWAP",short:"Vs VWAP",group:"Price & Structure",unit:"%",value:num(c.price_vs_vwap_pct),min:-50,max:50,display:pct(c.price_vs_vwap_pct),explain:"How far price is above or below the session volume-weighted average price."},
+      fromHigh:{label:"Distance from session high",short:"From high",group:"Price & Structure",unit:"%",value:num(c.distance_from_high_pct),min:-100,max:0,display:pct(c.distance_from_high_pct),explain:"How far the captured price sits below the session high. Closer to 0% means stronger high retention."},
+      model10:{label:"10% model score",short:"10% model",group:"Model Intelligence",unit:"/100",value:num(c.model_scores?.score10),min:0,max:100,display:num(c.model_scores?.score10)===null?"—":`${num(c.model_scores?.score10).toFixed(0)}/100`,explain:"Approved 5-minute model evidence for the 10% move target."},
+      model50:{label:"50% model score",short:"50% model",group:"Model Intelligence",unit:"/100",value:num(c.model_scores?.score50),min:0,max:100,display:num(c.model_scores?.score50)===null?"—":`${num(c.model_scores?.score50).toFixed(0)}/100`,explain:"Approved 5-minute model evidence for the 50% move target."},
+      liquidity15:{label:"15m liquidity acceleration",short:"15m liquidity",group:"Liquidity",unit:"×",value:num(c.volume_accel_15m),min:0,max:Math.max(6,Math.ceil((num(c.volume_accel_15m)||0)+1)),display:num(c.volume_accel_15m)===null?"—":`${num(c.volume_accel_15m).toFixed(2)}×`,explain:"Recent 15-minute trading activity relative to its baseline."},
+      spread:{label:"Spread",short:"Spread",group:"Price & Structure",unit:"%",value:num(c.spread_pct),min:0,max:Math.max(5,Math.ceil((num(c.spread_pct)||0)+1)),display:num(c.spread_pct)===null?"—":`${num(c.spread_pct).toFixed(2)}%`,explain:"Bid-ask spread as a percentage. Lower is generally easier to trade."},
+      dollar5:{label:"5m dollar volume",short:"5m $ volume",group:"Liquidity",unit:"$",value:num(c.dollar_volume_5m),min:0,max:Math.max(100000,num(c.dollar_volume_5m)||0),display:num(c.dollar_volume_5m)===null?"—":`$${Math.round(num(c.dollar_volume_5m)).toLocaleString()}`,explain:"Approximate dollars traded over the most recent 5-minute scanner window."},
+      dollar15:{label:"15m dollar volume",short:"15m $ volume",group:"Liquidity",unit:"$",value:num(c.dollar_volume_15m),min:0,max:Math.max(250000,num(c.dollar_volume_15m)||0),display:num(c.dollar_volume_15m)===null?"—":`$${Math.round(num(c.dollar_volume_15m)).toLocaleString()}`,explain:"Approximate dollars traded over the most recent 15-minute scanner window."},
+      rank10:{label:"10% model rank",short:"10% rank",group:"Model Intelligence",unit:"rank",value:num(c.model_ranks?.rank10),min:1,max:Math.max(10,num(c.model_ranks?.rank10)||10),display:num(c.model_ranks?.rank10)===null?"—":`#${Math.round(num(c.model_ranks?.rank10))}`,explain:"Relative model rank within the captured cohort for the 10% move target. Lower rank is stronger."},
+      rank25:{label:"25% model rank",short:"25% rank",group:"Model Intelligence",unit:"rank",value:num(c.model_ranks?.rank25),min:1,max:Math.max(10,num(c.model_ranks?.rank25)||10),display:num(c.model_ranks?.rank25)===null?"—":`#${Math.round(num(c.model_ranks?.rank25))}`,explain:"Relative model rank within the captured cohort for the 25% move target. Lower rank is stronger."},
+      rank50:{label:"50% model rank",short:"50% rank",group:"Model Intelligence",unit:"rank",value:num(c.model_ranks?.rank50),min:1,max:Math.max(10,num(c.model_ranks?.rank50)||10),display:num(c.model_ranks?.rank50)===null?"—":`#${Math.round(num(c.model_ranks?.rank50))}`,explain:"Relative model rank within the captured cohort for the 50% move target. Lower rank is stronger."},
+      firstPromotion:{label:"First promotion time",short:"First promoted",group:"Model Intelligence",unit:"time",value:null,min:0,max:1,display:(()=>{if(!c.first_promotion_utc)return"—";const d=new Date(c.first_promotion_utc);return Number.isNaN(d.getTime())?"—":d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});})(),explain:"First archived time this symbol was promoted by the 5-minute model layer."}
     };
     return specs[key] || specs.move;
   }
 
+  function whySetup(c){
+    if(!(tier==="PRO"||tier==="PREMIUM")) return "";
+    const parts=[];
+    const m25=score(c), m50=num(c.model_scores?.score50), vwap=num(c.price_vs_vwap_pct), liq5=num(c.vol), liq15=num(c.volume_accel_15m), high=num(c.distance_from_high_pct), spr=num(c.spread_pct);
+    if(m25!==null) parts.push(`25% model ${m25.toFixed(0)}/100`);
+    if(m50!==null) parts.push(`50% model ${m50.toFixed(0)}/100`);
+    if(vwap!==null) parts.push(`${vwap>=0?Math.abs(vwap).toFixed(1)+"% above":Math.abs(vwap).toFixed(1)+"% below"} VWAP`);
+    if(high!==null) parts.push(`${Math.abs(high).toFixed(1)}% below the session high`);
+    if(liq5!==null) parts.push(`5m liquidity ${liq5.toFixed(2)}×`);
+    if(liq15!==null) parts.push(`15m liquidity ${liq15.toFixed(2)}×`);
+    if(spr!==null) parts.push(`spread ${spr.toFixed(2)}%`);
+    return parts.length ? `${c.symbol} is ${String(c.state||"being monitored").toLowerCase()}. ${parts.slice(0,tier==="PRO"?5:7).join(", ")}.` : "";
+  }
+
   function bulletChart(c,key){
     const s=metricSpec(c,key);
+    if(key==="firstPromotion"){
+      return `<div class="bullet-chart time-chart">
+        <div class="bullet-chart-title"><span>${esc(s.label)}</span><strong>${esc(s.display)}</strong></div>
+        <div class="time-axis"><span>Earlier detection</span><i></i><span>Later detection</span></div>
+        <small>${esc(s.explain)}</small>
+      </div>`;
+    }
     if(s.value===null) return `<div class="metric-chart-empty">No ${esc(s.label)} value in this snapshot.</div>`;
-    const span = (s.max-s.min)||1;
-    const pos = Math.max(0,Math.min(100,(s.value-s.min)/span*100));
-    const zeroPos = s.min < 0 ? Math.max(0,Math.min(100,(0-s.min)/span*100)) : 0;
-    const ticks = Array.from({length:5},(_,i)=>s.min+i*span/4);
-    const tickText = v => s.unit==="%" ? `${Math.round(v)}%` :
-                          s.unit==="×" ? `${v.toFixed(v<10?1:0)}×` :
-                          s.unit==="$" ? `$${v.toFixed(v<10?1:0)}` :
-                          `${Math.round(v)}`;
+    const span=(s.max-s.min)||1;
+    let pos=(s.value-s.min)/span*100;
+    if(["rank10","rank25","rank50"].includes(key)) pos=100-pos;
+    pos=Math.max(0,Math.min(100,pos));
+    const zeroPos=s.min<0?Math.max(0,Math.min(100,(0-s.min)/span*100)):0;
+    const ticks=Array.from({length:5},(_,i)=>s.min+i*span/4);
+    const tickText=v=>{
+      if(s.unit==="%") return `${Math.round(v)}%`;
+      if(s.unit==="×") return `${v.toFixed(v<10?1:0)}×`;
+      if(s.unit==="$"){
+        if(v>=1_000_000) return `$${(v/1_000_000).toFixed(1)}M`;
+        if(v>=1_000) return `$${Math.round(v/1_000)}K`;
+        return `$${Math.round(v)}`;
+      }
+      if(s.unit==="rank") return `#${Math.max(1,Math.round(v))}`;
+      return `${Math.round(v)}`;
+    };
     return `<div class="bullet-chart" aria-label="${esc(s.label)} ${esc(s.display)}">
       <div class="bullet-chart-title"><span>${esc(s.label)}</span><strong>${esc(s.display)}</strong></div>
       <div class="bullet-stage">
@@ -115,37 +132,52 @@
   function renderScanner(){
     const el=document.getElementById("scannerCards"); if(!el)return;
     let rows=visibleRows();
-    if(tier==="FREE"){
-      const f=featuredRow();
-      rows=f?[f]:[];
-    }
+    if(tier==="FREE"){ const f=featuredRow(); rows=f?[f]:[]; }
     rows=filteredRows(rows);
+
     if(!rows.length){
       el.innerHTML=`<div class="panel empty-filter">No visible setups are in this price band.</div>`;
       return;
     }
 
+    const keys=METRIC_KEYS[tier];
+
     el.innerHTML=rows.map(c=>{
-      const key=metricBySymbol[c.symbol] || "move";
-      const metrics=[
-        ["move","Session move",pct(c.move)],
-        ["liquidity","5m liquidity",num(c.vol)===null?"—":`${num(c.vol).toFixed(2)}×`],
-        ["model","25% model",score(c)===null?"—":`${score(c).toFixed(0)}/100`],
-        ["price","Price",money(c.price)]
-      ];
-      return `<article class="scanner-card" data-symbol="${esc(c.symbol)}">
+      const key=metricBySymbol[c.symbol] || keys[0];
+      const specs=keys.map(k=>[k,metricSpec(c,k)]);
+
+      const metricHtml = tier==="PREMIUM"
+        ? ["Price & Structure","Liquidity","Model Intelligence"].map(group=>{
+            const subset=specs.filter(([,s])=>s.group===group);
+            if(!subset.length)return "";
+            return `<div class="metric-group">
+              <div class="metric-group-title">${esc(group)}</div>
+              <div class="metric-grid premium-metric-grid">
+                ${subset.map(([mk,s])=>`
+                  <button class="metric metric-switch ${key===mk?"active":""}" data-symbol="${esc(c.symbol)}" data-metric="${mk}">
+                    <span>${esc(s.short)}</span><strong>${esc(s.display)}</strong>
+                  </button>`).join("")}
+              </div>
+            </div>`;
+          }).join("")
+        : `<div class="metric-grid tiered-metric-grid tiered-${tier.toLowerCase()}">
+            ${specs.map(([mk,s])=>`
+              <button class="metric metric-switch ${key===mk?"active":""}" data-symbol="${esc(c.symbol)}" data-metric="${mk}">
+                <span>${esc(s.short)}</span><strong>${esc(s.display)}</strong>
+              </button>`).join("")}
+          </div>`;
+
+      const why=whySetup(c);
+
+      return `<article class="scanner-card expanded-scanner-card" data-symbol="${esc(c.symbol)}">
         <div class="scanner-card-head">
           <div><span class="rank">${esc(c.rank)}</span></div>
           <span class="state-badge">${esc(c.state||"Watch")}</span>
         </div>
         <div class="price">${esc(c.symbol)} <span>${money(c.price)}</span></div>
         <div class="interactive-metric-chart">${bulletChart(c,key)}</div>
-        <div class="metric-grid">
-          ${metrics.map(([mk,label,val])=>`
-            <button class="metric metric-switch ${key===mk?"active":""}" data-symbol="${esc(c.symbol)}" data-metric="${mk}">
-              <span>${esc(label)}</span><strong>${esc(val)}</strong>
-            </button>`).join("")}
-        </div>
+        ${metricHtml}
+        ${why?`<div class="why-setup"><div class="why-setup-label">WHY THIS SETUP?</div><p>${esc(why)}</p></div>`:""}
       </article>`;
     }).join("");
 

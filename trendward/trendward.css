@@ -563,3 +563,25 @@ body.tier-free .plan-badge{border-color:rgba(255,173,77,.3)}
   .page-help-v15>span{width:min(270px,78vw)}
   .interactive-metric-chart{height:104px;min-height:104px}
 }
+
+/* ===== Trendward v16 deeper scanner intelligence ===== */
+.expanded-scanner-card{align-self:start}
+.tiered-metric-grid{margin-top:4px}
+.tiered-basic{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tiered-pro{grid-template-columns:repeat(5,minmax(0,1fr))}
+.metric-group{margin-top:10px}
+.metric-group-title{font-size:9px;font-weight:850;letter-spacing:.09em;text-transform:uppercase;color:#8195a8;margin:0 0 6px}
+.premium-metric-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.why-setup{margin-top:12px;padding:11px 12px;border-radius:11px;border:1px solid hsl(var(--hue) 70% 55% / .22);background:var(--accent-soft)}
+.why-setup-label{font-size:8px;font-weight:900;letter-spacing:.11em;color:var(--accent);margin-bottom:5px}
+.why-setup p{margin:0;color:#b8c8d5;font-size:9px;line-height:1.55}
+.time-axis{display:flex;align-items:center;gap:8px;margin:18px 0 8px}
+.time-axis span{font-size:8px;color:var(--muted);white-space:nowrap}
+.time-axis i{height:6px;flex:1;border-radius:999px;background:linear-gradient(90deg,var(--accent),rgba(255,255,255,.06))}
+@media(max-width:1100px){
+  .tiered-pro{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .premium-metric-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .tiered-basic,.tiered-pro,.premium-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
