@@ -384,3 +384,30 @@ body.tier-premium .signal-visual,body.tier-premium .journey-premium-viz{border-c
   body.tier-basic #section-scanner .scanner-grid,
   body.tier-premium #section-scanner .scanner-grid{grid-template-columns:1fr}
 }
+
+/* ===== Trendward v13 real-data polish ===== */
+.neutral{color:var(--muted)!important}.warn-text{color:var(--orange)!important}
+.freshness-banner{margin:14px 0 0;padding:11px 14px;border-radius:12px;display:flex;gap:10px;align-items:center;font-size:11px;border:1px solid var(--border)}
+.freshness-banner strong{font-size:10px;letter-spacing:.11em;white-space:nowrap}
+.freshness-banner span{color:#aebdca}
+.freshness-banner.is-stale{background:rgba(255,173,77,.08);border-color:rgba(255,173,77,.25)}
+.freshness-banner.is-stale strong{color:var(--orange)}
+.freshness-banner.is-live{background:rgba(59,226,141,.07);border-color:rgba(59,226,141,.22)}
+.freshness-banner.is-live strong{color:var(--green)}
+.data-state-tag{display:inline-flex;margin-top:10px;padding:5px 8px;border-radius:999px;font-size:9px;font-weight:800;letter-spacing:.09em;border:1px solid var(--border)}
+.data-state-tag.stale{color:var(--orange);background:rgba(255,173,77,.08);border-color:rgba(255,173,77,.22)}
+.data-state-tag.live{color:var(--green);background:rgba(59,226,141,.07);border-color:rgba(59,226,141,.22)}
+.evidence-note,.empty-viz{display:block;color:var(--muted);font-size:10px;line-height:1.55;margin-top:10px}
+.evidence-unavailable{border-style:dashed!important;opacity:.88}
+.outcome-pending{border-style:dashed}
+.outcome-pending p{color:var(--muted);font-size:11px;line-height:1.6}
+.outcome-mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.outcome-mini-grid>div{padding:12px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.025);display:grid;gap:4px}
+.outcome-mini-grid span{font-size:9px;color:var(--muted)}
+.outcome-mini-grid strong{font-size:18px}
+.outcome-mini-grid small{font-size:10px}
+.pulse-visual-grid small{display:block;color:var(--muted);font-size:9px;margin-top:4px}
+@media(max-width:760px){
+  .freshness-banner{align-items:flex-start;flex-direction:column;gap:5px}
+  .outcome-mini-grid{grid-template-columns:1fr}
+}

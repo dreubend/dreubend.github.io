@@ -1,9 +1,7 @@
-
 (() => {
   const tier = window.TRENDWARD_FIXED_TIER || "FREE";
+  const limitByTier = {FREE:1, BASIC:4, PRO:8, PREMIUM:11};
 
-  // Make the route authoritative. This fixes older preview logic that remembered
-  // the last locally selected tier.
   try {
     if (typeof trendwardTier !== "undefined") trendwardTier = tier;
     if (typeof TIER_POLICY !== "undefined") {
@@ -29,189 +27,152 @@
     console.warn("Trendward tier sync:", e);
   }
 
-  const tierMeta = {
-    FREE: {
-      name:"Free",
-      strap:"Daily snapshot",
-      overview:"One featured setup and a simple read on why it matters.",
-      scanner:"A focused look at the strongest featured setup.",
-      watch:"One developing setup.",
-      signals:"Latest major state change.",
-      journey:"Snapshot only — no full historical path.",
-      pulse:"Current universe state.",
-      settings:"Core account and appearance controls.",
-      colorLabel:"Snapshot"
-    },
-    BASIC: {
-      name:"Basic",
-      strap:"Active scanner",
-      overview:"More setups plus 5-minute model context.",
-      scanner:"Up to four current setups with probability context.",
-      watch:"Two developing setups with clearer state progression.",
-      signals:"More state changes and 5-minute context.",
-      journey:"Compact setup progression, without the full historical experience.",
-      pulse:"Market pulse plus intraday breadth visuals.",
-      settings:"Basic subscription features and 5-minute intelligence.",
-      colorLabel:"5m model"
-    },
-    PRO: {
-      name:"Pro",
-      strap:"Historical intelligence",
-      overview:"A broader scanner view with historical/model context.",
-      scanner:"Up to eight setups with richer model comparison.",
-      watch:"Four featured/archive candidates and deeper context.",
-      signals:"Expanded state-change history.",
-      journey:"Full 5-minute Model Journey with resolved outcomes.",
-      pulse:"Intraday breadth, setup distribution, and market-state history.",
-      settings:"Pro historical access and outcome controls.",
-      colorLabel:"Journey"
-    },
-    PREMIUM: {
-      name:"Premium",
-      strap:"Research cockpit",
-      overview:"The deepest scanner and archive experience.",
-      scanner:"The full eleven-setup view with 1-minute evidence layer.",
-      watch:"Deep archive/variety view plus the true #1 setup.",
-      signals:"Full state-change stream with compact 1-minute evidence.",
-      journey:"Full journey, outcomes, and 1-minute evidence context.",
-      pulse:"Deepest market-state and scanner-universe visualization.",
-      settings:"Premium research controls and advanced evidence preferences.",
-      colorLabel:"1m evidence"
-    }
-  };
+  const meta = {
+    FREE:{name:"Free",strap:"Daily snapshot",overview:"One featured setup and a simple read on why it matters.",scanner:"A focused look at one featured scanner setup.",watch:"One developing setup.",signals:"Latest major state change.",journey:"Snapshot only — no full historical path.",pulse:"Simple scanner-universe state.",settings:"Core account and appearance controls."},
+    BASIC:{name:"Basic",strap:"Active scanner",overview:"Up to four setups with real 5-minute model and liquidity context.",scanner:"Up to four current setups with 5-minute model context.",watch:"Two developing setups with clearer state progression.",signals:"More scanner state changes and 5-minute context.",journey:"Compact setup progression; full historical journey remains locked.",pulse:"Scanner breadth plus intraday liquidity state.",settings:"Basic subscription features and 5-minute intelligence."},
+    PRO:{name:"Pro",strap:"Historical intelligence",overview:"Up to eight setups with deeper model comparison and resolved outcomes when available.",scanner:"Up to eight setups with richer model comparison.",watch:"Four featured/archive candidates and deeper context.",signals:"Expanded scanner state-change history.",journey:"Full 5-minute Model Journey with resolved 15/30/60-minute outcomes when available.",pulse:"Broader scanner-universe and model-state context.",settings:"Pro historical access and outcome controls."},
+    PREMIUM:{name:"Premium",strap:"Research cockpit",overview:"Up to eleven setups with the deepest approved scanner context.",scanner:"Eleven-setup research view with the deepest approved public fields.",watch:"Deep archive/variety view plus leading scanner setups.",signals:"Full approved state-change stream.",journey:"Full journey and outcomes; 1-minute evidence appears only after it is added to the public API.",pulse:"Deepest approved market-state and scanner-universe view.",settings:"Premium research controls and advanced evidence preferences."}
+  }[tier];
 
-  const m = tierMeta[tier];
+  function payload(){ return window.TRENDWARD_PUBLIC_PAYLOAD || null; }
+  function rows(){
+    const src = payload()?.candidates || (typeof data !== "undefined" ? data.candidates : []);
+    return Array.isArray(src) ? src.slice(0, limitByTier[tier]) : [];
+  }
+  function primary(){ return rows()[0] || null; }
+  function num(v, fallback=0){ const n=Number(v); return Number.isFinite(n)?n:fallback; }
+  function clamp(v){ return Math.max(0, Math.min(100, num(v))); }
+  function money(v){ const n=Number(v); return Number.isFinite(n) ? `$${n<1?n.toFixed(4):n.toFixed(2)}` : "—"; }
+  function signed(v,suffix="%"){ const n=Number(v); return Number.isFinite(n) ? `${n>=0?"+":""}${n.toFixed(1)}${suffix}` : "—"; }
+  function staleTag(){ return payload()?.stale ? `<span class="data-state-tag stale">STALE SNAPSHOT</span>` : `<span class="data-state-tag live">LIVE</span>`; }
 
-  function pctBar(label, value, hint="") {
-    return `<div class="viz-row">
-      <div class="viz-row-head"><span>${label}</span><strong>${value}%</strong></div>
-      <div class="viz-track"><i style="width:${Math.max(0,Math.min(100,value))}%"></i></div>
-      ${hint ? `<small>${hint}</small>` : ""}
-    </div>`;
+  function pctBar(label,value,hint=""){
+    value=clamp(value);
+    return `<div class="viz-row"><div class="viz-row-head"><span>${label}</span><strong>${value.toFixed(0)}%</strong></div><div class="viz-track"><i style="width:${value}%"></i></div>${hint?`<small>${hint}</small>`:""}</div>`;
   }
 
-  function ring(value, label) {
-    return `<div class="mini-ring" style="--value:${value}">
-      <div><strong>${value}</strong><span>${label}</span></div>
-    </div>`;
+  function ring(value,label){
+    value=clamp(value);
+    return `<div class="mini-ring" style="--value:${value}"><div><strong>${value.toFixed(0)}</strong><span>${label}</span></div></div>`;
   }
 
-  function spark(values) {
-    const w=220,h=60,p=4,min=Math.min(...values),max=Math.max(...values);
-    const pts=values.map((v,i)=>`${p+i*(w-2*p)/(values.length-1)},${h-p-(v-min)/(max-min||1)*(h-2*p)}`).join(" ");
-    return `<svg viewBox="0 0 ${w} ${h}" class="tier-spark">
-      <polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>`;
+  function candidateBars(){
+    const rs=rows();
+    if(!rs.length) return `<div class="empty-viz">Waiting for scanner candidates.</div>`;
+    return rs.map(c=>{
+      const score=clamp(c.model ?? c.model_scores?.score25);
+      return `<div class="candidate-viz-row">
+        <div><strong>${c.symbol}</strong><small>${money(c.price)} · ${c.state || "Watch"}</small></div>
+        <div class="candidate-viz-bar"><i style="width:${score}%"></i></div><b>${score.toFixed(0)}</b>
+      </div>`;
+    }).join("");
   }
 
-  function candidateBars(limit) {
-    const rows = (typeof data !== "undefined" ? data.candidates : []).slice(0,limit);
-    return rows.map(c => `<div class="candidate-viz-row">
-      <div><strong>${c.symbol}</strong><small>$${Number(c.price).toFixed(2)} · ${c.state}</small></div>
-      <div class="candidate-viz-bar"><i style="width:${c.model}%"></i></div>
-      <b>${c.model}</b>
-    </div>`).join("");
-  }
-
-  function heatTiles(limit) {
-    const rows = (typeof data !== "undefined" ? data.candidates : []).slice(0,limit);
-    return `<div class="heat-grid">${rows.map(c => {
-      const strength = Math.max(18, Math.min(100, c.model));
-      return `<div class="heat-tile" style="--heat:${strength}%">
-        <strong>${c.symbol}</strong><span>${c.model}</span><small>${c.vol.toFixed(1)}× vol</small>
+  function heatTiles(){
+    const rs=rows();
+    if(!rs.length) return `<div class="empty-viz">Waiting for scanner candidates.</div>`;
+    return `<div class="heat-grid">${rs.map(c=>{
+      const score=clamp(c.model ?? c.model_scores?.score25);
+      const vol=Number(c.vol);
+      return `<div class="heat-tile" style="--heat:${Math.max(18,score)}%">
+        <strong>${c.symbol}</strong><span>${score.toFixed(0)}</span>
+        <small>${Number.isFinite(vol)?vol.toFixed(2)+"× 5m liq":"liquidity —"}</small>
       </div>`;
     }).join("")}</div>`;
   }
 
-  function renderOverview() {
+  function renderOverview(){
     const el=document.getElementById("tierOverviewVisual"); if(!el)return;
-    const blocks = {
-      FREE: `<div class="tier-banner"><div><span>${m.strap}</span><h2>One setup. One clear read.</h2><p>${m.overview}</p></div>${ring(82,"setup")}</div>`,
-      BASIC: `<div class="tier-banner"><div><span>${m.strap}</span><h2>Track the setup as it develops.</h2><p>${m.overview}</p></div><div class="viz-stack">${pctBar("Liquidity",86)}${pctBar("Price confirmation",71)}${pctBar("5m model",76)}</div></div>`,
-      PRO: `<div class="tier-banner"><div><span>${m.strap}</span><h2>Compare current strength with historical model context.</h2><p>${m.overview}</p></div><div class="visual-pair">${ring(82,"current")}${ring(68,"historical")}</div></div>`,
-      PREMIUM: `<div class="tier-banner premium-banner"><div><span>${m.strap}</span><h2>Current setup + archive + one-minute evidence.</h2><p>${m.overview}</p></div><div class="micro-chart"><small>1m evidence pulse</small>${spark([22,28,26,38,45,41,54,63,61,74,82])}</div></div>`
-    };
-    el.innerHTML = blocks[tier];
-  }
+    const p=primary();
+    if(!p){ el.innerHTML=`<div class="visual-card">Waiting for scanner data.</div>`; return; }
 
-  function renderScanner() {
-    const el=document.getElementById("tierScannerVisual"); if(!el)return;
-    const lim={FREE:1,BASIC:4,PRO:8,PREMIUM:11}[tier];
-    let visual;
-    if(tier==="FREE") visual=`<div class="visual-card single-feature"><div><span class="viz-kicker">FEATURED SETUP</span><h3>NOVA</h3><p>Simple setup-strength view without deeper probability detail.</p></div>${ring(82,"strength")}</div>`;
-    if(tier==="BASIC") visual=`<div class="visual-card"><div class="visual-card-head"><div><span class="viz-kicker">MODEL COMPARISON</span><h3>Top four</h3></div><small>5-minute context</small></div>${candidateBars(lim)}</div>`;
-    if(tier==="PRO") visual=`<div class="visual-card"><div class="visual-card-head"><div><span class="viz-kicker">SETUP HEAT</span><h3>Current candidate field</h3></div><small>Current + historical context</small></div>${heatTiles(lim)}</div>`;
-    if(tier==="PREMIUM") visual=`<div class="visual-card"><div class="visual-card-head"><div><span class="viz-kicker">FULL SCANNER FIELD</span><h3>Eleven-candidate research view</h3></div><small>Includes 1m evidence layer</small></div>${heatTiles(lim)}<div class="evidence-strip">${spark([18,22,27,24,36,43,48,52,61,69,76,82])}<div><strong>1m evidence acceleration</strong><small>Compact evidence layer for the leading setup</small></div></div></div>`;
-    el.innerHTML=visual;
-  }
+    const model=clamp(p.model ?? p.model_scores?.score25);
+    const liq=Math.min(100, Math.max(0, num(p.vol)*20));
+    const confirmation=Math.max(0,Math.min(100,50+num(p.price_vs_vwap_pct)*3+num(p.distance_from_high_pct)*0.5));
 
-  function renderWatchlist() {
-    const el=document.getElementById("tierWatchlistVisual"); if(!el)return;
-    const copy = {
-      FREE:["1","One developing setup"],
-      BASIC:["2","Two developing setups"],
-      PRO:["4","Featured + archive variety"],
-      PREMIUM:["10+1","Ten archive/variety + true #1"]
-    }[tier];
-    el.innerHTML=`<div class="metric-ribbon">
-      <div><span>Visible watch depth</span><strong>${copy[0]}</strong><small>${copy[1]}</small></div>
-      <div>${pctBar("Average model strength",{FREE:58,BASIC:63,PRO:69,PREMIUM:74}[tier])}</div>
-      <div>${spark({FREE:[22,27,30,31,35],BASIC:[20,26,35,39,45,48],PRO:[18,28,34,49,55,63,68],PREMIUM:[16,24,31,38,47,59,66,74]}[tier])}</div>
-    </div>`;
-  }
-
-  function renderSignals() {
-    const el=document.getElementById("tierSignalsVisual"); if(!el)return;
-    const count={FREE:1,BASIC:3,PRO:5,PREMIUM:7}[tier];
-    const labels={
-      FREE:"Major state change",
-      BASIC:"5-minute state changes",
-      PRO:"Expanded setup timeline",
-      PREMIUM:"State changes + one-minute evidence"
-    };
-    el.innerHTML=`<div class="signal-visual">
-      <div class="signal-orbit">${ring({FREE:61,BASIC:70,PRO:78,PREMIUM:86}[tier],"signal")}</div>
-      <div><span class="viz-kicker">${labels[tier]}</span><h3>${count} visible signal layers</h3>
-      <p>${m.signals}</p><div class="signal-dots">${Array.from({length:count},(_,i)=>`<i style="opacity:${1-i/(count+2)}"></i>`).join("")}</div></div>
-    </div>`;
-  }
-
-  function renderJourney() {
-    const el=document.getElementById("tierJourneyVisual"); if(!el)return;
-    if(tier==="FREE") {
-      el.innerHTML=`<div class="journey-preview-viz"><div class="journey-node done">Discover</div><span></span><div class="journey-node active">Now</div><span class="locked-line"></span><div class="journey-node locked">History 🔒</div></div>`;
-    } else if(tier==="BASIC") {
-      el.innerHTML=`<div class="journey-preview-viz"><div class="journey-node done">Discover</div><span></span><div class="journey-node done">Ignition</div><span></span><div class="journey-node active">5m model</div><span class="locked-line"></span><div class="journey-node locked">Full journey 🔒</div></div>`;
-    } else if(tier==="PRO") {
-      el.innerHTML=`<div class="journey-premium-viz"><div><span class="viz-kicker">5-MINUTE MODEL JOURNEY</span><h3>Probability progression</h3>${spark([28,33,41,55,64,72])}</div><div>${ring(18,"60m MFE")}</div></div>`;
+    if(tier==="FREE"){
+      el.innerHTML=`<div class="tier-banner"><div><span>${meta.strap}</span><h2>${p.symbol} · ${money(p.price)}</h2><p>${p.state || "Scanner setup"} · ${signed(p.move)} session move. One clean setup-strength view.</p>${staleTag()}</div>${ring(model,"model")}</div>`;
+    } else if(tier==="BASIC"){
+      el.innerHTML=`<div class="tier-banner"><div><span>${meta.strap}</span><h2>${p.symbol} · 5-minute context</h2><p>${meta.overview}</p>${staleTag()}</div><div class="viz-stack">${pctBar("5m liquidity",liq,`${num(p.vol).toFixed(2)}× acceleration`)}${pctBar("Price confirmation",confirmation,`${signed(p.price_vs_vwap_pct)} vs VWAP`)}${pctBar("25% model",model)}</div></div>`;
+    } else if(tier==="PRO"){
+      const s50=clamp(p.model_scores?.score50);
+      el.innerHTML=`<div class="tier-banner"><div><span>${meta.strap}</span><h2>${p.symbol} · current vs deeper model context</h2><p>${meta.overview}</p>${staleTag()}</div><div class="visual-pair">${ring(model,"25% model")}${ring(s50,"50% model")}</div></div>`;
     } else {
-      el.innerHTML=`<div class="journey-premium-viz"><div><span class="viz-kicker">DEEP EXPERIENCE</span><h3>5m journey + 1m evidence</h3>${spark([25,31,36,43,51,57,63,70,76,80,86])}</div><div class="visual-pair">${ring(18,"60m MFE")}${ring(86,"1m pulse")}</div></div>`;
+      const s10=clamp(p.model_scores?.score10), s25=model, s50=clamp(p.model_scores?.score50);
+      el.innerHTML=`<div class="tier-banner premium-banner"><div><span>${meta.strap}</span><h2>${p.symbol} · deepest approved public view</h2><p>${meta.overview}</p>${staleTag()}</div><div class="viz-stack">${pctBar("10% model",s10)}${pctBar("25% model",s25)}${pctBar("50% model",s50)}<small class="evidence-note">1-minute evidence: not yet exposed by the customer-safe API.</small></div></div>`;
     }
   }
 
-  function renderPulse() {
-    const el=document.getElementById("tierPulseVisual"); if(!el)return;
-    const cards={
-      FREE:[["Breadth","31%"],["Risk","Selective"]],
-      BASIC:[["Breadth","31%"],["Liquidity","+12%"],["Confirming","18%"]],
-      PRO:[["Breadth","31%"],["Liquidity","+12%"],["Confirming","18%"],["High conviction","2"]],
-      PREMIUM:[["Breadth","31%"],["Liquidity","+12%"],["Confirming","18%"],["High conviction","2"],["1m ignition","6"],["Exhaustion flags","1"]]
-    }[tier];
-    el.innerHTML=`<div class="pulse-visual-grid">${cards.map(([a,b])=>`<div><span>${a}</span><strong>${b}</strong></div>`).join("")}</div>`;
+  function renderScanner(){
+    const el=document.getElementById("tierScannerVisual"); if(!el)return;
+    const p=primary();
+    if(tier==="FREE"){
+      el.innerHTML=p?`<div class="visual-card single-feature"><div><span class="viz-kicker">FEATURED SETUP</span><h3>${p.symbol}</h3><p>${money(p.price)} · ${signed(p.move)} · ${p.state || "Watch"}</p></div>${ring(p.model ?? p.model_scores?.score25,"model")}</div>`:`<div class="empty-viz">Waiting for scanner data.</div>`;
+    } else if(tier==="BASIC"){
+      el.innerHTML=`<div class="visual-card"><div class="visual-card-head"><div><span class="viz-kicker">REAL 5-MINUTE MODEL</span><h3>Top four public setups</h3></div>${staleTag()}</div>${candidateBars()}</div>`;
+    } else {
+      el.innerHTML=`<div class="visual-card"><div class="visual-card-head"><div><span class="viz-kicker">${tier==="PRO"?"MODEL HEAT":"RESEARCH FIELD"}</span><h3>${tier==="PRO"?"Eight-setup analytical view":"Eleven-setup deep view"}</h3></div>${staleTag()}</div>${heatTiles()}${tier==="PREMIUM"?`<div class="evidence-strip evidence-unavailable"><div><strong>1-minute evidence layer</strong><small>Waiting for an approved 1-minute field from the public API — no simulated values are shown.</small></div></div>`:""}</div>`;
+    }
   }
 
-  function renderSettings() {
+  function renderWatchlist(){
+    const el=document.getElementById("tierWatchlistVisual"); if(!el)return;
+    const rs=rows();
+    const avg=rs.length?rs.reduce((a,c)=>a+clamp(c.model ?? c.model_scores?.score25),0)/rs.length:0;
+    const copy={FREE:"1 featured setup",BASIC:"Up to 4 scanner setups",PRO:"Up to 8 analytical setups",PREMIUM:"Up to 11 deep-view setups"}[tier];
+    el.innerHTML=`<div class="metric-ribbon"><div><span>Visible setup depth</span><strong>${rs.length}</strong><small>${copy}</small></div><div>${pctBar("Average 25% model",avg)}</div><div><span class="viz-kicker">REAL PAYLOAD</span><strong>${rs.filter(x=>x.finalist).length} finalists</strong><small>${rs.filter(x=>x.ml_capped_top10).length} ML top-10 promoted</small></div></div>`;
+  }
+
+  function renderSignals(){
+    const el=document.getElementById("tierSignalsVisual"); if(!el)return;
+    const rs=rows();
+    const count=Math.min(rs.length,{FREE:1,BASIC:3,PRO:5,PREMIUM:7}[tier]);
+    const p=primary();
+    const score=p?clamp(p.model ?? p.model_scores?.score25):0;
+    el.innerHTML=`<div class="signal-visual"><div class="signal-orbit">${ring(score,"lead model")}</div><div><span class="viz-kicker">SCANNER STATE</span><h3>${count} visible signal layers</h3><p>${meta.signals}</p><div class="signal-dots">${Array.from({length:Math.max(1,count)},(_,i)=>`<i style="opacity:${1-i/(count+2)}"></i>`).join("")}</div></div></div>`;
+  }
+
+  function renderJourney(){
+    const el=document.getElementById("tierJourneyVisual"); if(!el)return;
+    const p=primary();
+    const outcome=p?.outcome || null;
+
+    if(tier==="FREE"){
+      el.innerHTML=`<div class="journey-preview-viz"><div class="journey-node done">Discover</div><span></span><div class="journey-node active">Current snapshot</div><span class="locked-line"></span><div class="journey-node locked">History 🔒</div></div>`;
+      return;
+    }
+    if(tier==="BASIC"){
+      el.innerHTML=`<div class="journey-preview-viz"><div class="journey-node done">Discover</div><span></span><div class="journey-node done">5m model</div><span></span><div class="journey-node active">${p?.state || "Current"}</div><span class="locked-line"></span><div class="journey-node locked">Full journey 🔒</div></div>`;
+      return;
+    }
+
+    if(!outcome){
+      el.innerHTML=`<div class="visual-card outcome-pending"><span class="viz-kicker">${tier==="PRO"?"HISTORICAL OUTCOME":"DEEP EXPERIENCE"}</span><h3>Resolved outcome pending</h3><p>No approved 15/30/60-minute outcome object is present for this latest captured setup. Trendward will show it here when the public API has a resolved record.</p>${tier==="PREMIUM"?`<p class="evidence-note">1-minute evidence is also not yet present in the public payload.</p>`:""}</div>`;
+      return;
+    }
+
+    const items=[["15m",outcome.mfe_15m_pct,outcome.mae_15m_pct],["30m",outcome.mfe_30m_pct,outcome.mae_30m_pct],["60m",outcome.mfe_60m_pct,outcome.mae_60m_pct]];
+    el.innerHTML=`<div class="visual-card"><span class="viz-kicker">FORWARD EXCURSION ENVELOPE</span><h3>${p.symbol} resolved movement</h3><div class="outcome-mini-grid">${items.map(([h,mfe,mae])=>`<div><span>${h}</span><strong class="up">${signed(mfe)}</strong><small class="down">${signed(mae)}</small></div>`).join("")}</div><p class="evidence-note">Historical price excursion, not realized P&amp;L.</p>${tier==="PREMIUM"?`<p class="evidence-note">1-minute evidence will appear when the approved public field is available.</p>`:""}</div>`;
+  }
+
+  function renderPulse(){
+    const el=document.getElementById("tierPulseVisual"); if(!el)return;
+    const pld=payload();
+    const market=Array.isArray(pld?.markets)?pld.markets:[];
+    const max={FREE:2,BASIC:3,PRO:4,PREMIUM:4}[tier];
+    const cards=market.slice(0,max);
+    el.innerHTML=`<div class="pulse-visual-grid">${cards.map(([a,b,c])=>`<div><span>${a}</span><strong>${b}</strong><small>${c}</small></div>`).join("")}</div>${tier==="PREMIUM"?`<p class="evidence-note">Ignition/exhaustion and 1-minute pulse fields will appear only after they are explicitly added to the customer-safe API.</p>`:""}`;
+  }
+
+  function renderSettings(){
     const el=document.getElementById("tierSettingsVisual"); if(!el)return;
     const features={
       FREE:["1 featured setup","Snapshot model view","Core appearance settings"],
-      BASIC:["Up to 4 setups","5-minute ML detail","2-item archive/variety view"],
-      PRO:["Up to 8 setups","Full 5-minute Model Journey","15/30/60m resolved outcomes"],
-      PREMIUM:["11-setup deep view","1-minute evidence layer","Deep archive + advanced filters"]
+      BASIC:["Up to 4 setups","Real 5-minute ML detail","Developing setup context"],
+      PRO:["Up to 8 setups","Full 5-minute Model Journey","15/30/60m outcomes when resolved"],
+      PREMIUM:["Up to 11 setups","Deep approved scanner fields","1-minute evidence when API-approved"]
     }[tier];
-    el.innerHTML=`<div class="settings-tier-card">
-      <div><span class="viz-kicker">${m.name.toUpperCase()} PLAN</span><h3>${m.settings}</h3></div>
-      <div class="feature-pills">${features.map(x=>`<span>✓ ${x}</span>`).join("")}</div>
-    </div>`;
+    el.innerHTML=`<div class="settings-tier-card"><div><span class="viz-kicker">${meta.name.toUpperCase()} PLAN</span><h3>${meta.settings}</h3></div><div class="feature-pills">${features.map(x=>`<span>✓ ${x}</span>`).join("")}</div></div>`;
   }
 
   function updateHeadings(){
@@ -221,42 +182,36 @@
       FREE:"See the strongest setup without the noise.",
       BASIC:"Follow momentum as the setup develops.",
       PRO:"Study the setup, the model, and what happened next.",
-      PREMIUM:"Research the full setup from ignition through one-minute evidence."
+      PREMIUM:"Research the deepest approved scanner evidence."
     }[tier];
-    if(lead) lead.textContent=m.overview;
+    if(lead) lead.textContent=meta.overview;
 
-    const headings = {
-      scanner:m.scanner, watchlist:m.watch, signals:m.signals,
-      journey:m.journey, pulse:m.pulse, settings:m.settings
-    };
+    const headings={scanner:meta.scanner,watchlist:meta.watch,signals:meta.signals,journey:meta.journey,pulse:meta.pulse,settings:meta.settings};
     Object.entries(headings).forEach(([id,copy])=>{
       const p=document.querySelector(`#section-${id} .section-heading p`);
       if(p) p.textContent=copy;
     });
 
     const header=document.querySelector(".topbar h1");
-    if(header) header.textContent=`${m.name} Intelligence Dashboard`;
+    if(header) header.textContent=`${meta.name} Intelligence Dashboard`;
   }
 
-  function renderAllTierExperience(){
+  function renderAll(){
     try {
-      if (typeof trendwardTier !== "undefined") trendwardTier=tier;
-      if (typeof applyTier === "function") applyTier();
+      if(typeof trendwardTier!=="undefined") trendwardTier=tier;
+      if(typeof applyTier==="function") applyTier();
     } catch {}
     updateHeadings();
     renderOverview(); renderScanner(); renderWatchlist(); renderSignals();
     renderJourney(); renderPulse(); renderSettings();
 
-    const top=document.getElementById("topPlanBadge");
-    const side=document.getElementById("sidebarTier");
-    const hdr=document.getElementById("headerTier");
-    [top,side,hdr].forEach(x=>{if(x)x.textContent=tier;});
+    ["topPlanBadge","sidebarTier","headerTier"].forEach(id=>{
+      const x=document.getElementById(id); if(x)x.textContent=tier;
+    });
   }
 
-  if(document.readyState==="loading"){
-    document.addEventListener("DOMContentLoaded", renderAllTierExperience, {once:true});
-  } else {
-    renderAllTierExperience();
-  }
-  window.addEventListener("trendward:data", renderAllTierExperience);
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",renderAll,{once:true});
+  else renderAll();
+
+  window.addEventListener("trendward:data",renderAll);
 })();
