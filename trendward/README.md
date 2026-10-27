@@ -1,13 +1,13 @@
-# Trendward public dashboard v13
+# Trendward public dashboard v14
 
-Real-data polish for the customer-safe scanner API.
-
-- Keeps v12 refresh/hash routing fix.
-- Uses https://dashboard.reubendecker.com/api/public/trendward/snapshot.
-- Clearly labels stale scanner data and shows scanner capture time.
-- Uses neutral styling for descriptive market-strip labels.
-- Enforces visible setup depth: Free 1, Basic 4, Pro 8, Premium 11.
-- Drives tier visuals from real 5-minute scanner/model/liquidity fields.
-- Pro/Premium show resolved 15/30/60m outcomes only when an approved outcome object exists.
-- Premium does not fabricate 1-minute evidence; it explicitly shows the layer as unavailable until the public API exposes approved 1-minute fields.
-- No paper trades, positions, orders, account data, or private raw model inputs are exposed by the frontend.
+Fixes and product changes:
+- fixes scanner spark/chart overlap;
+- makes Scanner price-band chips actually filter the live visible setups;
+- removes the duplicate plan badge in the top-right;
+- keeps Overview, Scanner, Watchlist, Signals, and context cards on the same customer-safe candidate set;
+- expands Premium Watchlist to up to 10 secondary setups from the 11-setup Premium field;
+- adds plain-English hover/click help on Pro and Premium;
+- adds a Settings glossary;
+- replaces demo model/journey/pulse visuals with approved live snapshot fields where possible;
+- Free requests a real 30-minute-delayed public snapshot and shows one featured setup;
+- no invented 1-minute evidence or resolved outcomes are displayed.

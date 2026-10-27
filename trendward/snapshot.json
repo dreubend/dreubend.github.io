@@ -1,6 +1,6 @@
 {
   "mode": "illustrative_preview",
-  "version": "13.0",
+  "version": "14.0",
   "generated_at": "2026-10-25",
   "live_data_configured": false,
   "auth_mode": "browser_preview_only",
@@ -46,5 +46,15 @@
   ],
   "routing_fix": "hash-authoritative refresh routing",
   "live_data_polish": true,
-  "public_api": "https://dashboard.reubendecker.com/api/public/trendward/snapshot"
+  "public_api": "https://dashboard.reubendecker.com/api/public/trendward/snapshot",
+  "fixes": [
+    "scanner_overlap",
+    "price_filters",
+    "duplicate_tier_badge",
+    "cross_section_symbol_consistency",
+    "premium_watchlist",
+    "pro_premium_help",
+    "settings_glossary",
+    "free_30m_delay"
+  ]
 }

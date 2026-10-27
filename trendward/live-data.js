@@ -62,7 +62,9 @@
     el.classList.toggle("is-live", !stale);
     el.innerHTML = stale
       ? `<strong>STALE SCANNER DATA</strong><span>${esc(fmtScanTime(payload))} · ${esc(ageText)}. The dashboard is showing the latest captured scanner state, not current market conditions.</span>`
-      : `<strong>LIVE SCANNER DATA</strong><span>${esc(fmtScanTime(payload))} · customer-safe scanner snapshot.</span>`;
+      : (String(window.TRENDWARD_FIXED_TIER || "FREE").toUpperCase() === "FREE"
+          ? `<strong>30-MINUTE DELAYED DATA</strong><span>${esc(fmtScanTime(payload))} · Free shows one featured setup on a delayed scanner snapshot.</span>`
+          : `<strong>LIVE SCANNER DATA</strong><span>${esc(fmtScanTime(payload))} · customer-safe scanner snapshot.</span>`);
   }
 
   function renderSnapshot(payload) {
@@ -126,8 +128,11 @@
     }
 
     try {
-      const sep = cfg.liveDataUrl.includes("?") ? "&" : "?";
-      const res = await fetch(`${cfg.liveDataUrl}${sep}_=${Date.now()}`, {
+      const requestUrl = new URL(cfg.liveDataUrl, window.location.href);
+      requestUrl.searchParams.set("_", Date.now());
+      const fixedTier = String(window.TRENDWARD_FIXED_TIER || "FREE").toUpperCase();
+      if (fixedTier === "FREE") requestUrl.searchParams.set("delay_minutes", "30");
+      const res = await fetch(requestUrl.toString(), {
         cache: "no-store",
         headers: {"Accept":"application/json"}
       });
@@ -156,7 +161,13 @@
         const when = d && !Number.isNaN(d.getTime())
           ? d.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"})
           : "current";
-        setStatus(`Live scanner · ${when}`, "ok");
+        const fixedTier = String(window.TRENDWARD_FIXED_TIER || "FREE").toUpperCase();
+        setStatus(
+          fixedTier === "FREE"
+            ? `30m delayed scanner · ${when}`
+            : `Live scanner · ${when}`,
+          "ok"
+        );
       }
 
       window.dispatchEvent(new CustomEvent("trendward:data", {detail: payload}));
