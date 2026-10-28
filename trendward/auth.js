@@ -354,3 +354,212 @@
 
   loadMe();
 })();
+/* ===== TRENDWARD_ENTITLEMENT_GATE_V24 ===== */
+(() => {
+
+  const ORDER = ["FREE","BASIC","PRO","PREMIUM","PREMIER"];
+
+  const PATHS = {
+    FREE: "/trendward/",
+    BASIC: "/trendward/basic/",
+    PRO: "/trendward/pro/",
+    PREMIUM: "/trendward/premium/",
+    PREMIER: "/trendward/premier/"
+  };
+
+  function rank(tier) {
+    return ORDER.indexOf(String(tier || "FREE").toUpperCase());
+  }
+
+  function fixedTier() {
+    return String(
+      window.TRENDWARD_FIXED_TIER || "FREE"
+    ).toUpperCase();
+  }
+
+  function authState() {
+    return window.TRENDWARD_AUTH?.state || null;
+  }
+
+  async function setAdminTier(tier) {
+
+    const auth = window.TRENDWARD_AUTH;
+
+    if (!auth) return;
+
+    try {
+
+      const result = await auth.api("/admin/test-tier", {
+        method: "POST",
+        body: JSON.stringify({
+          tier: tier
+        })
+      });
+
+      await auth.loadMe();
+
+      window.location.href = PATHS[tier];
+
+    } catch (error) {
+
+      alert(error.message || "Could not change admin preview tier.");
+
+    }
+  }
+
+  function addAdminTester() {
+
+    const state = authState();
+
+    if (!state?.user?.is_admin) return;
+
+    if (document.getElementById("adminTierTester")) return;
+
+    const account =
+      document.getElementById("accountState");
+
+    if (!account) return;
+
+    const box = document.createElement("div");
+
+    box.id = "adminTierTester";
+    box.className = "admin-tier-tester";
+
+    box.innerHTML = `
+      <strong>Admin tier preview</strong>
+      <div class="admin-tier-buttons">
+        ${ORDER.map(t =>
+          `<button type="button" data-admin-tier="${t}">${t}</button>`
+        ).join("")}
+      </div>
+    `;
+
+    account.insertAdjacentElement("afterend", box);
+
+    box.querySelectorAll("[data-admin-tier]").forEach(button => {
+
+      button.addEventListener("click", () => {
+        setAdminTier(button.dataset.adminTier);
+      });
+
+    });
+  }
+
+  function enforceTier() {
+
+    const state = authState();
+
+    if (!state) return;
+
+    const requested = fixedTier();
+
+    /* Logged out users may see Free only. */
+    if (!state.user) {
+
+      if (requested !== "FREE") {
+        window.location.replace("/trendward/");
+      }
+
+      return;
+    }
+
+    const entitled =
+      String(
+        state.user.effective_tier || "FREE"
+      ).toUpperCase();
+
+    /*
+      Admin accounts may visit all pages because the admin
+      tier tester controls their actual backend entitlement.
+    */
+    if (state.user.is_admin) {
+
+      addAdminTester();
+
+      return;
+    }
+
+    /*
+      Normal customers may never load a page above
+      their real backend entitlement.
+    */
+    if (rank(requested) > rank(entitled)) {
+
+      window.location.replace(
+        PATHS[entitled] || "/trendward/"
+      );
+
+    }
+  }
+
+  /*
+    Settings plan links now mean:
+      logged out -> signup
+      logged in -> request plan change
+  */
+  document.addEventListener(
+    "click",
+    async event => {
+
+      const link =
+        event.target.closest("[data-plan-link]");
+
+      if (!link) return;
+
+      event.preventDefault();
+
+      const target =
+        String(link.dataset.planLink || "FREE").toUpperCase();
+
+      const state = authState();
+
+      if (!state?.user) {
+
+        window.TRENDWARD_AUTH?.setMode(
+          "signup",
+          target
+        );
+
+        return;
+      }
+
+      if (state.user.is_admin) {
+
+        await setAdminTier(target);
+
+        return;
+      }
+
+      try {
+
+        const result =
+          await window.TRENDWARD_AUTH.api(
+            "/account/request-tier",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                tier: target
+              })
+            }
+          );
+
+        alert(result.message);
+
+      } catch (error) {
+
+        alert(error.message);
+
+      }
+
+    },
+    true
+  );
+
+  /*
+    Give auth.js enough time to finish /auth/me,
+    then enforce the actual backend entitlement.
+  */
+  setTimeout(enforceTier, 1200);
+  setTimeout(enforceTier, 2500);
+
+})();

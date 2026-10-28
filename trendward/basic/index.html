@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="Trendward â€” AI market intelligence for lower-priced U.S. equities." />
   <title>Trendward Basic | Active Scanner</title>
-  <link rel="stylesheet" href="../trendward.css?v=23" />
+  <link rel="stylesheet" href="../trendward.css?v=24" />
   <link rel="canonical" href="https://reubendecker.com/trendward/basic/" />
 </head>
 <body class="tier-basic">
@@ -34,7 +34,7 @@
         <div><div class="eyebrow">BASIC &middot; ACTIVE SCANNER</div><h1>Market Intelligence Dashboard</h1></div>
         <div class="top-actions"><div class="status-pill" id="dataStatus"><span class="live-dot"></span> Demo data</div><span class="plan-badge" id="topPlanBadge">FREE</span><button class="ghost-btn auth-small" id="loginBtn">Log in</button><button class="primary-btn auth-small" id="signupBtn">Sign up</button></div>
       </header>
-      <section class="notice"><strong>Illustrative product preview.</strong> Sample interface data is shown unless a customer-safe live feed is configured. This page does not place trades or provide investment advice.</section>
+      <section class="notice illustrative-preview-banner"><strong>Illustrative product preview.</strong> Sample interface data is shown unless a customer-safe live feed is configured. This page does not place trades or provide investment advice.</section>
       
       <section class="section active" id="section-overview">
       <div class="static-tier-identity tier-basic">
@@ -54,7 +54,7 @@
         </div>
         <div class="kpi-grid" id="kpiGrid"><article class="kpi-card"><div class="kpi-label">Visible setups</div><div class="kpi-value">4</div><div class="kpi-sub">Active scanner workspace</div></article><article class="kpi-card"><div class="kpi-label">Model cadence</div><div class="kpi-value">5m</div><div class="kpi-sub">Current model context</div></article><article class="kpi-card"><div class="kpi-label">Watch depth</div><div class="kpi-value">2</div><div class="kpi-sub">Developing candidates</div></article><article class="kpi-card"><div class="kpi-label">Signal layers</div><div class="kpi-value">3</div><div class="kpi-sub">More state changes</div></article></div>
         <div class="content-grid">
-          <article class="panel span-2"><div class="panel-header"><div><div class="panel-label">SCANNER</div><h3>Top candidates</h3></div><a class="text-btn action-link" href="#scanner" data-section-link="scanner">View scanner â†’</a></div><div class="table-wrap"><table><thead><tr><th>Rank</th><th>Symbol</th><th>Price</th><th>5m move</th><th>Vol accel.</th><th>Model</th><th>State</th></tr></thead><tbody id="candidateTable"></tbody></table></div><div class="tier-lock" id="candidateLock"></div></article>
+          <article class="panel span-2"><div class="panel-header"><div><div class="panel-label">SCANNER</div><h3>Top candidates</h3></div><a class="text-btn action-link" href="#scanner" data-section-link="scanner">View scanner &rarr;</a></div><div class="table-wrap"><table><thead><tr><th>Rank</th><th>Symbol</th><th>Price</th><th>5m move</th><th>Vol accel.</th><th>Model</th><th>State</th></tr></thead><tbody id="candidateTable"></tbody></table></div><div class="tier-lock" id="candidateLock"></div></article>
           <article class="panel"><div class="panel-header"><div><div class="panel-label">MODEL</div><h3>Probability profile</h3></div></div><div id="probabilityChart" class="chart"></div><div class="tier-lock" id="probabilityLock"></div></article>
         </div>
         <div class="content-grid">
@@ -89,10 +89,10 @@
   </div>
   <div class="modal-backdrop" id="modalBackdrop" hidden><div class="modal" id="authModal"><button class="modal-close" data-close-modal>&times;</button><div class="eyebrow">PREVIEW ACCOUNT</div><h2 id="authTitle">Log in</h2><p class="modal-copy">Browser-only preview. No password is sent anywhere.</p><form id="authForm"><label>Email<input type="email" id="authEmail" name="email" required autocomplete="email"></label><label id="nameLabel" hidden>Username<input type="text" id="authName" name="username" autocomplete="username"></label><label>Password<input type="password" id="authPassword" name="password" minlength="12" required autocomplete="current-password"></label><button class="primary-btn full" id="authSubmit" type="submit">Log in</button></form><div class="modal-note">Production accounts will use real server-side authentication.</div></div><div class="modal legal-modal" id="legalModal" hidden><button class="modal-close" data-close-modal>&times;</button><div class="eyebrow">TRENDWARD</div><h2 id="legalTitle">About</h2><div id="legalBody" class="legal-body"></div></div></div>
   <script>window.TRENDWARD_FIXED_TIER = "BASIC";</script>
-  <script src="../config.js?v=23"></script>
-  <script src="../trendward.js?v=23"></script>
-  <script src="../live-data.js?v=23"></script>
-  <script src="../tier-experience.js?v=23"></script>
-<script src="/trendward/auth.js?v=23"></script>
+  <script src="../config.js?v=24"></script>
+  <script src="../trendward.js?v=24"></script>
+  <script src="../live-data.js?v=24"></script>
+  <script src="../tier-experience.js?v=24"></script>
+<script src="/trendward/auth.js?v=24"></script>
 </body>
 </html>

@@ -823,3 +823,74 @@ body.authenticated .freshness-banner{padding:7px 10px;font-size:9px;opacity:.82}
     align-items: center !important;
     justify-content: center !important;
 }
+/* ===== Trendward v24 mobile/menu/auth fixes ===== */
+
+@media (max-width:760px) {
+
+    .topbar {
+        position: relative;
+        gap: 10px !important;
+    }
+
+    .mobile-menu {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex: 0 0 40px !important;
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        padding: 0 !important;
+        position: relative !important;
+        z-index: 80 !important;
+        color: #fff !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .top-actions {
+        gap: 7px !important;
+        flex-shrink: 1;
+        min-width: 0;
+    }
+}
+
+/* Hide only after real authentication succeeds */
+body.authenticated .illustrative-preview-banner {
+    display: none !important;
+}
+
+/* Admin entitlement tester */
+.admin-tier-tester {
+    margin-top: 14px;
+    padding: 12px;
+    border: 1px solid hsl(var(--hue) 70% 55% / .25);
+    border-radius: 12px;
+    background: var(--accent-soft);
+}
+
+.admin-tier-tester strong {
+    display: block;
+    font-size: 11px;
+    margin-bottom: 8px;
+}
+
+.admin-tier-buttons {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.admin-tier-buttons button {
+    padding: 7px 9px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.035);
+    color: var(--text);
+    font-size: 9px;
+}
+
+.admin-tier-buttons button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
