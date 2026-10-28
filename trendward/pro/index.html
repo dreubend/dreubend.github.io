@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="Trendward â€” AI market intelligence for lower-priced U.S. equities." />
   <title>Trendward Pro | Historical Intelligence</title>
-  <link rel="stylesheet" href="../trendward.css?v=24" />
+  <link rel="stylesheet" href="../trendward.css?v=25" />
   <link rel="canonical" href="https://reubendecker.com/trendward/pro/" />
 </head>
 <body class="tier-pro">
@@ -63,8 +63,8 @@
           <article class="panel"><div class="panel-header"><div><div class="panel-label">CATALYSTS</div><h3>Why the scanner cares</h3></div></div><div id="catalystCards" class="stack-list"></div></article>
         </div>
       </section>
-      <section class="section" id="section-scanner"><div class="section-heading"><div><div class="eyebrow">SCANNER EXPERIENCE</div><h2>Eight-setup analytical scanner</h2><p>Compare more candidates with richer model-state and historical context.</p></div><div class="filter-row"><button class="chip active">All</button><button class="chip">Under $2</button><button class="chip">$2â€“$5</button><button class="chip">$5â€“$20</button></div></div><div id="scannerCards" class="scanner-grid"></div></section>
-      <section class="section" id="section-watchlist"><div class="section-heading"><div><div class="eyebrow">WATCHLIST</div><h2>What Iâ€™m following</h2><p>Your selected current Scanner setups, with the context that explains whether they are strengthening, holding, mixed, or cooling.</p></div></div><div class="panel"><div id="watchlistFull" class="large-list"></div></div></section>
+      <section class="section" id="section-scanner"><div class="section-heading"><div><div class="eyebrow">SCANNER EXPERIENCE</div><h2>Eight-setup analytical scanner</h2><p>Compare more candidates with richer model-state and historical context.</p></div><div class="filter-row"><button class="chip active">All</button><button class="chip">Under $2</button><button class="chip">$2&ndash;$5</button><button class="chip">$5&ndash;$20</button></div></div><div id="scannerCards" class="scanner-grid"></div></section>
+      <section class="section" id="section-watchlist"><div class="section-heading"><div><div class="eyebrow">WATCHLIST</div><h2>What I&rsquo;m following</h2><p>Your selected current Scanner setups, with the context that explains whether they are strengthening, holding, mixed, or cooling.</p></div></div><div class="panel"><div id="watchlistFull" class="large-list"></div></div></section>
       <section class="section" id="section-signals"><div class="section-heading"><div><div class="eyebrow">SIGNALS</div><h2>What the evidence is saying now</h2><p>A richer current-state feed across model, liquidity, structure, and verified promotion timestamps.</p></div></div><div id="signalsFull" class="timeline"></div></section>
       <section class="section" id="section-journey">
         <div class="section-heading"><div><div class="eyebrow">MODEL JOURNEY</div><h2>How the setup developed</h2><p>Follow the verified path from current scanner appearance through promotion, finalist context, and resolved outcomes when available.</p></div></div>
@@ -81,7 +81,7 @@
     <a href="/trendward/basic/" data-plan-link="BASIC">Basic</a>
     <a href="/trendward/pro/" data-plan-link="PRO">Pro</a>
     <a href="/trendward/premium/" data-plan-link="PREMIUM">Premium</a>
-    <a href="/trendward/premier/" data-plan-link="PREMIER">Premier &middot; $75</a>
+    <a href="/trendward/Premier &middot; $75</a>
   </div>
 </article><article class="panel"><div class="panel-label">APPEARANCE</div><h3>Accent color</h3><p class="settings-copy">Move the slider to change the accent used across navigation, charts, highlights, and controls.</p><div class="accent-row"><span>Hue</span><strong id="accentValue">190&deg;</strong></div><input id="accentSlider" type="range" min="0" max="360" value="190" aria-label="Accent color" /><div class="accent-spectrum"></div></article><article class="panel"><div class="panel-label">ACCOUNT</div><h3>Preview account</h3><p class="settings-copy">The current login is a browser-only preview for testing the experience before production authentication is connected.</p><div id="accountState" class="account-state">Not signed in</div><button class="ghost-btn" id="settingsLoginBtn">Open login</button></article><article class="panel"><div class="panel-label">DATA</div><h3>Live-data readiness</h3><p class="settings-copy">This build can fetch a future customer-safe JSON endpoint and otherwise falls back to demo data.</p><code class="config-code">window.TRENDWARD_CONFIG.liveDataUrl</code></article></div></section>
       <footer class="footer"><div><strong>Trendward</strong><span>by Reuben Decker LLC</span></div><div class="footer-links"><a href="#" data-footer-modal="about">About</a><a href="#" data-footer-modal="terms">Terms</a><a href="#" data-footer-modal="billing">Billing &amp; Refunds</a><a href="#" data-footer-modal="privacy">Privacy</a><a href="#" data-footer-modal="risk">Risk Disclosure</a></div><p>Preview only. Trendward provides analytical and research tools. Nothing on this page is investment advice, a recommendation, or a guarantee of future results.</p></footer>
@@ -89,10 +89,10 @@
   </div>
   <div class="modal-backdrop" id="modalBackdrop" hidden><div class="modal" id="authModal"><button class="modal-close" data-close-modal>&times;</button><div class="eyebrow">PREVIEW ACCOUNT</div><h2 id="authTitle">Log in</h2><p class="modal-copy">Browser-only preview. No password is sent anywhere.</p><form id="authForm"><label>Email<input type="email" id="authEmail" name="email" required autocomplete="email"></label><label id="nameLabel" hidden>Username<input type="text" id="authName" name="username" autocomplete="username"></label><label>Password<input type="password" id="authPassword" name="password" minlength="12" required autocomplete="current-password"></label><button class="primary-btn full" id="authSubmit" type="submit">Log in</button></form><div class="modal-note">Production accounts will use real server-side authentication.</div></div><div class="modal legal-modal" id="legalModal" hidden><button class="modal-close" data-close-modal>&times;</button><div class="eyebrow">TRENDWARD</div><h2 id="legalTitle">About</h2><div id="legalBody" class="legal-body"></div></div></div>
   <script>window.TRENDWARD_FIXED_TIER = "PRO";</script>
-  <script src="../config.js?v=24"></script>
-  <script src="../trendward.js?v=24"></script>
-  <script src="../live-data.js?v=24"></script>
-  <script src="../tier-experience.js?v=24"></script>
-<script src="/trendward/auth.js?v=24"></script>
+  <script src="../config.js?v=25"></script>
+  <script src="../trendward.js?v=25"></script>
+  <script src="../live-data.js?v=25"></script>
+  <script src="../tier-experience.js?v=25"></script>
+<script src="/trendward/auth.js?v=25"></script>
 </body>
 </html>
