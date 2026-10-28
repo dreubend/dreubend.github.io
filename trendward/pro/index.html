@@ -1,11 +1,11 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="Trendward â€” AI market intelligence for lower-priced U.S. equities." />
   <title>Trendward Pro | Historical Intelligence</title>
-  <link rel="stylesheet" href="../trendward.css?v=20" />
+  <link rel="stylesheet" href="../trendward.css?v=21" />
   <link rel="canonical" href="https://reubendecker.com/trendward/pro/" />
 </head>
 <body class="tier-pro">
@@ -17,10 +17,10 @@
         <div><div class="brand-name">Trendward</div><div class="brand-kicker">AI MARKET INTELLIGENCE</div></div>
       </div>
       <nav class="nav">
-        <a class="nav-item active" href="#overview" data-section="overview"><span>â—«</span> Overview</a>
+        <a class="nav-item active" href="#overview" data-section="overview"><span>â&mdash;«</span> Overview</a>
         <a class="nav-item" href="#scanner" data-section="scanner"><span>âŒ</span> Scanner</a>
-        <a class="nav-item" href="#watchlist" data-section="watchlist"><span>â—Ž</span> Watchlist</a>
-        <a class="nav-item" href="#signals" data-section="signals"><span>â†—</span> Signals</a>
+        <a class="nav-item" href="#watchlist" data-section="watchlist"><span>â&mdash;Ž</span> Watchlist</a>
+        <a class="nav-item" href="#signals" data-section="signals"><span>â†&mdash;</span> Signals</a>
         <a class="nav-item" href="#journey" data-section="journey"><span>âŒ˜</span> Model Journey</a>
         <a class="nav-item" href="#pulse" data-section="pulse"><span>â‰‹</span> Market Pulse</a>
         <a class="nav-item" href="#settings" data-section="settings"><span>âš™</span> Settings</a>
@@ -30,8 +30,8 @@
     </aside>
     <main class="main">
       <header class="topbar">
-        <button class="mobile-menu" id="mobileMenu" aria-label="Open menu">â˜°</button>
-        <div><div class="eyebrow">PRO Â· HISTORICAL INTELLIGENCE</div><h1>Market Intelligence Dashboard</h1></div>
+        <button class="mobile-menu" id="mobileMenu" aria-label="Open menu">â˜&deg;</button>
+        <div><div class="eyebrow">PRO Â&middot; HISTORICAL INTELLIGENCE</div><h1>Market Intelligence Dashboard</h1></div>
         <div class="top-actions"><div class="status-pill" id="dataStatus"><span class="live-dot"></span> Demo data</div><span class="plan-badge" id="topPlanBadge">FREE</span><button class="ghost-btn auth-small" id="loginBtn">Log in</button><button class="primary-btn auth-small" id="signupBtn">Sign up</button></div>
       </header>
       <section class="notice"><strong>Illustrative product preview.</strong> Sample interface data is shown unless a customer-safe live feed is configured. This page does not place trades or provide investment advice.</section>
@@ -52,7 +52,7 @@
           </article>
           <article class="panel score-panel"><div class="panel-label">Current preview state</div><div class="score-ring"><div><div class="score-number">82</div><div class="score-caption">Setup strength</div></div></div><div class="score-meta"><div><span>Liquidity</span><strong>High</strong></div><div><span>Price action</span><strong>Constructive</strong></div><div><span>Model state</span><strong>Developing</strong></div></div></article>
         </div>
-        <div class="kpi-grid" id="kpiGrid"><article class="kpi-card"><div class="kpi-label">Visible setups</div><div class="kpi-value">8</div><div class="kpi-sub">Broader candidate field</div></article><article class="kpi-card"><div class="kpi-label">Journey cadence</div><div class="kpi-value">5m</div><div class="kpi-sub">Full historical progression</div></article><article class="kpi-card"><div class="kpi-label">Outcome windows</div><div class="kpi-value">3</div><div class="kpi-sub">15m Â· 30m Â· 60m</div></article><article class="kpi-card"><div class="kpi-label">Research mode</div><div class="kpi-value">Historical</div><div class="kpi-sub">Resolved context</div></article></div>
+        <div class="kpi-grid" id="kpiGrid"><article class="kpi-card"><div class="kpi-label">Visible setups</div><div class="kpi-value">8</div><div class="kpi-sub">Broader candidate field</div></article><article class="kpi-card"><div class="kpi-label">Journey cadence</div><div class="kpi-value">5m</div><div class="kpi-sub">Full historical progression</div></article><article class="kpi-card"><div class="kpi-label">Outcome windows</div><div class="kpi-value">3</div><div class="kpi-sub">15m Â&middot; 30m Â&middot; 60m</div></article><article class="kpi-card"><div class="kpi-label">Research mode</div><div class="kpi-value">Historical</div><div class="kpi-sub">Resolved context</div></article></div>
         <div class="content-grid">
           <article class="panel span-2"><div class="panel-header"><div><div class="panel-label">SCANNER</div><h3>Top candidates</h3></div><a class="text-btn action-link" href="#scanner" data-section-link="scanner">View scanner â†’</a></div><div class="table-wrap"><table><thead><tr><th>Rank</th><th>Symbol</th><th>Price</th><th>5m move</th><th>Vol accel.</th><th>Model</th><th>State</th></tr></thead><tbody id="candidateTable"></tbody></table></div><div class="tier-lock" id="candidateLock"></div></article>
           <article class="panel"><div class="panel-header"><div><div class="panel-label">MODEL</div><h3>Probability profile</h3></div></div><div id="probabilityChart" class="chart"></div><div class="tier-lock" id="probabilityLock"></div></article>
@@ -81,18 +81,18 @@
     <a href="/trendward/basic/" data-plan-link="BASIC">Basic</a>
     <a href="/trendward/pro/" data-plan-link="PRO">Pro</a>
     <a href="/trendward/premium/" data-plan-link="PREMIUM">Premium</a>
-    <a href="/trendward/premier/" data-plan-link="PREMIER">Premier Â· $75</a>
+    <a href="/trendward/premier/" data-plan-link="PREMIER">Premier Â&middot; $75</a>
   </div>
-</article><article class="panel"><div class="panel-label">APPEARANCE</div><h3>Accent color</h3><p class="settings-copy">Move the slider to change the accent used across navigation, charts, highlights, and controls.</p><div class="accent-row"><span>Hue</span><strong id="accentValue">190Â°</strong></div><input id="accentSlider" type="range" min="0" max="360" value="190" aria-label="Accent color" /><div class="accent-spectrum"></div></article><article class="panel"><div class="panel-label">ACCOUNT</div><h3>Preview account</h3><p class="settings-copy">The current login is a browser-only preview for testing the experience before production authentication is connected.</p><div id="accountState" class="account-state">Not signed in</div><button class="ghost-btn" id="settingsLoginBtn">Open login</button></article><article class="panel"><div class="panel-label">DATA</div><h3>Live-data readiness</h3><p class="settings-copy">This build can fetch a future customer-safe JSON endpoint and otherwise falls back to demo data.</p><code class="config-code">window.TRENDWARD_CONFIG.liveDataUrl</code></article></div></section>
+</article><article class="panel"><div class="panel-label">APPEARANCE</div><h3>Accent color</h3><p class="settings-copy">Move the slider to change the accent used across navigation, charts, highlights, and controls.</p><div class="accent-row"><span>Hue</span><strong id="accentValue">190Â&deg;</strong></div><input id="accentSlider" type="range" min="0" max="360" value="190" aria-label="Accent color" /><div class="accent-spectrum"></div></article><article class="panel"><div class="panel-label">ACCOUNT</div><h3>Preview account</h3><p class="settings-copy">The current login is a browser-only preview for testing the experience before production authentication is connected.</p><div id="accountState" class="account-state">Not signed in</div><button class="ghost-btn" id="settingsLoginBtn">Open login</button></article><article class="panel"><div class="panel-label">DATA</div><h3>Live-data readiness</h3><p class="settings-copy">This build can fetch a future customer-safe JSON endpoint and otherwise falls back to demo data.</p><code class="config-code">window.TRENDWARD_CONFIG.liveDataUrl</code></article></div></section>
       <footer class="footer"><div><strong>Trendward</strong><span>by Reuben Decker LLC</span></div><div class="footer-links"><a href="#" data-footer-modal="about">About</a><a href="#" data-footer-modal="terms">Terms</a><a href="#" data-footer-modal="billing">Billing &amp; Refunds</a><a href="#" data-footer-modal="privacy">Privacy</a><a href="#" data-footer-modal="risk">Risk Disclosure</a></div><p>Preview only. Trendward provides analytical and research tools. Nothing on this page is investment advice, a recommendation, or a guarantee of future results.</p></footer>
     </main>
   </div>
-  <div class="modal-backdrop" id="modalBackdrop" hidden><div class="modal" id="authModal"><button class="modal-close" data-close-modal>Ã—</button><div class="eyebrow">PREVIEW ACCOUNT</div><h2 id="authTitle">Log in</h2><p class="modal-copy">Browser-only preview. No password is sent anywhere.</p><form id="authForm"><label>Email<input type="email" id="authEmail" required></label><label id="nameLabel" hidden>Name<input type="text" id="authName"></label><label>Password<input type="password" id="authPassword" minlength="4" required></label><button class="primary-btn full" id="authSubmit" type="submit">Log in</button></form><div class="modal-note">Production accounts will use real server-side authentication.</div></div><div class="modal legal-modal" id="legalModal" hidden><button class="modal-close" data-close-modal>Ã—</button><div class="eyebrow">TRENDWARD</div><h2 id="legalTitle">About</h2><div id="legalBody" class="legal-body"></div></div></div>
+  <div class="modal-backdrop" id="modalBackdrop" hidden><div class="modal" id="authModal"><button class="modal-close" data-close-modal>Ã&mdash;</button><div class="eyebrow">PREVIEW ACCOUNT</div><h2 id="authTitle">Log in</h2><p class="modal-copy">Browser-only preview. No password is sent anywhere.</p><form id="authForm"><label>Email<input type="email" id="authEmail" name="email" required></label><label id="nameLabel" hidden>Username<input type="text" id="authName" name="username" autocomplete="username"></label><label>Password<input type="password" id="authPassword" minlength="4" required></label><button class="primary-btn full" id="authSubmit" type="submit">Log in</button></form><div class="modal-note">Production accounts will use real server-side authentication.</div></div><div class="modal legal-modal" id="legalModal" hidden><button class="modal-close" data-close-modal>Ã&mdash;</button><div class="eyebrow">TRENDWARD</div><h2 id="legalTitle">About</h2><div id="legalBody" class="legal-body"></div></div></div>
   <script>window.TRENDWARD_FIXED_TIER = "PRO";</script>
   <script src="../config.js"></script>
   <script src="../trendward.js?v=20"></script>
   <script src="../live-data.js?v=20"></script>
   <script src="../tier-experience.js?v=20"></script>
-<script src="/trendward/auth.js?v=20"></script>
+<script src="/trendward/auth.js?v=21"></script>
 </body>
 </html>
