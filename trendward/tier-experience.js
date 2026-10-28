@@ -440,6 +440,256 @@
     renderList(historical,plannedHistorical,"historical");
   }
 
+
+  function titleForSection(section){
+    const names={
+      overview:["Trendward · Research Cockpit","Market Intelligence Dashboard"],
+      scanner:["Trendward","Scanner"],
+      watchlist:["Trendward","Watchlist"],
+      signals:["Trendward","Signals"],
+      journey:["Trendward","Model Journey"],
+      pulse:["Trendward","Market Pulse"],
+      minute:["Trendward","1-Minute Intelligence"],
+      settings:["Trendward","Settings"]
+    };
+    return names[section] || names.overview;
+  }
+
+  function applyPageTitle(section){
+    const [brand,page]=titleForSection(section);
+    const topbar=document.querySelector(".topbar");
+    if(!topbar)return;
+    const eyebrow=topbar.querySelector(".eyebrow");
+    const h1=topbar.querySelector("h1");
+    if(eyebrow) eyebrow.textContent=brand;
+    if(h1) h1.textContent=page;
+  }
+
+  function currentSectionFromHash(){
+    const raw=(location.hash||"#overview").replace("#","");
+    return ["overview","scanner","watchlist","signals","journey","pulse","minute","settings"].includes(raw)
+      ? raw : "overview";
+  }
+
+  function bindPageTitles(){
+    applyPageTitle(currentSectionFromHash());
+    if(window.__trendwardTitleBound)return;
+    window.__trendwardTitleBound=true;
+    window.addEventListener("hashchange",()=>applyPageTitle(currentSectionFromHash()));
+    document.querySelectorAll("[data-section],[data-section-link]").forEach(el=>{
+      el.addEventListener("click",()=>{
+        const s=el.dataset.section || el.dataset.sectionLink;
+        if(s) setTimeout(()=>applyPageTitle(s),0);
+      });
+    });
+  }
+
+  function momentumLabel(c){
+    const v=num(c.price_vs_vwap_pct), h=num(c.distance_from_high_pct), l5=num(c.vol), l15=num(c.volume_accel_15m);
+    let score=0;
+    if(v!==null) score += v>3?2:v>=0?1:-1;
+    if(h!==null) score += h>-10?2:h>-25?1:-1;
+    if(l5!==null) score += l5>=1.5?2:l5>=1?1:l5<0.7?-1:0;
+    if(l15!==null) score += l15>=1.5?1:l15<0.7?-1:0;
+    if(score>=5)return "Strengthening";
+    if(score>=2)return "Holding";
+    if(score>=0)return "Mixed";
+    return "Cooling";
+  }
+
+  function plainWhy(c){
+    const bits=[];
+    const v=num(c.price_vs_vwap_pct), h=num(c.distance_from_high_pct), l5=num(c.vol), l15=num(c.volume_accel_15m), m=score(c);
+    if(v!==null) bits.push(v>=0?`${Math.abs(v).toFixed(1)}% above VWAP`:`${Math.abs(v).toFixed(1)}% below VWAP`);
+    if(h!==null) bits.push(`${Math.abs(h).toFixed(1)}% below the session high`);
+    if(l5!==null) bits.push(`5m liquidity ${l5.toFixed(2)}×`);
+    if(l15!==null) bits.push(`15m liquidity ${l15.toFixed(2)}×`);
+    if(m!==null) bits.push(`25% model ${m.toFixed(0)}/100`);
+    return bits.join(" · ");
+  }
+
+  function renderWatchlistDepth(){
+    const section=document.getElementById("section-watchlist");
+    if(!section)return;
+    let panel=document.getElementById("watchlistInsightPanel");
+    if(!panel){
+      panel=document.createElement("article");
+      panel.id="watchlistInsightPanel";
+      panel.className="panel watch-insight-panel";
+      section.appendChild(panel);
+    }
+
+    const selected=new Set(watchedSymbols());
+    const rows=visibleRows().filter(c=>selected.has(c.symbol));
+
+    if(!rows.length){
+      panel.innerHTML=`<div class="panel-label">WATCH CONTEXT</div><h3>Current watch intelligence</h3><p class="settings-copy">Select a current Scanner setup to see deeper watch context here.</p>`;
+      return;
+    }
+
+    panel.innerHTML=`<div class="panel-header"><div><div class="panel-label">WATCH CONTEXT</div><h3>Why these setups are still worth watching</h3></div><span class="mini-badge">${rows.length} CURRENT</span></div>
+      <div class="watch-intel-grid">
+        ${rows.map(c=>`
+          <article class="watch-intel-card">
+            <div class="watch-intel-top"><strong>${esc(c.symbol)}</strong><span class="momentum-state ${momentumLabel(c).toLowerCase()}">${momentumLabel(c)}</span></div>
+            <div class="watch-intel-price">${money(c.price)} <span>${pct(c.move)}</span></div>
+            <div class="watch-intel-metrics">
+              <div><span>State</span><strong>${esc(c.state||"Watch")}</strong></div>
+              <div><span>Vs VWAP</span><strong>${pct(c.price_vs_vwap_pct)}</strong></div>
+              <div><span>From high</span><strong>${pct(c.distance_from_high_pct)}</strong></div>
+              <div><span>5m liq</span><strong>${num(c.vol)===null?"—":num(c.vol).toFixed(2)+"×"}</strong></div>
+              <div><span>15m liq</span><strong>${num(c.volume_accel_15m)===null?"—":num(c.volume_accel_15m).toFixed(2)+"×"}</strong></div>
+              <div><span>25% model</span><strong>${score(c)===null?"—":score(c).toFixed(0)+"/100"}</strong></div>
+            </div>
+            <p>${esc(plainWhy(c))}</p>
+          </article>`).join("")}
+      </div>`;
+  }
+
+  function renderSignalDepth(){
+    const section=document.getElementById("section-signals");
+    if(!section)return;
+    let panel=document.getElementById("signalEvidencePanel");
+    if(!panel){
+      panel=document.createElement("article");
+      panel.id="signalEvidencePanel";
+      panel.className="panel signal-evidence-panel";
+      section.appendChild(panel);
+    }
+
+    const rows=visibleRows().slice(0,tier==="FREE"?1:tier==="BASIC"?3:tier==="PRO"?5:8);
+    const events=[];
+    rows.forEach(c=>{
+      const t=scanTime();
+      events.push({symbol:c.symbol,type:"State",value:c.state||"Watch",note:`Current scanner state at ${t}`});
+      if(num(c.vol)!==null) events.push({symbol:c.symbol,type:"Liquidity",value:`${num(c.vol).toFixed(2)}×`,note:num(c.vol)>=1?"5m activity is at/above baseline":"5m activity is below baseline"});
+      if(num(c.price_vs_vwap_pct)!==null) events.push({symbol:c.symbol,type:"Structure",value:pct(c.price_vs_vwap_pct),note:num(c.price_vs_vwap_pct)>=0?"Price is above VWAP":"Price is below VWAP"});
+      if(c.first_promotion_utc){
+        const d=new Date(c.first_promotion_utc);
+        events.push({symbol:c.symbol,type:"Promotion",value:Number.isNaN(d.getTime())?"Archived":d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}),note:"First archived 5-minute model promotion"});
+      }
+    });
+
+    panel.innerHTML=`<div class="panel-header"><div><div class="panel-label">EVIDENCE STREAM</div><h3>What the scanner is saying now</h3></div><span class="mini-badge">CURRENT SNAPSHOT</span></div>
+      <p class="signal-disclaimer">These are current evidence reads from the captured scanner snapshot. Historical change events appear only when the API has an actual timestamp, such as first promotion.</p>
+      <div class="signal-evidence-grid">
+        ${events.slice(0,tier==="PREMIER"?20:tier==="PREMIUM"?18:tier==="PRO"?14:tier==="BASIC"?8:4).map(e=>`
+          <div class="signal-evidence-row">
+            <strong>${esc(e.symbol)}</strong>
+            <span class="signal-type">${esc(e.type)}</span>
+            <b>${esc(e.value)}</b>
+            <small>${esc(e.note)}</small>
+          </div>`).join("")}
+      </div>`;
+  }
+
+  function renderJourneyDepth(){
+    const section=document.getElementById("section-journey");
+    if(!section)return;
+    let panel=document.getElementById("journeyTruthPanel");
+    if(!panel){
+      panel=document.createElement("article");
+      panel.id="journeyTruthPanel";
+      panel.className="panel journey-truth-panel";
+      section.appendChild(panel);
+    }
+
+    const c=visibleRows()[0] || featuredRow();
+    if(!c){
+      panel.innerHTML=`<div class="panel-label">JOURNEY</div><h3>Waiting for a current setup</h3>`;
+      return;
+    }
+
+    const promotion=c.first_promotion_utc ? new Date(c.first_promotion_utc) : null;
+    const promotionText=promotion && !Number.isNaN(promotion.getTime())
+      ? promotion.toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})
+      : "No archived promotion time";
+    const o=c.outcome || null;
+
+    panel.innerHTML=`<div class="panel-header"><div><div class="panel-label">MODEL JOURNEY · VERIFIED MILESTONES</div><h3>${esc(c.symbol)} progression</h3></div><span class="state-badge">${esc(c.state||"Watch")}</span></div>
+      <div class="journey-timeline-v19">
+        <div class="journey-v19-node complete"><span>1</span><div><strong>Current scanner appearance</strong><small>Rank #${esc(c.rank)} · ${money(c.price)}</small></div></div>
+        <i></i>
+        <div class="journey-v19-node ${c.first_promotion_utc?"complete":"pending"}"><span>2</span><div><strong>First archived promotion</strong><small>${esc(promotionText)}</small></div></div>
+        <i></i>
+        <div class="journey-v19-node ${c.finalist?"complete":"pending"}"><span>3</span><div><strong>Finalist context</strong><small>${c.finalist?"Captured as a finalist":"Not a finalist in this snapshot"}</small></div></div>
+        <i></i>
+        <div class="journey-v19-node ${o?"complete":"pending"}"><span>4</span><div><strong>Resolved forward outcome</strong><small>${o?"15 / 30 / 60-minute outcome available":"Waiting for resolved outcome record"}</small></div></div>
+      </div>
+      <div class="journey-model-state-grid">
+        <div><span>10% model</span><strong>${num(c.model_scores?.score10)===null?"—":num(c.model_scores.score10).toFixed(1)+"%"}</strong></div>
+        <div><span>25% model</span><strong>${num(c.model_scores?.score25)===null?"—":num(c.model_scores.score25).toFixed(1)+"%"}</strong></div>
+        <div><span>50% model</span><strong>${num(c.model_scores?.score50)===null?"—":num(c.model_scores.score50).toFixed(1)+"%"}</strong></div>
+        <div><span>5m liquidity</span><strong>${num(c.vol)===null?"—":num(c.vol).toFixed(2)+"×"}</strong></div>
+        <div><span>Vs VWAP</span><strong>${pct(c.price_vs_vwap_pct)}</strong></div>
+        <div><span>From high</span><strong>${pct(c.distance_from_high_pct)}</strong></div>
+      </div>`;
+  }
+
+  function renderPulseDepth(){
+    const section=document.getElementById("section-pulse");
+    if(!section)return;
+    let panel=document.getElementById("marketPulseDepth");
+    if(!panel){
+      panel=document.createElement("div");
+      panel.id="marketPulseDepth";
+      panel.className="pulse-depth-wrap";
+      section.appendChild(panel);
+    }
+
+    const rows=allRows();
+    if(!rows.length){
+      panel.innerHTML=`<article class="panel"><div class="panel-label">ENVIRONMENT</div><h3>Waiting for scanner universe data</h3></article>`;
+      return;
+    }
+
+    const count=rows.length;
+    const aboveVwap=rows.filter(c=>num(c.price_vs_vwap_pct)!==null && num(c.price_vs_vwap_pct)>=0).length;
+    const nearHigh=rows.filter(c=>num(c.distance_from_high_pct)!==null && num(c.distance_from_high_pct)>=-10).length;
+    const promoted=rows.filter(c=>String(c.state||"").toUpperCase()==="PROMOTED").length;
+    const finalists=rows.filter(c=>c.finalist).length;
+    const liqExpand=rows.filter(c=>num(c.vol)!==null && num(c.vol)>=1).length;
+    const modelVals=rows.map(score).filter(v=>v!==null).sort((a,b)=>a-b);
+    const medianModel=modelVals.length ? modelVals[Math.floor(modelVals.length/2)] : null;
+    const liqVals=rows.map(c=>num(c.vol)).filter(v=>v!==null).sort((a,b)=>a-b);
+    const medianLiq=liqVals.length ? liqVals[Math.floor(liqVals.length/2)] : null;
+
+    let state="Quiet";
+    const energy=(aboveVwap/count)+(nearHigh/count)+(liqExpand/count)+(finalists/Math.max(1,count));
+    if(energy>=2.4) state="Explosive";
+    else if(energy>=1.8) state="Active";
+    else if(energy>=1.25) state="Building";
+    else if(energy>=0.8) state="Mixed";
+
+    const summary=`${aboveVwap} of ${count} setups are at/above VWAP, ${liqExpand} have 5-minute liquidity at or above baseline, ${nearHigh} are within 10% of their session highs, and ${finalists} are finalists.`;
+
+    panel.innerHTML=`<article class="panel pulse-environment">
+        <div class="panel-header"><div><div class="panel-label">SCANNER ENVIRONMENT</div><h3>${esc(state)}</h3></div><span class="market-state-badge">${esc(state)}</span></div>
+        <p>${esc(summary)}</p>
+        <div class="pulse-stat-grid">
+          <div><span>Visible universe</span><strong>${count}</strong></div>
+          <div><span>Above VWAP</span><strong>${aboveVwap}/${count}</strong></div>
+          <div><span>Near session high</span><strong>${nearHigh}/${count}</strong></div>
+          <div><span>5m liquidity ≥ 1×</span><strong>${liqExpand}/${count}</strong></div>
+          <div><span>Promoted</span><strong>${promoted}</strong></div>
+          <div><span>Finalists</span><strong>${finalists}</strong></div>
+          <div><span>Median 25% model</span><strong>${medianModel===null?"—":medianModel.toFixed(0)+"/100"}</strong></div>
+          <div><span>Median 5m liquidity</span><strong>${medianLiq===null?"—":medianLiq.toFixed(2)+"×"}</strong></div>
+        </div>
+      </article>
+      <article class="panel pulse-buckets">
+        <div class="panel-label">WHERE THE STRENGTH IS</div>
+        <h3>Price-band distribution</h3>
+        <div class="pulse-band-grid">
+          ${[
+            ["Under $2",rows.filter(c=>num(c.price)!==null&&num(c.price)<2).length],
+            ["$2–$5",rows.filter(c=>num(c.price)!==null&&num(c.price)>=2&&num(c.price)<5).length],
+            ["$5–$20",rows.filter(c=>num(c.price)!==null&&num(c.price)>=5&&num(c.price)<=20).length]
+          ].map(([label,n])=>`<div><span>${label}</span><strong>${n}</strong><i style="width:${Math.max(4,n/count*100)}%"></i></div>`).join("")}
+        </div>
+      </article>`;
+  }
+
   function renderEverything(){
     renderUpgradeMenu();
     renderCandidateTable();
@@ -450,6 +700,11 @@
     renderHelp();
     renderFreeCopy();
     renderMinuteIntelligence();
+    bindPageTitles();
+    renderWatchlistDepth();
+    renderSignalDepth();
+    renderJourneyDepth();
+    renderPulseDepth();
 
     const badge=document.getElementById("topPlanBadge"); if(badge) badge.textContent=tier;
     const side=document.getElementById("sidebarTier"); if(side) side.textContent=tier;

@@ -1,32 +1,20 @@
-# Trendward public dashboard v17
+# Trendward public dashboard v19
 
-Adds the planned Premier tier at $75/month.
+Product structure:
+- Overview = What matters now
+- Scanner = What Trendward found
+- Watchlist = What I’m following
+- Signals = What the evidence is saying now
+- Model Journey = How the setup developed
+- Market Pulse = What the scanner environment looks like
+- 1-Minute Intelligence (Premier) = What is happening minute by minute
 
-Tier boundary:
-- Premium ($50): deepest approved 5-minute scanner intelligence.
-- Premier ($75): everything in Premium plus a dedicated 1-Minute Intelligence workspace.
-
-Premier route:
-- /trendward/premier/
-
-Premier 1-Minute Intelligence page:
-1. Live 1-minute intelligence first:
-   - price movement
-   - liquidity acceleration
-   - VWAP/high retention
-   - re-acceleration
-   - giveback/exhaustion
-   - momentum state
-2. Historical 1-minute intelligence below:
-   - first 1m ignition
-   - VWAP holds/losses
-   - breakout attempts
-   - re-acceleration points
-   - MFE/MAE context
-   - 5m versus 1m comparison
-
-Current state:
-- The customer-safe API does not yet expose approved one-minute fields.
-- The Premier page therefore shows explicit Pending feed states rather than invented values.
-- The renderer is ready to consume payload.oneMinute.live and payload.oneMinute.historical arrays later.
-- Premium copy no longer claims to include one-minute evidence.
+v19 changes:
+- Dynamic two-level page titles:
+  Overview -> Trendward · Research Cockpit / Market Intelligence Dashboard
+  Other pages -> Trendward / [Page Name]
+- Watchlist adds current-state intelligence: momentum state, VWAP, distance from high, 5m/15m liquidity, model score.
+- Signals adds a richer current evidence stream. It only labels historical changes where a real timestamp exists.
+- Model Journey adds verified milestones using current appearance, first archived promotion, finalist state, and resolved outcomes.
+- Market Pulse adds an overall environment state plus scanner-universe breadth, VWAP/high retention, liquidity and model metrics.
+- Existing v18 mobile title and Premier Manual <-> Auto-current fixes are preserved.

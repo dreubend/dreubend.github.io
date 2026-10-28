@@ -1,6 +1,6 @@
 {
   "mode": "illustrative_preview",
-  "version": "17.0",
+  "version": "19.0",
   "generated_at": "2026-10-25",
   "live_data_configured": false,
   "auth_mode": "browser_preview_only",
@@ -71,5 +71,14 @@
     "route": "/trendward/premier/",
     "feature": "1-Minute Intelligence",
     "status": "UI ready; API fields pending"
+  },
+  "page_roles": {
+    "overview": "what matters now",
+    "scanner": "what Trendward found",
+    "watchlist": "what I\u2019m following",
+    "signals": "what the evidence is saying now",
+    "journey": "how the setup developed",
+    "pulse": "what the scanner environment looks like",
+    "minute": "what is happening minute by minute"
   }
 }
