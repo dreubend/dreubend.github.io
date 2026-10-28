@@ -1,95 +1,356 @@
 (() => {
-  const API="https://dashboard.reubendecker.com/api/trendward";
-  const state={user:null,desiredTier:"FREE"};
+  const API = "https://dashboard.reubendecker.com/api/trendward";
 
-  async function api(path,opts={}){
-    const res=await fetch(API+path,{credentials:"include",headers:{"Content-Type":"application/json",...(opts.headers||{})},...opts});
-    let body=null; try{body=await res.json()}catch{}
-    if(!res.ok) throw new Error(body?.detail||body?.message||`HTTP ${res.status}`);
+  const state = {
+    user: null,
+    mode: "login",
+    desiredTier: "FREE"
+  };
+
+  async function api(path, options = {}) {
+    const response = await fetch(API + path, {
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {})
+      },
+      ...options
+    });
+
+    let body = null;
+
+    try {
+      body = await response.json();
+    } catch (_) {}
+
+    if (!response.ok) {
+      throw new Error(
+        (body && (body.detail || body.message)) ||
+        ("HTTP " + response.status)
+      );
+    }
+
     return body;
   }
 
-  function label(t){return t.charAt(0)+t.slice(1).toLowerCase()}
-  function update(){
-    document.body.classList.toggle("authenticated",!!state.user);
-    const login=document.getElementById("loginBtn"), signup=document.getElementById("signupBtn"), badge=document.getElementById("topPlanBadge");
-    if(state.user){
-      if(login) login.textContent=state.user.username||"Account";
-      if(signup) signup.textContent="Log out";
-      if(badge) badge.textContent=String(state.user.effective_tier||"FREE").toUpperCase();
-    }else{
-      if(login) login.textContent="Log in";
-      if(signup) signup.textContent="Sign up";
+  function planLabel(tier) {
+    tier = String(tier || "").toLowerCase();
+    return tier.charAt(0).toUpperCase() + tier.slice(1);
+  }
+
+  function modal() {
+    return document.getElementById("authModal");
+  }
+
+  function showModal() {
+    const backdrop = document.getElementById("modalBackdrop");
+    const auth = modal();
+
+    if (backdrop) backdrop.hidden = false;
+    if (auth) auth.hidden = false;
+  }
+
+  function hideModal() {
+    const backdrop = document.getElementById("modalBackdrop");
+    if (backdrop) backdrop.hidden = true;
+  }
+
+  function setMode(mode, tier) {
+    state.mode = mode;
+
+    if (tier) {
+      state.desiredTier = tier;
     }
-    document.querySelectorAll(".plan-upgrade-menu button[data-upgrade]").forEach(btn=>{
-      const t=String(btn.dataset.upgrade||"").toUpperCase();
-      const span=btn.querySelector("span");
-      if(span) span.textContent=state.user?`Upgrade to ${label(t)}`:`Sign up for ${label(t)}`;
+
+    const auth = modal();
+    if (!auth) return;
+
+    const title = document.getElementById("authTitle");
+    const submit = document.getElementById("authSubmit");
+    const nameLabel = document.getElementById("nameLabel");
+    const nameInput = document.getElementById("authName");
+
+    if (mode === "signup") {
+      if (title) title.textContent = "Create your Trendward account";
+      if (submit) submit.textContent = "Create account";
+      if (nameLabel) nameLabel.hidden = false;
+
+      if (nameInput) {
+        nameInput.placeholder = "Username";
+        nameInput.setAttribute("autocomplete", "username");
+      }
+    } else {
+      if (title) title.textContent = "Log in to Trendward";
+      if (submit) submit.textContent = "Log in";
+      if (nameLabel) nameLabel.hidden = true;
+    }
+
+    showModal();
+  }
+
+  function updateUI() {
+    const login = document.getElementById("loginBtn");
+    const signup = document.getElementById("signupBtn");
+    const badge = document.getElementById("topPlanBadge");
+    const accountState = document.getElementById("accountState");
+
+    document.body.classList.toggle("authenticated", !!state.user);
+
+    if (state.user) {
+      if (login) login.textContent = state.user.username || "Account";
+      if (signup) signup.textContent = "Log out";
+      if (badge) {
+        badge.textContent =
+          String(state.user.effective_tier || "FREE").toUpperCase();
+      }
+
+      if (accountState) {
+        accountState.textContent =
+          "Signed in as " +
+          state.user.username +
+          " (" +
+          state.user.email +
+          ")";
+      }
+    } else {
+      if (login) login.textContent = "Log in";
+      if (signup) signup.textContent = "Sign up";
+      if (accountState) accountState.textContent = "Not signed in";
+    }
+
+    document
+      .querySelectorAll("[data-upgrade]")
+      .forEach((button) => {
+        const tier = String(button.dataset.upgrade || "").toUpperCase();
+        const label = button.querySelector("span");
+
+        if (!label) return;
+
+        label.textContent = state.user
+          ? "Upgrade to " + planLabel(tier)
+          : "Sign up for " + planLabel(tier);
+      });
+  }
+
+  async function loadMe() {
+    try {
+      const result = await api("/auth/me", {
+        method: "GET",
+        headers: {}
+      });
+
+      state.user = result.user;
+    } catch (_) {
+      state.user = null;
+    }
+
+    updateUI();
+  }
+
+  async function handleLogin() {
+    const email =
+      document.getElementById("authEmail").value.trim();
+
+    const password =
+      document.getElementById("authPassword").value;
+
+    if (!email || !password) {
+      alert("Please enter your email and password.");
+      return;
+    }
+
+    const result = await api("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({
+        email: email,
+        password: password
+      })
     });
+
+    state.user = result.user;
+
+    hideModal();
+    updateUI();
   }
 
-  function setMode(mode,tier=null){
-    if(tier) state.desiredTier=tier;
-    const modal=document.getElementById("authModal"); if(!modal)return;
-    modal.dataset.authMode=mode;
-    const title=modal.querySelector("#authTitle");
-    if(title) title.textContent=mode==="signup"?"Create your Trendward account":"Log in to Trendward";
-    const input=modal.querySelector('input[name="name"],input[name="username"]');
-    if(input){input.name="username";input.placeholder="Username";}
-    let chooser=modal.querySelector("#authPlanChoice");
-    if(mode==="signup"){
-      if(!chooser){
-        chooser=document.createElement("div");
-        chooser.id="authPlanChoice";chooser.className="auth-plan-choice";
-        modal.querySelector("form")?.prepend(chooser);
-      }
-      chooser.innerHTML=["FREE","BASIC","PRO","PREMIUM","PREMIER"].map(t=>`<button type="button" data-auth-tier="${t}" class="${state.desiredTier===t?"active":""}">${label(t)}</button>`).join("");
-      chooser.querySelectorAll("button").forEach(b=>b.onclick=()=>{state.desiredTier=b.dataset.authTier;chooser.querySelectorAll("button").forEach(x=>x.classList.toggle("active",x===b));});
-    }else if(chooser) chooser.remove();
+  async function handleSignup() {
+    const username =
+      document.getElementById("authName").value.trim();
 
-    let note=modal.querySelector("#securityRecoveryNote");
-    if(!note){note=document.createElement("div");note.id="securityRecoveryNote";note.className="account-lock-note";modal.querySelector(".modal-card")?.appendChild(note);}
-    note.textContent="Recovery uses verified email and one-time recovery codes. Security questions are not used as the primary recovery factor.";
-  }
+    const email =
+      document.getElementById("authEmail").value.trim();
 
-  async function me(){
-    try{state.user=(await api("/auth/me",{method:"GET",headers:{}})).user}catch{state.user=null}
-    update();
-  }
+    const password =
+      document.getElementById("authPassword").value;
 
-  document.addEventListener("click",async e=>{
-    const up=e.target.closest("[data-upgrade]");
-    if(up){
-      e.preventDefault();
-      const target=String(up.dataset.upgrade||"").toUpperCase();
-      if(!state.user){setMode("signup",target);document.getElementById("signupBtn")?.click();}
-      else{try{alert((await api("/account/request-tier",{method:"POST",body:JSON.stringify({tier:target})})).message)}catch(err){alert(err.message)}}
+    if (!username) {
+      alert("Please choose a username.");
+      return;
     }
-    if(e.target.closest("#loginBtn")&&!state.user) setMode("login");
-    if(e.target.closest("#signupBtn")){
-      if(state.user){
-        e.preventDefault(); await api("/auth/logout",{method:"POST",body:"{}"}); state.user=null; update();
-      }else setMode("signup","FREE");
+
+    if (!email || !password) {
+      alert("Please enter your email and password.");
+      return;
     }
-  });
 
-  document.addEventListener("submit",async e=>{
-    if(!e.target.closest("#authModal form"))return;
-    e.preventDefault();
-    const mode=document.getElementById("authModal")?.dataset.authMode||"login";
-    const fd=new FormData(e.target);
-    const p=Object.fromEntries(fd.entries());
-    try{
-      if(mode==="signup"){
-        p.desired_tier=state.desiredTier;
-        alert((await api("/auth/signup",{method:"POST",body:JSON.stringify(p)})).message);
-      }else{
-        const r=await api("/auth/login",{method:"POST",body:JSON.stringify(p)});
-        state.user=r.user;update();document.getElementById("authModal").hidden=true;
+    if (password.length < 12) {
+      alert("Password must be at least 12 characters.");
+      return;
+    }
+
+    const result = await api("/auth/signup", {
+      method: "POST",
+      body: JSON.stringify({
+        username: username,
+        email: email,
+        password: password,
+        desired_tier: state.desiredTier
+      })
+    });
+
+    alert(result.message);
+
+    state.mode = "login";
+
+    const nameLabel = document.getElementById("nameLabel");
+    const title = document.getElementById("authTitle");
+    const submit = document.getElementById("authSubmit");
+
+    if (nameLabel) nameLabel.hidden = true;
+    if (title) title.textContent = "Log in to Trendward";
+    if (submit) submit.textContent = "Log in";
+  }
+
+  async function logout() {
+    await api("/auth/logout", {
+      method: "POST",
+      body: "{}"
+    });
+
+    state.user = null;
+    updateUI();
+  }
+
+  // This comment is intentionally plain ASCII.
+  document.addEventListener(
+    "submit",
+    async function (event) {
+      const form = event.target;
+
+      if (!form || form.id !== "authForm") {
+        return;
       }
-    }catch(err){alert(err.message)}
-  });
 
-  window.TRENDWARD_AUTH={api,state,me,setMode};
-  me();
+      // Stop the old browser-only preview auth handler.
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
+      try {
+        if (state.mode === "signup") {
+          await handleSignup();
+        } else {
+          await handleLogin();
+        }
+      } catch (error) {
+        alert(error.message || "Trendward authentication failed.");
+      }
+    },
+    true
+  );
+
+  document.addEventListener(
+    "click",
+    async function (event) {
+      const login = event.target.closest("#loginBtn");
+
+      if (login) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+
+        if (state.user) {
+          return;
+        }
+
+        setMode("login");
+        return;
+      }
+
+      const signup = event.target.closest("#signupBtn");
+
+      if (signup) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+
+        try {
+          if (state.user) {
+            await logout();
+          } else {
+            setMode("signup", "FREE");
+          }
+        } catch (error) {
+          alert(error.message);
+        }
+
+        return;
+      }
+
+      const settingsLogin =
+        event.target.closest("#settingsLoginBtn");
+
+      if (settingsLogin) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+
+        if (!state.user) {
+          setMode("login");
+        }
+
+        return;
+      }
+
+      const upgrade =
+        event.target.closest("[data-upgrade]");
+
+      if (upgrade) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+
+        const tier =
+          String(upgrade.dataset.upgrade || "").toUpperCase();
+
+        if (!state.user) {
+          setMode("signup", tier);
+          return;
+        }
+
+        try {
+          const result = await api("/account/request-tier", {
+            method: "POST",
+            body: JSON.stringify({
+              tier: tier
+            })
+          });
+
+          alert(result.message);
+        } catch (error) {
+          alert(error.message);
+        }
+      }
+    },
+    true
+  );
+
+  window.TRENDWARD_AUTH = {
+    api: api,
+    state: state,
+    setMode: setMode,
+    loadMe: loadMe
+  };
+
+  loadMe();
 })();
