@@ -771,3 +771,17 @@ body.tier-premier .static-tier-identity{border-color:hsl(188 80% 55% / .26);back
   .watch-intel-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
   .journey-model-state-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+/* ===== Trendward v20 auth/branding polish ===== */
+#section-overview .static-tier-identity .eyebrow,
+#section-overview .hero-panel .eyebrow{font-size:12px!important;font-weight:900;letter-spacing:.12em}
+#section-overview .static-tier-identity strong,
+#section-overview .hero-panel .brand-word{font-size:18px}
+.topbar .plan-badge,.topbar #topPlanBadge{min-height:36px;padding:0 14px!important;display:inline-flex;align-items:center;justify-content:center;font-size:11px!important;font-weight:800;line-height:1;border-radius:10px}
+.auth-btn{min-height:36px!important}
+.auth-plan-choice{display:flex;gap:7px;flex-wrap:wrap;margin:4px 0 12px}
+.auth-plan-choice button{border:1px solid var(--border);background:rgba(255,255,255,.02);color:var(--text);padding:7px 9px;border-radius:9px;font-size:9px;cursor:pointer}
+.auth-plan-choice button.active{color:var(--accent);border-color:hsl(var(--hue) 70% 55% / .45);background:var(--accent-soft)}
+.account-lock-note{padding:9px 10px;border-radius:9px;background:rgba(255,173,77,.07);border:1px solid rgba(255,173,77,.22);color:#d9c4a4;font-size:9px;line-height:1.5;margin-top:8px}
+body.authenticated .illustrative-preview-banner{display:none!important}
+body.authenticated .freshness-banner{padding:7px 10px;font-size:9px;opacity:.82}
