@@ -244,11 +244,11 @@
       heading?.appendChild(controls);
     }
 
-    const isAuto=(tier==="PRO"||tier==="PREMIUM") && autoEnabled();
+    const isAuto=(tier==="PRO"||tier==="PREMIUM"||tier==="PREMIER") && autoEnabled();
     const canAuto=(tier==="PRO"||tier==="PREMIUM"||tier==="PREMIER");
     controls.innerHTML=`
       <span class="watch-mode">${isAuto?"AUTO-CURRENT":"MANUAL"}</span>
-      ${canAuto?`<button class="chip ${isAuto?"active":""}" id="autoCurrentBtn">${isAuto?"Use manual":"Auto-current"}</button>`:""}
+      ${canAuto?`<button class="chip ${isAuto?"active":""}" id="autoCurrentBtn">${isAuto?"Switch to Manual":"Switch to Auto-current"}</button>`:""}
       ${tier==="PRO"?`<button class="chip upsell-inline" data-upgrade="PREMIUM">Want all current setups? Premium →</button>`:""}
     `;
 

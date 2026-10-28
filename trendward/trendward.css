@@ -624,3 +624,66 @@ body.tier-premier .static-tier-identity{border-color:hsl(188 80% 55% / .26);back
   .minute-hero,.minute-section-label{align-items:flex-start;flex-direction:column}
   .minute-tier-price{text-align:left}
 }
+
+/* ===== Trendward v18 mobile header + Premier watchlist fix ===== */
+@media(max-width:700px){
+  .top-left{
+    padding-left:58px;
+    flex:1 1 auto;
+    min-width:0;
+  }
+
+  .topbar{
+    align-items:center;
+    min-height:86px;
+  }
+
+  .topbar h1{
+    white-space:normal !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+    max-width:none !important;
+    width:auto !important;
+    line-height:1.08;
+    font-size:17px !important;
+    overflow-wrap:anywhere;
+  }
+
+  .topbar .eyebrow{
+    display:block;
+    font-size:8px;
+    line-height:1.2;
+    margin-bottom:3px;
+  }
+
+  .top-actions{
+    flex:0 0 auto;
+    align-self:center;
+  }
+}
+
+@media(max-width:480px){
+  .topbar{
+    min-height:88px;
+  }
+
+  .topbar h1{
+    font-size:16px !important;
+    max-width:none !important;
+  }
+
+  .topbar .eyebrow{
+    display:none;
+  }
+}
+
+/* Make watch mode state visually obvious. */
+.watch-mode{
+  display:inline-flex;
+  align-items:center;
+  min-height:28px;
+  padding:5px 8px;
+  border-radius:999px;
+  border:1px solid hsl(var(--hue) 70% 55% / .24);
+  background:var(--accent-soft);
+}
