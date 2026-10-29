@@ -1,8 +1,8 @@
 (() => {
   const tier = String(window.TRENDWARD_FIXED_TIER || "FREE").toUpperCase();
   const LIMITS = {FREE:1, BASIC:4, PRO:8, PREMIUM:11, PREMIER:11};
-  const WATCH_MAX = {FREE:1, BASIC:3, PRO:5, PREMIUM:10, PREMIER:10};
-  const AUTO_LIMIT = {FREE:0, BASIC:0, PRO:5, PREMIUM:10, PREMIER:10};
+  const WATCH_MAX = {FREE:1, BASIC:4, PRO:8, PREMIUM:11, PREMIER:11};
+  const AUTO_LIMIT = {FREE:1, BASIC:4, PRO:8, PREMIUM:11, PREMIER:11};
   const UPGRADE_ORDER = ["FREE","BASIC","PRO","PREMIUM","PREMIER"];
   const PLAN_PATH = {
     FREE:"/trendward/",
@@ -213,11 +213,26 @@
   function watchModeKey(){ return `trendward-watchmode-${tier.toLowerCase()}`; }
   function currentSymbols(){ return visibleRows().map(c=>c.symbol); }
   function loadManualWatch(){
+    const raw=localStorage.getItem(watchKey());
     let saved=[];
-    try{ saved=JSON.parse(localStorage.getItem(watchKey())||"[]"); }catch{}
+
+    if(raw===null){
+      saved=currentSymbols().slice(0,WATCH_MAX[tier]);
+    }else{
+      try{ saved=JSON.parse(raw||"[]"); }catch{}
+    }
+
     const current=new Set(currentSymbols());
-    saved=(Array.isArray(saved)?saved:[]).filter(s=>current.has(s)).slice(0,WATCH_MAX[tier]);
-    localStorage.setItem(watchKey(),JSON.stringify(saved));
+
+    saved=(Array.isArray(saved)?saved:[])
+      .filter(s=>current.has(s))
+      .slice(0,WATCH_MAX[tier]);
+
+    localStorage.setItem(
+      watchKey(),
+      JSON.stringify(saved)
+    );
+
     return saved;
   }
   function saveManualWatch(arr){ localStorage.setItem(watchKey(),JSON.stringify(arr.slice(0,WATCH_MAX[tier]))); }
@@ -226,9 +241,20 @@
   function setAuto(on){ localStorage.setItem(watchModeKey(),on?"auto":"manual"); }
 
   function watchedSymbols(){
-    if((tier==="PRO" || tier==="PREMIUM" || tier==="PREMIER") && autoEnabled()){
-      return visibleRows().slice(0,AUTO_LIMIT[tier]).map(c=>c.symbol);
+
+    if(tier==="FREE"){
+      return visibleRows().slice(0,1).map(c=>c.symbol);
     }
+
+    if(
+      (tier==="PRO" || tier==="PREMIUM" || tier==="PREMIER")
+      && autoEnabled()
+    ){
+      return visibleRows()
+        .slice(0,AUTO_LIMIT[tier])
+        .map(c=>c.symbol);
+    }
+
     return loadManualWatch();
   }
 
@@ -304,7 +330,7 @@
   function renderSignals(){
     const full=document.getElementById("signalsFull");
     const compact=document.getElementById("signalCards");
-    const rows=visibleRows().slice(0,tier==="FREE"?1:tier==="BASIC"?3:tier==="PRO"?5:8);
+    const rows=visibleRows();
     const item=c=>`${c.state||"Watch"} · ${score(c)===null?"model —":`25% model ${score(c).toFixed(0)}`} · ${num(c.vol)===null?"liquidity —":`5m liquidity ${num(c.vol).toFixed(2)}×`}`;
     if(compact) compact.innerHTML=rows.slice(0,3).map(c=>`<div class="stack-card"><div class="stack-card-top"><strong>${esc(c.symbol)}</strong><span class="mini-badge">${esc(scanTime())}</span></div><p>${esc(item(c))}</p></div>`).join("");
     if(full) full.innerHTML=rows.map((c,i)=>`<div class="timeline-item"><div class="timeline-time">${esc(scanTime())}</div><div class="timeline-dot-col"><div class="timeline-dot"></div>${i<rows.length-1?'<div class="timeline-line"></div>':''}</div><div class="timeline-content"><strong>${esc(c.symbol)}</strong><p>${esc(item(c))}</p></div></div>`).join("");
@@ -557,7 +583,7 @@
       section.appendChild(panel);
     }
 
-    const rows=visibleRows().slice(0,tier==="FREE"?1:tier==="BASIC"?3:tier==="PRO"?5:8);
+    const rows=visibleRows();
     const events=[];
     rows.forEach(c=>{
       const t=scanTime();
@@ -573,7 +599,7 @@
     panel.innerHTML=`<div class="panel-header"><div><div class="panel-label">EVIDENCE STREAM</div><h3>What the scanner is saying now</h3></div><span class="mini-badge">CURRENT SNAPSHOT</span></div>
       <p class="signal-disclaimer">These are current evidence reads from the captured scanner snapshot. Historical change events appear only when the API has an actual timestamp, such as first promotion.</p>
       <div class="signal-evidence-grid">
-        ${events.slice(0,tier==="PREMIER"?20:tier==="PREMIUM"?18:tier==="PRO"?14:tier==="BASIC"?8:4).map(e=>`
+        ${events.map(e=>`
           <div class="signal-evidence-row">
             <strong>${esc(e.symbol)}</strong>
             <span class="signal-type">${esc(e.type)}</span>
@@ -586,7 +612,9 @@
   function renderJourneyDepth(){
     const section=document.getElementById("section-journey");
     if(!section)return;
+
     let panel=document.getElementById("journeyTruthPanel");
+
     if(!panel){
       panel=document.createElement("article");
       panel.id="journeyTruthPanel";
@@ -594,36 +622,165 @@
       section.appendChild(panel);
     }
 
-    const c=visibleRows()[0] || featuredRow();
-    if(!c){
-      panel.innerHTML=`<div class="panel-label">JOURNEY</div><h3>Waiting for a current setup</h3>`;
+    const rows=visibleRows();
+
+    if(!rows.length){
+      panel.innerHTML=
+        '<div class="panel-label">MODEL JOURNEY</div>' +
+        '<h3>Waiting for current setups</h3>';
       return;
     }
 
-    const promotion=c.first_promotion_utc ? new Date(c.first_promotion_utc) : null;
-    const promotionText=promotion && !Number.isNaN(promotion.getTime())
-      ? promotion.toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})
-      : "No archived promotion time";
-    const o=c.outcome || null;
-
-    panel.innerHTML=`<div class="panel-header"><div><div class="panel-label">MODEL JOURNEY · VERIFIED MILESTONES</div><h3>${esc(c.symbol)} progression</h3></div><span class="state-badge">${esc(c.state||"Watch")}</span></div>
-      <div class="journey-timeline-v19">
-        <div class="journey-v19-node complete"><span>1</span><div><strong>Current scanner appearance</strong><small>Rank #${esc(c.rank)} · ${money(c.price)}</small></div></div>
-        <i></i>
-        <div class="journey-v19-node ${c.first_promotion_utc?"complete":"pending"}"><span>2</span><div><strong>First archived promotion</strong><small>${esc(promotionText)}</small></div></div>
-        <i></i>
-        <div class="journey-v19-node ${c.finalist?"complete":"pending"}"><span>3</span><div><strong>Finalist context</strong><small>${c.finalist?"Captured as a finalist":"Not a finalist in this snapshot"}</small></div></div>
-        <i></i>
-        <div class="journey-v19-node ${o?"complete":"pending"}"><span>4</span><div><strong>Resolved forward outcome</strong><small>${o?"15 / 30 / 60-minute outcome available":"Waiting for resolved outcome record"}</small></div></div>
+    panel.innerHTML=`
+      <div class="panel-header">
+        <div>
+          <div class="panel-label">VERIFIED MODEL JOURNEYS</div>
+          <h3>${rows.length} setup${rows.length===1?"":"s"} in this tier</h3>
+        </div>
+        <span class="mini-badge">${rows.length} SETUP${rows.length===1?"":"S"}</span>
       </div>
-      <div class="journey-model-state-grid">
-        <div><span>10% model</span><strong>${num(c.model_scores?.score10)===null?"—":num(c.model_scores.score10).toFixed(1)+"%"}</strong></div>
-        <div><span>25% model</span><strong>${num(c.model_scores?.score25)===null?"—":num(c.model_scores.score25).toFixed(1)+"%"}</strong></div>
-        <div><span>50% model</span><strong>${num(c.model_scores?.score50)===null?"—":num(c.model_scores.score50).toFixed(1)+"%"}</strong></div>
-        <div><span>5m liquidity</span><strong>${num(c.vol)===null?"—":num(c.vol).toFixed(2)+"×"}</strong></div>
-        <div><span>Vs VWAP</span><strong>${pct(c.price_vs_vwap_pct)}</strong></div>
-        <div><span>From high</span><strong>${pct(c.distance_from_high_pct)}</strong></div>
-      </div>`;
+
+      <div class="tier-journey-list">
+        ${rows.map(c=>{
+
+          const promotion=
+            c.first_promotion_utc
+              ? new Date(c.first_promotion_utc)
+              : null;
+
+          const promotionText=
+            promotion && !Number.isNaN(promotion.getTime())
+              ? promotion.toLocaleString([],{
+                  month:"short",
+                  day:"numeric",
+                  hour:"numeric",
+                  minute:"2-digit"
+                })
+              : "No archived promotion time";
+
+          const outcome=c.outcome||null;
+
+          return `
+            <article class="tier-journey-card">
+
+              <div class="panel-header">
+                <div>
+                  <div class="panel-label">MODEL JOURNEY</div>
+                  <h3>${esc(c.symbol)} progression</h3>
+                </div>
+
+                <span class="state-badge">
+                  ${esc(c.state||"Watch")}
+                </span>
+              </div>
+
+              <div class="journey-timeline-v19">
+
+                <div class="journey-v19-node complete">
+                  <span>1</span>
+                  <div>
+                    <strong>Scanner appearance</strong>
+                    <small>
+                      Rank #${esc(c.rank)} &middot; ${money(c.price)}
+                    </small>
+                  </div>
+                </div>
+
+                <i></i>
+
+                <div class="journey-v19-node ${c.first_promotion_utc?"complete":"pending"}">
+                  <span>2</span>
+                  <div>
+                    <strong>First archived promotion</strong>
+                    <small>${esc(promotionText)}</small>
+                  </div>
+                </div>
+
+                <i></i>
+
+                <div class="journey-v19-node ${c.finalist?"complete":"pending"}">
+                  <span>3</span>
+                  <div>
+                    <strong>Finalist context</strong>
+                    <small>
+                      ${c.finalist
+                        ?"Captured as a finalist"
+                        :"Not a finalist in this snapshot"}
+                    </small>
+                  </div>
+                </div>
+
+                <i></i>
+
+                <div class="journey-v19-node ${outcome?"complete":"pending"}">
+                  <span>4</span>
+                  <div>
+                    <strong>Resolved outcome</strong>
+                    <small>
+                      ${outcome
+                        ?"15 / 30 / 60-minute outcome available"
+                        :"Waiting for resolved outcome"}
+                    </small>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="journey-model-state-grid">
+
+                <div>
+                  <span>10% model</span>
+                  <strong>
+                    ${num(c.model_scores?.score10)===null
+                      ?"--"
+                      :num(c.model_scores.score10).toFixed(1)+"/100"}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>25% model</span>
+                  <strong>
+                    ${num(c.model_scores?.score25)===null
+                      ?"--"
+                      :num(c.model_scores.score25).toFixed(1)+"/100"}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>50% model</span>
+                  <strong>
+                    ${num(c.model_scores?.score50)===null
+                      ?"--"
+                      :num(c.model_scores.score50).toFixed(1)+"/100"}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>5m liquidity</span>
+                  <strong>
+                    ${num(c.vol)===null
+                      ?"--"
+                      :num(c.vol).toFixed(2)+"x"}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>Vs VWAP</span>
+                  <strong>${pct(c.price_vs_vwap_pct)}</strong>
+                </div>
+
+                <div>
+                  <span>From high</span>
+                  <strong>${pct(c.distance_from_high_pct)}</strong>
+                </div>
+
+              </div>
+
+            </article>
+          `;
+        }).join("")}
+      </div>
+    `;
   }
 
   function renderPulseDepth(){
@@ -637,7 +794,7 @@
       section.appendChild(panel);
     }
 
-    const rows=allRows();
+    const rows=visibleRows();
     if(!rows.length){
       panel.innerHTML=`<article class="panel"><div class="panel-label">ENVIRONMENT</div><h3>Waiting for scanner universe data</h3></article>`;
       return;
@@ -690,7 +847,49 @@
       </article>`;
   }
 
+
+  function renderSetupCountBadges(){
+
+    const count=visibleRows().length;
+
+    const sections=[
+      "scanner",
+      "watchlist",
+      "signals",
+      "journey",
+      "pulse"
+    ];
+
+    sections.forEach(name=>{
+
+      const heading=
+        document.querySelector(
+          `#section-${name} .section-heading`
+        );
+
+      if(!heading)return;
+
+      let badge=
+        heading.querySelector(
+          ".tier-setup-count"
+        );
+
+      if(!badge){
+
+        badge=document.createElement("span");
+        badge.className=
+          "mini-badge tier-setup-count";
+
+        heading.appendChild(badge);
+      }
+
+      badge.textContent=
+        `${count} SETUP${count===1?"":"S"}`;
+
+    });
+  }
   function renderEverything(){
+    renderSetupCountBadges();
     renderUpgradeMenu();
     renderCandidateTable();
     renderScanner();
