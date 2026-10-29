@@ -912,4 +912,9 @@
   if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",renderEverything,{once:true});
   else renderEverything();
   window.addEventListener("trendward:data",renderEverything);
+
+  /* ===== TRENDWARD_DATA_RERENDER_V29 ===== */
+  window.addEventListener("trendward:data", () => {
+    renderEverything();
+  });
 })();
