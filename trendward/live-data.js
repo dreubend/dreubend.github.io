@@ -266,23 +266,52 @@
         const fixedTier = String(window.TRENDWARD_FIXED_TIER || "FREE").toUpperCase();
         setStatus(
           fixedTier === "FREE"
-            ? `30m delayed scanner · ${when}`
-            : `Live scanner · ${when}`,
+            ? `30m delayed scanner - ${when}`
+            : `Live scanner - ${when}`,
           "ok"
         );
       }
 
       window.dispatchEvent(new CustomEvent("trendward:data", {detail: payload}));
     } catch (err) {
-
       console.warn(
         "Trendward scanner feed unavailable:",
         err
       );
-refreshTrendwardData();
+
+      const cached = loadLastRealSnapshot();
+
+      if (cached) {
+        const historical = historicalSnapshot(cached);
+
+        renderSnapshot(historical);
+
+        setStatus(
+          `Latest historical scanner - ${fmtScanTime(historical)}`,
+          "warn"
+        );
+
+        window.dispatchEvent(
+          new CustomEvent(
+            "trendward:data",
+            {detail: historical}
+          )
+        );
+      } else {
+        setStatus(
+          "Scanner feed unavailable - no saved scanner snapshot",
+          "warn"
+        );
+      }
+    }
+  }
+
+  refreshTrendwardData();
 
   const seconds = Number(cfg.refreshSeconds || 0);
+
   if (seconds >= 30) {
     setInterval(refreshTrendwardData, seconds * 1000);
   }
+
 })();
