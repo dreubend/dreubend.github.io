@@ -279,57 +279,7 @@
         "Trendward scanner feed unavailable:",
         err
       );
-
-      const cached =
-        loadLastRealSnapshot();
-
-      if (cached) {
-
-        const historical =
-          historicalSnapshot(cached);
-
-        renderSnapshot(historical);
-
-        setStatus(
-          `Latest historical scanner · ${fmtScanTime(historical)}`,
-          "warn"
-        );
-
-        window.dispatchEvent(
-          new CustomEvent(
-            "trendward:data",
-            { detail: historical }
-          )
-        );
-
-      } else {
-
-        setStatus(
-          "Scanner feed unavailable · no saved scanner snapshot",
-          "warn"
-        );
-
-      }
-    }
-  }
-
-  const cachedAtStartup =
-    loadLastRealSnapshot();
-
-  if (cachedAtStartup) {
-
-    const historical =
-      historicalSnapshot(cachedAtStartup);
-
-    renderSnapshot(historical);
-
-    setStatus(
-      `Latest historical scanner · ${fmtScanTime(historical)}`,
-      "warn"
-    );
-  }
-
-  refreshTrendwardData();
+refreshTrendwardData();
 
   const seconds = Number(cfg.refreshSeconds || 0);
   if (seconds >= 30) {
