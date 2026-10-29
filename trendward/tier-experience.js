@@ -917,4 +917,6 @@
   window.addEventListener("trendward:data", () => {
     renderEverything();
   });
+  window.TRENDWARD_RENDER_ALL = renderEverything;
+
 })();

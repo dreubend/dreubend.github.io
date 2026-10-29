@@ -217,6 +217,10 @@
     }
 
     if (typeof renderAllCharts === "function") renderAllCharts();
+
+    if (typeof window.TRENDWARD_RENDER_ALL === "function") {
+      window.TRENDWARD_RENDER_ALL();
+    }
   }
 
   async function refreshTrendwardData() {
