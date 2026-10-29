@@ -31,15 +31,112 @@
   }
 
   function fmtScanTime(payload) {
-    const raw = payload.scannerScanTime || payload.scannerCapturedAt;
+    const raw =
+      payload.scannerScanTime ||
+      payload.scannerCapturedAt ||
+      payload.generatedAt;
+
     if (!raw) return "Scanner timestamp unavailable";
+
     const d = new Date(raw);
-    if (Number.isNaN(d.getTime())) return `Scanner ${raw}`;
-    return `Scanner ${d.toLocaleString([], {
-      month:"short", day:"numeric", hour:"numeric", minute:"2-digit"
+
+    if (Number.isNaN(d.getTime())) {
+      return `Scanner ${raw}`;
+    }
+
+    return `Scanner ${d.toLocaleString("en-US", {
+      timeZone: "America/New_York",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      timeZoneName: "short"
     })}`;
   }
 
+
+  const LAST_REAL_SNAPSHOT_KEY =
+    "trendward:last-real-scanner-snapshot:v1";
+
+  function saveLastRealSnapshot(payload) {
+    if (
+      !payload ||
+      payload.schemaVersion !== "trendward_public_v1" ||
+      !Array.isArray(payload.candidates)
+    ) {
+      return;
+    }
+
+    try {
+      localStorage.setItem(
+        LAST_REAL_SNAPSHOT_KEY,
+        JSON.stringify(payload)
+      );
+    } catch (err) {
+      console.warn("Could not save Trendward scanner snapshot:", err);
+    }
+  }
+
+  function loadLastRealSnapshot() {
+    try {
+      const raw =
+        localStorage.getItem(LAST_REAL_SNAPSHOT_KEY);
+
+      if (!raw) return null;
+
+      const payload = JSON.parse(raw);
+
+      if (
+        !payload ||
+        payload.schemaVersion !== "trendward_public_v1" ||
+        !Array.isArray(payload.candidates)
+      ) {
+        return null;
+      }
+
+      return payload;
+
+    } catch (err) {
+      console.warn("Could not load saved Trendward snapshot:", err);
+      return null;
+    }
+  }
+
+  function historicalSnapshot(payload) {
+    if (!payload) return null;
+
+    const copy = JSON.parse(
+      JSON.stringify(payload)
+    );
+
+    const raw =
+      copy.scannerScanTime ||
+      copy.scannerCapturedAt ||
+      copy.generatedAt;
+
+    let ageMinutes = Number(copy.ageMinutes);
+
+    if (raw) {
+      const d = new Date(raw);
+
+      if (!Number.isNaN(d.getTime())) {
+        ageMinutes = Math.max(
+          0,
+          (Date.now() - d.getTime()) / 60000
+        );
+      }
+    }
+
+    copy.stale = true;
+    copy.marketStatus = "stale";
+
+    if (Number.isFinite(ageMinutes)) {
+      copy.ageMinutes = ageMinutes;
+    }
+
+    return copy;
+  }
   function freshnessBanner(payload) {
     let el = document.getElementById("dataFreshnessBanner");
     const topbar = document.querySelector(".topbar");
@@ -69,6 +166,7 @@
 
   function renderSnapshot(payload) {
     window.TRENDWARD_PUBLIC_PAYLOAD = payload;
+    saveLastRealSnapshot(payload);
 
     if (typeof data !== "undefined") {
       for (const key of ["markets","kpis","candidates","watchlist","signals","catalysts"]) {
@@ -123,7 +221,7 @@
 
   async function refreshTrendwardData() {
     if (!cfg.liveDataUrl) {
-      setStatus("Demo data", "neutral");
+      setStatus("Scanner data unavailable", "warn");
       return;
     }
 
@@ -172,9 +270,59 @@
 
       window.dispatchEvent(new CustomEvent("trendward:data", {detail: payload}));
     } catch (err) {
-      console.warn("Trendward public data fallback:", err);
-      setStatus("Live feed unavailable · demo fallback", "warn");
+
+      console.warn(
+        "Trendward scanner feed unavailable:",
+        err
+      );
+
+      const cached =
+        loadLastRealSnapshot();
+
+      if (cached) {
+
+        const historical =
+          historicalSnapshot(cached);
+
+        renderSnapshot(historical);
+
+        setStatus(
+          `Latest historical scanner · ${fmtScanTime(historical)}`,
+          "warn"
+        );
+
+        window.dispatchEvent(
+          new CustomEvent(
+            "trendward:data",
+            { detail: historical }
+          )
+        );
+
+      } else {
+
+        setStatus(
+          "Scanner feed unavailable · no saved scanner snapshot",
+          "warn"
+        );
+
+      }
     }
+  }
+
+  const cachedAtStartup =
+    loadLastRealSnapshot();
+
+  if (cachedAtStartup) {
+
+    const historical =
+      historicalSnapshot(cachedAtStartup);
+
+    renderSnapshot(historical);
+
+    setStatus(
+      `Latest historical scanner · ${fmtScanTime(historical)}`,
+      "warn"
+    );
   }
 
   refreshTrendwardData();
