@@ -267,7 +267,10 @@
       controls=document.createElement("div");
       controls.id="watchControlsV15";
       controls.className="watch-controls";
-      heading?.appendChild(controls);
+    }
+
+    if(controls.parentElement !== full.parentElement){
+      full.parentElement?.insertBefore(controls, full);
     }
 
     const isAuto=(tier==="PRO"||tier==="PREMIUM"||tier==="PREMIER") && autoEnabled();
@@ -523,7 +526,7 @@
 
   function titleForSection(section){
     const names={
-      overview:["Trendward · Research Cockpit","Market Intelligence Dashboard"],
+      overview:["Trendward","AI MARKET INTELLIGENCE"],
       scanner:["Trendward","Scanner"],
       watchlist:["Trendward","Watchlist"],
       signals:["Trendward","Signals"],
@@ -541,6 +544,7 @@
     if(!topbar)return;
     const eyebrow=topbar.querySelector(".eyebrow");
     const h1=topbar.querySelector("h1");
+    topbar.classList.toggle("overview-brand-title", section==="overview");
     if(eyebrow) eyebrow.textContent=brand;
     if(h1) h1.textContent=page;
   }
