@@ -1138,3 +1138,11 @@ table {
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
+/* v33 cleanup: remove redundant overview links and section page titles */
+#section-overview .hero-actions {
+  display: none !important;
+}
+
+.section:not(#section-overview) > .section-heading > div > h2 {
+  display: none !important;
+}
