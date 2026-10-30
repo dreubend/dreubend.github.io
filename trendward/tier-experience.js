@@ -544,7 +544,6 @@
     if(!topbar)return;
     const eyebrow=topbar.querySelector(".eyebrow");
     const h1=topbar.querySelector("h1");
-    topbar.classList.toggle("overview-brand-title", section==="overview");
     if(eyebrow) eyebrow.textContent=brand;
     if(h1) h1.textContent=page;
   }

@@ -1150,20 +1150,3 @@ table {
 .section:not(#section-overview) > .section-heading {
   display: none !important;
 }
-/* v36: Overview branding matches sidebar */
-.topbar.overview-brand-title .eyebrow {
-  color: var(--text);
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -.03em;
-  text-transform: none;
-}
-
-.topbar.overview-brand-title h1 {
-  margin-top: 2px;
-  color: var(--muted);
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: .17em;
-  text-transform: uppercase;
-}
