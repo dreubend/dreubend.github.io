@@ -336,6 +336,60 @@
     if(full) full.innerHTML=rows.map((c,i)=>`<div class="timeline-item"><div class="timeline-time">${esc(scanTime())}</div><div class="timeline-dot-col"><div class="timeline-dot"></div>${i<rows.length-1?'<div class="timeline-line"></div>':''}</div><div class="timeline-content"><strong>${esc(c.symbol)}</strong><p>${esc(item(c))}</p></div></div>`).join("");
   }
 
+  function renderOverviewCards(){
+    const rows=visibleRows();
+
+    const watch=document.getElementById("watchlistCards");
+    const signals=document.getElementById("signalCards");
+    const catalysts=document.getElementById("catalystCards");
+
+    if(watch){
+      watch.innerHTML=rows.map(c=>{
+        const context=plainWhy(c) || `${c.state||"Watch"} · ${money(c.price)}`;
+        return `<div class="stack-card">
+          <div class="stack-card-top">
+            <strong>${esc(c.symbol)}</strong>
+            <span class="mini-badge">WATCH</span>
+          </div>
+          <p>${esc(context)}</p>
+        </div>`;
+      }).join("");
+    }
+
+    if(signals){
+      signals.innerHTML=rows.map(c=>{
+        const item=`${c.state||"Watch"} · ${score(c)===null?"model —":`25% model ${score(c).toFixed(0)}`} · ${num(c.vol)===null?"liquidity —":`5m liquidity ${num(c.vol).toFixed(2)}×`}`;
+        return `<div class="stack-card">
+          <div class="stack-card-top">
+            <strong>${esc(c.symbol)}</strong>
+            <span class="mini-badge">${esc(scanTime())}</span>
+          </div>
+          <p>${esc(item)}</p>
+        </div>`;
+      }).join("");
+    }
+
+    if(catalysts){
+      catalysts.innerHTML=rows.map(c=>{
+        const move=num(c.move);
+        const liq=num(c.vol);
+
+        const context=[
+          c.state || "Watch",
+          move===null ? null : `${pct(move)} session move`,
+          liq===null ? null : `${liq.toFixed(2)}× 5m liquidity`
+        ].filter(Boolean).join(" · ");
+
+        return `<div class="stack-card">
+          <div class="stack-card-top">
+            <strong>${esc(c.symbol)}</strong>
+            <span class="mini-badge">CONTEXT</span>
+          </div>
+          <p>${esc(context)}</p>
+        </div>`;
+      }).join("");
+    }
+  }
   function renderCandidateTable(){
     const el=document.getElementById("candidateTable"); if(!el)return;
     let rows=visibleRows();
@@ -896,6 +950,7 @@
     setupPriceFilters();
     renderWatchlist();
     renderSignals();
+    renderOverviewCards();
     renderHelp();
     renderFreeCopy();
     renderMinuteIntelligence();
