@@ -1126,3 +1126,15 @@ table {
         flex-shrink: 1;
     }
 }
+/* v32 cleanup: remove obsolete tier banners and their layout space */
+.static-tier-identity,
+.tier-mini {
+  display: none !important;
+}
+
+/* Keep page content tight beneath the stale/live data banner */
+.illustrative-preview-banner + .section.active,
+.notice + .section.active {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
