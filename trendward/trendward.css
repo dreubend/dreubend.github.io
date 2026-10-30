@@ -1146,3 +1146,7 @@ table {
 .section:not(#section-overview) > .section-heading > div > h2 {
   display: none !important;
 }
+/* v35: remove redundant section intro blocks completely */
+.section:not(#section-overview) > .section-heading {
+  display: none !important;
+}
