@@ -526,7 +526,7 @@
 
   function titleForSection(section){
     const names={
-      overview:["Trendward","AI MARKET INTELLIGENCE"],
+      overview:["Trendward","Overview"],
       scanner:["Trendward","Scanner"],
       watchlist:["Trendward","Watchlist"],
       signals:["Trendward","Signals"],
