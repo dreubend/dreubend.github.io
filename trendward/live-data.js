@@ -236,6 +236,7 @@
       if (fixedTier === "FREE") requestUrl.searchParams.set("delay_minutes", "30");
       const res = await fetch(requestUrl.toString(), {
         cache: "no-store",
+        credentials: "include",
         headers: {"Accept":"application/json"}
       });
 
