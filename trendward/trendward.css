@@ -1167,3 +1167,37 @@ table {
   letter-spacing: .17em;
   text-transform: uppercase;
 }
+/* v37: hamburger menu at all screen sizes */
+.sidebar {
+  position: fixed !important;
+  left: 0 !important;
+  top: 0 !important;
+  height: 100vh !important;
+  transform: translateX(-100%) !important;
+  transition: transform .22s ease !important;
+  z-index: 1001 !important;
+}
+
+.sidebar.open {
+  transform: translateX(0) !important;
+}
+
+#mobileMenu {
+  display: inline-flex !important;
+}
+
+.main {
+  margin-left: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+#mobileBackdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1000 !important;
+}
+
+#mobileBackdrop.show {
+  display: block !important;
+}
