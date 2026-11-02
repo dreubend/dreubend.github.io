@@ -2560,3 +2560,38 @@ table {
     grid-template-columns:1fr;
   }
 }
+
+/* ===== Overview lower row cleanup v53 ===== */
+
+.overview-market-grid
+.overview-strength-in-grid{
+  margin:0 !important;
+  width:100%;
+}
+
+.overview-strength-in-grid
+.overview-price-bands{
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+
+.overview-strength-in-grid
+.overview-price-bands > div{
+  min-width:0;
+}
+
+@media(max-width:900px){
+  .overview-strength-in-grid
+  .overview-price-bands{
+    grid-template-columns:
+      repeat(3,minmax(0,1fr));
+  }
+}
+
+@media(max-width:600px){
+  .overview-strength-in-grid
+  .overview-price-bands{
+    grid-template-columns:1fr;
+  }
+}

@@ -455,6 +455,36 @@
       <div id="overviewJourneyPanels"></div>
     `;
 
+    const marketGrid =
+      wrap.querySelector(
+        ".overview-market-grid"
+      );
+
+    const oldEnvironment =
+      wrap.querySelector(
+        ".overview-environment"
+      );
+
+    const strengthPanel =
+      wrap.querySelector(
+        ".overview-strength"
+      );
+
+    if(oldEnvironment){
+      oldEnvironment.remove();
+    }
+
+    if(marketGrid && strengthPanel){
+      strengthPanel.classList.add(
+        "overview-strength-in-grid"
+      );
+
+      marketGrid.insertBefore(
+        strengthPanel,
+        marketGrid.firstChild
+      );
+    }
+
     moveJourneyPanels();
   }
 
