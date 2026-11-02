@@ -1640,18 +1640,62 @@
     const scorePanel =
       section.querySelector(".score-panel");
 
+    const storyPanel =
+      block.querySelector(".overview-story-panel");
+
+    const storyGrid =
+      block.querySelector(".overview-story-grid");
+
     const factColumn =
       block.querySelector(".overview-fact-column");
 
-    if(scorePanel && factColumn){
+    if(storyGrid){
+      storyGrid.classList.add(
+        "overview-story-grid-single"
+      );
+    }
+
+    if(scorePanel && storyPanel){
       scorePanel.classList.add(
-        "overview-environment-score"
+        "overview-environment-score",
+        "overview-strength-panel"
       );
 
-      factColumn.insertBefore(
-        scorePanel,
-        factColumn.firstChild
+      storyPanel.insertAdjacentElement(
+        "afterend",
+        scorePanel
       );
+    }
+
+    if(factColumn && storyPanel){
+      let factsPanel =
+        block.querySelector(
+          ".overview-facts-panel"
+        );
+
+      if(!factsPanel){
+        factsPanel =
+          document.createElement("article");
+
+        factsPanel.className =
+          "panel overview-facts-panel";
+      }
+
+      factsPanel.appendChild(
+        factColumn
+      );
+
+      if(scorePanel){
+        scorePanel.insertAdjacentElement(
+          "afterend",
+          factsPanel
+        );
+      }else{
+        storyPanel.insertAdjacentElement(
+          "afterend",
+          factsPanel
+        );
+      }
     }
 
     if(oldHeroPanel){
