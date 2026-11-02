@@ -934,4 +934,7 @@
     "trendward:data",
     scheduleRender
   );
+  window.TRENDWARD_SETUP_PHASE = phase;
+  window.TRENDWARD_PHASE_REASON = phaseReason;
+
 })();

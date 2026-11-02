@@ -621,7 +621,9 @@
   function renderWatchlistDepth(){
     const section=document.getElementById("section-watchlist");
     if(!section)return;
+
     let panel=document.getElementById("watchlistInsightPanel");
+
     if(!panel){
       panel=document.createElement("article");
       panel.id="watchlistInsightPanel";
@@ -633,27 +635,181 @@
     const rows=visibleRows().filter(c=>selected.has(c.symbol));
 
     if(!rows.length){
-      panel.innerHTML=`<div class="panel-label">WATCH CONTEXT</div><h3>Current watch intelligence</h3><p class="settings-copy">Select a current Scanner setup to see deeper watch context here.</p>`;
+      panel.innerHTML=`
+        <div class="panel-label">WATCH CONTEXT</div>
+        <h3>Current watch intelligence</h3>
+        <p class="settings-copy">
+          Select a current Scanner setup to see deeper watch context here.
+        </p>
+      `;
       return;
     }
 
-    panel.innerHTML=`<div class="panel-header"><div><div class="panel-label">WATCH CONTEXT</div><h3>Why these setups are still worth watching</h3></div><span class="mini-badge">${rows.length} CURRENT</span></div>
+    const setupPhase = c =>
+      typeof window.TRENDWARD_SETUP_PHASE === "function"
+        ? window.TRENDWARD_SETUP_PHASE(c)
+        : (c.state || "Developing");
+
+    const setupReason = c =>
+      typeof window.TRENDWARD_PHASE_REASON === "function"
+        ? window.TRENDWARD_PHASE_REASON(c)
+        : (plainWhy(c) || "This setup remains active in the current Scanner.");
+
+    function watchStatus(c){
+      const p=setupPhase(c);
+
+      if(
+        p==="Rejected / Fading" ||
+        p==="Cooling"
+      ){
+        return "At Risk";
+      }
+
+      return "Still Monitoring";
+    }
+
+    function whyStillWatching(c){
+      const support=[];
+
+      const vwap=num(c.price_vs_vwap_pct);
+      const high=num(c.distance_from_high_pct);
+      const liq5=num(c.vol);
+      const liq15=num(c.volume_accel_15m);
+      const model=score(c);
+
+      if(vwap!==null && vwap>0){
+        support.push(
+          `price remains ${Math.abs(vwap).toFixed(1)}% above VWAP`
+        );
+      }
+
+      if(high!==null && high>=-10){
+        support.push(
+          `price remains within ${Math.abs(high).toFixed(1)}% of the session high`
+        );
+      }
+
+      if(liq15!==null && liq15>=1.5){
+        support.push(
+          `15-minute liquidity remains elevated at ${liq15.toFixed(2)}×`
+        );
+      } else if(liq5!==null && liq5>=1){
+        support.push(
+          `5-minute liquidity remains above baseline at ${liq5.toFixed(2)}×`
+        );
+      }
+
+      if(model!==null && model>=60){
+        support.push(
+          `the 25% model remains ${model.toFixed(0)}/100`
+        );
+      }
+
+      if(!support.length){
+        return "It remains in the current Scanner, but supportive evidence is limited. Trendward is monitoring for renewed strength or further deterioration.";
+      }
+
+      return `Trendward is still monitoring this setup because ${support.slice(0,3).join(", ")}.`;
+    }
+
+    panel.innerHTML=`
+      <div class="panel-header">
+        <div>
+          <div class="panel-label">WATCH CONTEXT</div>
+          <h3>Why these setups are still being followed</h3>
+        </div>
+      </div>
+
       <div class="watch-intel-grid">
-        ${rows.map(c=>`
-          <article class="watch-intel-card">
-            <div class="watch-intel-top"><strong>${esc(c.symbol)}</strong><span class="momentum-state ${momentumLabel(c).toLowerCase()}">${momentumLabel(c)}</span></div>
-            <div class="watch-intel-price">${money(c.price)} <span>${pct(c.move)}</span></div>
-            <div class="watch-intel-metrics">
-              <div><span>State</span><strong>${esc(c.state||"Watch")}</strong></div>
-              <div><span>Vs VWAP</span><strong>${pct(c.price_vs_vwap_pct)}</strong></div>
-              <div><span>From high</span><strong>${pct(c.distance_from_high_pct)}</strong></div>
-              <div><span>5m liq</span><strong>${num(c.vol)===null?"—":num(c.vol).toFixed(2)+"×"}</strong></div>
-              <div><span>15m liq</span><strong>${num(c.volume_accel_15m)===null?"—":num(c.volume_accel_15m).toFixed(2)+"×"}</strong></div>
-              <div><span>25% model</span><strong>${score(c)===null?"—":score(c).toFixed(0)+"/100"}</strong></div>
-            </div>
-            <p>${esc(plainWhy(c))}</p>
-          </article>`).join("")}
-      </div>`;
+
+        ${rows.map(c=>{
+
+          const p=setupPhase(c);
+          const status=watchStatus(c);
+
+          return `
+            <article class="watch-intel-card">
+
+              <div class="watch-intel-top">
+                <div>
+                  <strong>${esc(c.symbol)}</strong>
+                  <div class="watch-intel-price">
+                    ${money(c.price)} ${pct(c.move)}
+                  </div>
+                </div>
+
+                <span class="momentum-state ${
+                  status==="At Risk"
+                    ? "mixed"
+                    : "holding"
+                }">
+                  ${esc(status)}
+                </span>
+              </div>
+
+              <div class="watch-phase-block">
+                <span class="watch-focus-label">SETUP PHASE</span>
+                <strong>${esc(p)}</strong>
+                <p>${esc(setupReason(c))}</p>
+              </div>
+
+              <div class="watch-phase-block">
+                <span class="watch-focus-label">WHY I AM STILL WATCHING</span>
+                <p>${esc(whyStillWatching(c))}</p>
+              </div>
+
+              <div class="watch-intel-metrics">
+
+                <div>
+                  <span>State</span>
+                  <strong>${esc(c.state||"Selected")}</strong>
+                </div>
+
+                <div>
+                  <span>Vs VWAP</span>
+                  <strong>${pct(c.price_vs_vwap_pct)}</strong>
+                </div>
+
+                <div>
+                  <span>From high</span>
+                  <strong>${pct(c.distance_from_high_pct)}</strong>
+                </div>
+
+                <div>
+                  <span>5m liq</span>
+                  <strong>${
+                    num(c.vol)===null
+                      ?"—"
+                      :num(c.vol).toFixed(2)+"×"
+                  }</strong>
+                </div>
+
+                <div>
+                  <span>15m liq</span>
+                  <strong>${
+                    num(c.volume_accel_15m)===null
+                      ?"—"
+                      :num(c.volume_accel_15m).toFixed(2)+"×"
+                  }</strong>
+                </div>
+
+                <div>
+                  <span>25% model</span>
+                  <strong>${
+                    score(c)===null
+                      ?"—"
+                      :score(c).toFixed(0)+"/100"
+                  }</strong>
+                </div>
+
+              </div>
+
+            </article>
+          `;
+        }).join("")}
+
+      </div>
+    `;
   }
 
   function renderSignalDepth(){
