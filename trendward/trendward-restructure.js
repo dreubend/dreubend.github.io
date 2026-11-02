@@ -1197,3 +1197,640 @@
   window.TRENDWARD_PHASE_REASON = phaseReason;
 
 })();
+/* ===== Trendward Timeline UI persistence + dual sliders v7 ===== */
+(() => {
+
+  const STATE_KEY =
+    "trendward-dashboard-ui-state-v1";
+
+  let lastDataSignature = "";
+
+
+  function readState(){
+    try{
+      return JSON.parse(
+        sessionStorage.getItem(STATE_KEY) || "{}"
+      );
+    }catch{
+      return {};
+    }
+  }
+
+
+  function saveState(extra = {}){
+
+    const previous = readState();
+
+    const next = {
+      ...previous,
+      ...extra
+    };
+
+    try{
+      sessionStorage.setItem(
+        STATE_KEY,
+        JSON.stringify(next)
+      );
+    }catch{}
+  }
+
+
+  function timelineSlider(){
+
+    return (
+      document.getElementById(
+        "signalTimelineSlider"
+      ) ||
+      document.querySelector(
+        "#section-signals input[type='range']"
+      )
+    );
+  }
+
+
+  /*
+    Signature intentionally ignores things such as
+    "ageMinutes". The freshness banner can update without
+    rebuilding the entire dashboard.
+  */
+  function dataSignature(payload){
+
+    if(!payload) return "";
+
+    const candidates =
+      Array.isArray(payload.candidates)
+        ? payload.candidates
+        : [];
+
+    const compact =
+      candidates.map(c => ({
+        symbol:c?.symbol ?? null,
+        rank:c?.rank ?? null,
+        state:c?.state ?? null,
+        price:c?.price ?? null,
+        move:c?.move ?? null,
+        vol:c?.vol ?? null,
+        volume_accel_15m:
+          c?.volume_accel_15m ?? null,
+        price_vs_vwap_pct:
+          c?.price_vs_vwap_pct ?? null,
+        distance_from_high_pct:
+          c?.distance_from_high_pct ?? null,
+        score10:
+          c?.model_scores?.score10 ?? null,
+        score25:
+          c?.model_scores?.score25 ?? null,
+        score50:
+          c?.model_scores?.score50 ?? null,
+        score100:
+          c?.model_scores?.score100 ?? null
+      }));
+
+    try{
+      return JSON.stringify({
+        scan:
+          payload.scannerScanTime ||
+          payload.scannerCapturedAt ||
+          "",
+        candidates:compact
+      });
+    }catch{
+      return "";
+    }
+  }
+
+
+  function rememberCurrentUI(){
+
+    const slider = timelineSlider();
+
+    saveState({
+      hash:
+        window.location.hash || "#overview",
+
+      scrollY:
+        window.scrollY || 0,
+
+      timelineValue:
+        slider
+          ? slider.value
+          : null
+    });
+  }
+
+
+  function positionTimelineLine(slider){
+
+    if(!slider) return;
+
+    const panel =
+      slider.closest(
+        ".signal-history-panel"
+      );
+
+    if(!panel) return;
+
+    const matrix =
+      panel.querySelector(
+        ".signal-matrix"
+      );
+
+    const track =
+      panel.querySelector(
+        ".signal-track"
+      );
+
+    const line =
+      panel.querySelector(
+        ".signal-now-line"
+      );
+
+    if(
+      !matrix ||
+      !track ||
+      !line
+    ){
+      return;
+    }
+
+    const min =
+      Number(slider.min || 0);
+
+    const max =
+      Number(slider.max || 100);
+
+    const value =
+      Number(slider.value || min);
+
+    const denominator =
+      Math.max(1,max-min);
+
+    const ratio =
+      Math.max(
+        0,
+        Math.min(
+          1,
+          (value-min)/denominator
+        )
+      );
+
+    const matrixRect =
+      matrix.getBoundingClientRect();
+
+    const trackRect =
+      track.getBoundingClientRect();
+
+    const x =
+      (trackRect.left-matrixRect.left) +
+      (trackRect.width*ratio);
+
+    line.style.marginLeft="0";
+    line.style.left=`${x}px`;
+  }
+
+
+  function enhanceTimeline(){
+
+    const primary =
+      document.getElementById(
+        "signalTimelineSlider"
+      );
+
+    if(!primary) return;
+
+    const panel =
+      primary.closest(
+        ".signal-history-panel"
+      );
+
+    if(!panel) return;
+
+    const primaryWrap =
+      primary.closest(
+        ".signal-slider-wrap"
+      );
+
+    const matrix =
+      panel.querySelector(
+        ".signal-matrix"
+      );
+
+    if(
+      !primaryWrap ||
+      !matrix
+    ){
+      return;
+    }
+
+
+    /* -----------------------------
+       TOP SLIDER
+    ----------------------------- */
+
+    primaryWrap.classList.add(
+      "timeline-slider-top"
+    );
+
+
+    /* -----------------------------
+       SECOND / LOWER SLIDER
+    ----------------------------- */
+
+    let bottomWrap =
+      panel.querySelector(
+        ".timeline-slider-bottom"
+      );
+
+    if(!bottomWrap){
+
+      bottomWrap =
+        primaryWrap.cloneNode(true);
+
+      bottomWrap.classList.remove(
+        "timeline-slider-top"
+      );
+
+      bottomWrap.classList.add(
+        "timeline-slider-bottom"
+      );
+
+      const bottomSlider =
+        bottomWrap.querySelector(
+          'input[type="range"]'
+        );
+
+      if(bottomSlider){
+
+        bottomSlider.id =
+          "signalTimelineSliderBottom";
+
+        bottomSlider.setAttribute(
+          "aria-label",
+          "Historical timeline lower slider"
+        );
+      }
+
+      const bottomButton =
+        bottomWrap.querySelector(
+          "button"
+        );
+
+      if(bottomButton){
+
+        bottomButton.id =
+          "signalTimelineLatestBottom";
+      }
+
+      matrix.insertAdjacentElement(
+        "afterend",
+        bottomWrap
+      );
+    }
+
+
+    const bottom =
+      bottomWrap.querySelector(
+        'input[type="range"]'
+      );
+
+
+    /* -----------------------------
+       RESTORE SAVED POSITION
+    ----------------------------- */
+
+    const saved =
+      readState().timelineValue;
+
+    if(
+      saved !== null &&
+      saved !== undefined &&
+      saved !== ""
+    ){
+
+      const numeric =
+        Number(saved);
+
+      if(Number.isFinite(numeric)){
+
+        primary.value =
+          String(
+            Math.max(
+              Number(primary.min || 0),
+              Math.min(
+                Number(primary.max || 100),
+                numeric
+              )
+            )
+          );
+
+        if(bottom){
+          bottom.value=primary.value;
+        }
+
+        /*
+          Let the original Trendward Timeline
+          logic update Evidence Stream/session.
+        */
+        primary.dispatchEvent(
+          new Event(
+            "input",
+            {bubbles:true}
+          )
+        );
+      }
+    }
+
+
+    /* -----------------------------
+       TOP -> BOTTOM SYNC
+    ----------------------------- */
+
+    if(
+      primary.dataset.dualTimelineBound
+      !== "1"
+    ){
+
+      primary.dataset.dualTimelineBound="1";
+
+      primary.addEventListener(
+        "input",
+        () => {
+
+          const lower =
+            document.getElementById(
+              "signalTimelineSliderBottom"
+            );
+
+          if(lower){
+            lower.value=primary.value;
+          }
+
+          saveState({
+            timelineValue:
+              primary.value
+          });
+
+          requestAnimationFrame(
+            () =>
+              positionTimelineLine(
+                primary
+              )
+          );
+        }
+      );
+    }
+
+
+    /* -----------------------------
+       BOTTOM -> TOP SYNC
+    ----------------------------- */
+
+    if(
+      bottom &&
+      bottom.dataset.dualTimelineBound
+      !== "1"
+    ){
+
+      bottom.dataset.dualTimelineBound="1";
+
+      bottom.addEventListener(
+        "input",
+        () => {
+
+          primary.value=
+            bottom.value;
+
+          saveState({
+            timelineValue:
+              bottom.value
+          });
+
+          /*
+            Use the original primary control
+            as the source of truth.
+          */
+          primary.dispatchEvent(
+            new Event(
+              "input",
+              {bubbles:true}
+            )
+          );
+
+          requestAnimationFrame(
+            () =>
+              positionTimelineLine(
+                primary
+              )
+          );
+        }
+      );
+    }
+
+
+    /* -----------------------------
+       LOWER "LATEST" BUTTON
+    ----------------------------- */
+
+    const bottomButton =
+      bottomWrap.querySelector(
+        "button"
+      );
+
+    if(
+      bottomButton &&
+      bottomButton.dataset.dualTimelineBound
+      !== "1"
+    ){
+
+      bottomButton.dataset.dualTimelineBound="1";
+
+      bottomButton.addEventListener(
+        "click",
+        () => {
+
+          primary.value =
+            primary.max;
+
+          if(bottom){
+            bottom.value =
+              primary.max;
+          }
+
+          saveState({
+            timelineValue:
+              primary.max
+          });
+
+          primary.dispatchEvent(
+            new Event(
+              "input",
+              {bubbles:true}
+            )
+          );
+
+          requestAnimationFrame(
+            () =>
+              positionTimelineLine(
+                primary
+              )
+          );
+        }
+      );
+    }
+
+
+    if(bottom){
+      bottom.value=primary.value;
+    }
+
+    requestAnimationFrame(
+      () =>
+        positionTimelineLine(
+          primary
+        )
+    );
+  }
+
+
+  function restoreUI(){
+
+    enhanceTimeline();
+
+    const state =
+      readState();
+
+    if(
+      Number.isFinite(
+        Number(state.scrollY)
+      )
+    ){
+
+      window.scrollTo(
+        0,
+        Number(state.scrollY)
+      );
+    }
+  }
+
+
+  /*
+    This capture listener runs before the normal
+    dashboard trendward:data listeners.
+
+    If the actual Scanner state has not changed,
+    stop the event from causing a complete rebuild.
+  */
+  window.addEventListener(
+    "trendward:data",
+    event => {
+
+      rememberCurrentUI();
+
+      const signature =
+        dataSignature(
+          event.detail
+        );
+
+      if(
+        signature &&
+        signature === lastDataSignature
+      ){
+
+        event.stopImmediatePropagation();
+
+        setTimeout(
+          enhanceTimeline,
+          0
+        );
+
+        return;
+      }
+
+      if(signature){
+        lastDataSignature =
+          signature;
+      }
+
+      /*
+        A genuinely new Scanner snapshot may
+        rerender the dashboard. Restore UI afterward.
+      */
+      setTimeout(
+        restoreUI,
+        80
+      );
+
+    },
+    true
+  );
+
+
+  window.addEventListener(
+    "trendward:timeline",
+    () => {
+
+      const slider =
+        timelineSlider();
+
+      if(slider){
+
+        saveState({
+          timelineValue:
+            slider.value
+        });
+
+        requestAnimationFrame(
+          () =>
+            positionTimelineLine(
+              slider
+            )
+        );
+      }
+    }
+  );
+
+
+  window.addEventListener(
+    "resize",
+    () => {
+
+      const slider =
+        timelineSlider();
+
+      if(slider){
+
+        requestAnimationFrame(
+          () =>
+            positionTimelineLine(
+              slider
+            )
+        );
+      }
+    }
+  );
+
+
+  if(
+    document.readyState ===
+    "loading"
+  ){
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () =>
+        setTimeout(
+          enhanceTimeline,
+          100
+        ),
+      {once:true}
+    );
+
+  }else{
+
+    setTimeout(
+      enhanceTimeline,
+      100
+    );
+  }
+
+})();

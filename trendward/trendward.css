@@ -2854,3 +2854,132 @@ table {
     min-height:auto;
   }
 }
+
+/* ===== Timeline synchronized slider geometry v57 ===== */
+
+#section-signals
+.signal-history-panel{
+  display:flex;
+  flex-direction:column;
+}
+
+
+/* Top Timeline slider */
+#section-signals
+.signal-slider-wrap.timeline-slider-top{
+  order:2;
+}
+
+
+/* Existing content */
+#section-signals
+.signal-history-note{
+  order:3;
+}
+
+#section-signals
+.signal-axis{
+  order:4;
+}
+
+#section-signals
+.signal-matrix{
+  order:5;
+}
+
+
+/* Restored lower slider */
+#section-signals
+.signal-slider-wrap.timeline-slider-bottom{
+  order:6;
+  margin-top:18px !important;
+}
+
+
+/* Legend now follows the lower slider */
+#section-signals
+.signal-legend{
+  order:7;
+}
+
+
+/*
+   Match the exact geometry of:
+
+   .signal-stock-row {
+     grid-template-columns:140px 1fr;
+     gap:10px;
+   }
+
+   This makes the slider's range begin at the
+   same horizontal position as each stock track.
+*/
+#section-signals
+.signal-slider-wrap{
+  display:grid !important;
+
+  grid-template-columns:
+    140px minmax(0,1fr);
+
+  column-gap:10px;
+  row-gap:8px;
+
+  width:100%;
+
+  margin:
+    18px 0
+    12px !important;
+
+  padding:0 !important;
+}
+
+
+/* Range exactly matches the stock-track column */
+#section-signals
+.signal-slider-wrap
+input[type="range"]{
+  grid-column:2;
+  width:100%;
+  min-width:0;
+  margin:0;
+}
+
+
+/*
+   Put Latest underneath the range so the button
+   does not shorten the slider track.
+*/
+#section-signals
+.signal-slider-wrap
+.ghost-btn{
+  grid-column:2;
+
+  justify-self:end;
+
+  margin-top:2px;
+}
+
+
+/*
+   JS now calculates the vertical line from the
+   actual track rectangle, so remove the older
+   hard-coded 150px margin.
+*/
+#section-signals
+.signal-now-line{
+  margin-left:0 !important;
+}
+
+
+@media(max-width:760px){
+
+  /*
+    This matches the existing mobile stock row:
+    85px label + 10px gap + track.
+  */
+  #section-signals
+  .signal-slider-wrap{
+    grid-template-columns:
+      85px minmax(0,1fr);
+  }
+}
