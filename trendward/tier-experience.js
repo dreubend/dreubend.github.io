@@ -263,6 +263,201 @@
     return loadManualWatch();
   }
 
+
+  function sharedSetupPhase(c){
+    return typeof window.TRENDWARD_SETUP_PHASE === "function"
+      ? window.TRENDWARD_SETUP_PHASE(c)
+      : (c.state || "Developing");
+  }
+
+  function sharedSetupReason(c){
+    return typeof window.TRENDWARD_PHASE_REASON === "function"
+      ? window.TRENDWARD_PHASE_REASON(c)
+      : (plainWhy(c) || "This setup remains active in the current Scanner.");
+  }
+
+  function watchEvidenceCount(c){
+    let count=0;
+
+    const vwap=num(c.price_vs_vwap_pct);
+    const high=num(c.distance_from_high_pct);
+    const l5=num(c.vol);
+    const l15=num(c.volume_accel_15m);
+    const model=score(c);
+
+    if(vwap!==null && vwap>=0) count++;
+    if(high!==null && high>=-10) count++;
+    if(l5!==null && l5>=1) count++;
+    if(l15!==null && l15>=1.5) count++;
+    if(model!==null && model>=60) count++;
+
+    return count;
+  }
+
+  function watchTierStatus(c){
+    const p=sharedSetupPhase(c);
+    const supports=watchEvidenceCount(c);
+
+    if(p==="Rejected / Fading"){
+      return "At Risk";
+    }
+
+    if(p==="Cooling"){
+      return "Fragile Watch";
+    }
+
+    if(
+      (p==="Continuation" || p==="Re-acceleration") &&
+      supports>=3
+    ){
+      return "Strong Watch";
+    }
+
+    if(supports>=2){
+      return "Active Watch";
+    }
+
+    return "Fragile Watch";
+  }
+
+  function watchStatusExplanation(c){
+    const status=watchTierStatus(c);
+    const supports=watchEvidenceCount(c);
+
+    if(status==="Strong Watch"){
+      return `${supports} supporting signals are currently aligned and the setup remains constructive.`;
+    }
+
+    if(status==="Active Watch"){
+      return `${supports} supporting signals remain constructive, so the setup still deserves active monitoring.`;
+    }
+
+    if(status==="At Risk"){
+      return "The setup has triggered rejection or fading conditions, but some supporting evidence remains and Trendward is monitoring for recovery or further deterioration.";
+    }
+
+    return "Supporting evidence has weakened. Trendward is still monitoring the setup, but confirmation is limited.";
+  }
+
+  function formatWatchMinutes(value){
+    const minutes=num(value);
+
+    if(minutes===null) return null;
+
+    const rounded=Math.max(0,Math.round(minutes));
+
+    if(rounded<60){
+      return `${rounded} minute${rounded===1?"":"s"}`;
+    }
+
+    const hours=Math.floor(rounded/60);
+    const mins=rounded%60;
+
+    return mins
+      ? `${hours}h ${mins}m`
+      : `${hours}h`;
+  }
+
+  function scannerPersistenceText(c){
+    const scans=num(c.consecutive_scans);
+    const minutes=num(c.scanner_streak_minutes);
+
+    if(scans===null || scans<1){
+      return "Scanner persistence is not available for this setup.";
+    }
+
+    const duration=formatWatchMinutes(minutes);
+
+    return duration
+      ? `Seen in ${Math.round(scans)} consecutive scans · continuously present for ${duration}.`
+      : `Seen in ${Math.round(scans)} consecutive scans.`;
+  }
+
+  function watchWhyText(c){
+    const support=[];
+
+    const vwap=num(c.price_vs_vwap_pct);
+    const high=num(c.distance_from_high_pct);
+    const l5=num(c.vol);
+    const l15=num(c.volume_accel_15m);
+    const model=score(c);
+
+    if(vwap!==null && vwap>0){
+      support.push(
+        `price remains ${vwap.toFixed(1)}% above VWAP`
+      );
+    }
+
+    if(high!==null && high>=-10){
+      support.push(
+        `price remains within ${Math.abs(high).toFixed(1)}% of the session high`
+      );
+    }
+
+    if(l15!==null && l15>=1.5){
+      support.push(
+        `15-minute liquidity remains elevated at ${l15.toFixed(2)}×`
+      );
+    } else if(l5!==null && l5>=1){
+      support.push(
+        `5-minute liquidity remains above baseline at ${l5.toFixed(2)}×`
+      );
+    }
+
+    if(model!==null && model>=60){
+      support.push(
+        `the 25% model remains ${model.toFixed(0)}/100`
+      );
+    }
+
+    if(!support.length){
+      return "The setup remains in the current Scanner, but constructive evidence is limited. Trendward is watching for renewed confirmation or further deterioration.";
+    }
+
+    return `Trendward is still following this setup because ${support.slice(0,3).join(", ")}.`;
+  }
+
+  function watchRiskText(c){
+    const triggered=[];
+
+    const move=num(c.move);
+    const vwap=num(c.price_vs_vwap_pct);
+    const high=num(c.distance_from_high_pct);
+    const l5=num(c.vol);
+
+    if(vwap!==null && vwap<=-5){
+      triggered.push(
+        `${Math.abs(vwap).toFixed(1)}% below VWAP`
+      );
+    }
+
+    if(high!==null && high<=-20){
+      triggered.push(
+        `${Math.abs(high).toFixed(1)}% below the session high`
+      );
+    }
+
+    if(l5!==null && l5<0.8){
+      triggered.push(
+        `5-minute liquidity at ${l5.toFixed(2)}×`
+      );
+    }
+
+    if(move!==null && move<0){
+      triggered.push(
+        `session move at ${move.toFixed(1)}%`
+      );
+    }
+
+    const thresholds =
+      "Key weakening thresholds are price 5% or more below VWAP, 20% or more below the session high, 5-minute liquidity below 0.80× baseline, or a negative session move.";
+
+    if(triggered.length){
+      return `Currently triggered: ${triggered.join(", ")}. ${thresholds} The Watchlist removes the stock when it is no longer returned by your tier's current Scanner.`;
+    }
+
+    return `${thresholds} The Watchlist removes the stock when it is no longer returned by your tier's current Scanner.`;
+  }
   function renderWatchlist(){
     const heading=document.querySelector("#section-watchlist .section-heading");
     const full=document.getElementById("watchlistFull"); if(!full)return;
@@ -308,24 +503,39 @@
           <div class="watch-focus-head">
             <div>
               <strong>${esc(c.symbol)}</strong>
-              <span>${money(c.price)}</span>
+              <span>${money(c.price)} ${pct(c.move)}</span>
             </div>
-            <span class="state-badge">${esc(c.state||"Watch")}</span>
+
+            <span class="state-badge">
+              ${esc(watchTierStatus(c))}
+            </span>
           </div>
 
           <div class="watch-focus-section">
-            <span class="watch-focus-label">WHY I AM STILL WATCHING</span>
-            <p>${esc(plainWhy(c) || "This setup remains active in the current Scanner.")}</p>
+            <span class="watch-focus-label">SETUP PHASE</span>
+            <strong>${esc(sharedSetupPhase(c))}</strong>
+            <p>${esc(sharedSetupReason(c))}</p>
           </div>
 
           <div class="watch-focus-section">
             <span class="watch-focus-label">WATCH STATUS</span>
-            <p>Still present in the current Scanner and actively followed by this Watchlist.</p>
+            <strong>${esc(watchTierStatus(c))}</strong>
+            <p>${esc(watchStatusExplanation(c))}</p>
+          </div>
+
+          <div class="watch-focus-section">
+            <span class="watch-focus-label">SCANNER PERSISTENCE</span>
+            <p>${esc(scannerPersistenceText(c))}</p>
+          </div>
+
+          <div class="watch-focus-section">
+            <span class="watch-focus-label">WHY I AM STILL WATCHING</span>
+            <p>${esc(watchWhyText(c))}</p>
           </div>
 
           <div class="watch-focus-section watch-focus-exit">
-            <span class="watch-focus-label">WHAT ENDS THE WATCH</span>
-            <p>This stock automatically leaves the Watchlist if it falls out of your tier's current Scanner.</p>
+            <span class="watch-focus-label">WHAT WOULD WEAKEN OR END THE WATCH</span>
+            <p>${esc(watchRiskText(c))}</p>
           </div>
 
         </article>
@@ -619,197 +829,8 @@
   }
 
   function renderWatchlistDepth(){
-    const section=document.getElementById("section-watchlist");
-    if(!section)return;
-
-    let panel=document.getElementById("watchlistInsightPanel");
-
-    if(!panel){
-      panel=document.createElement("article");
-      panel.id="watchlistInsightPanel";
-      panel.className="panel watch-insight-panel";
-      section.appendChild(panel);
-    }
-
-    const selected=new Set(watchedSymbols());
-    const rows=visibleRows().filter(c=>selected.has(c.symbol));
-
-    if(!rows.length){
-      panel.innerHTML=`
-        <div class="panel-label">WATCH CONTEXT</div>
-        <h3>Current watch intelligence</h3>
-        <p class="settings-copy">
-          Select a current Scanner setup to see deeper watch context here.
-        </p>
-      `;
-      return;
-    }
-
-    const setupPhase = c =>
-      typeof window.TRENDWARD_SETUP_PHASE === "function"
-        ? window.TRENDWARD_SETUP_PHASE(c)
-        : (c.state || "Developing");
-
-    const setupReason = c =>
-      typeof window.TRENDWARD_PHASE_REASON === "function"
-        ? window.TRENDWARD_PHASE_REASON(c)
-        : (plainWhy(c) || "This setup remains active in the current Scanner.");
-
-    function watchStatus(c){
-      const p=setupPhase(c);
-
-      if(
-        p==="Rejected / Fading" ||
-        p==="Cooling"
-      ){
-        return "At Risk";
-      }
-
-      return "Still Monitoring";
-    }
-
-    function whyStillWatching(c){
-      const support=[];
-
-      const vwap=num(c.price_vs_vwap_pct);
-      const high=num(c.distance_from_high_pct);
-      const liq5=num(c.vol);
-      const liq15=num(c.volume_accel_15m);
-      const model=score(c);
-
-      if(vwap!==null && vwap>0){
-        support.push(
-          `price remains ${Math.abs(vwap).toFixed(1)}% above VWAP`
-        );
-      }
-
-      if(high!==null && high>=-10){
-        support.push(
-          `price remains within ${Math.abs(high).toFixed(1)}% of the session high`
-        );
-      }
-
-      if(liq15!==null && liq15>=1.5){
-        support.push(
-          `15-minute liquidity remains elevated at ${liq15.toFixed(2)}×`
-        );
-      } else if(liq5!==null && liq5>=1){
-        support.push(
-          `5-minute liquidity remains above baseline at ${liq5.toFixed(2)}×`
-        );
-      }
-
-      if(model!==null && model>=60){
-        support.push(
-          `the 25% model remains ${model.toFixed(0)}/100`
-        );
-      }
-
-      if(!support.length){
-        return "It remains in the current Scanner, but supportive evidence is limited. Trendward is monitoring for renewed strength or further deterioration.";
-      }
-
-      return `Trendward is still monitoring this setup because ${support.slice(0,3).join(", ")}.`;
-    }
-
-    panel.innerHTML=`
-      <div class="panel-header">
-        <div>
-          <div class="panel-label">WATCH CONTEXT</div>
-          <h3>Why these setups are still being followed</h3>
-        </div>
-      </div>
-
-      <div class="watch-intel-grid">
-
-        ${rows.map(c=>{
-
-          const p=setupPhase(c);
-          const status=watchStatus(c);
-
-          return `
-            <article class="watch-intel-card">
-
-              <div class="watch-intel-top">
-                <div>
-                  <strong>${esc(c.symbol)}</strong>
-                  <div class="watch-intel-price">
-                    ${money(c.price)} ${pct(c.move)}
-                  </div>
-                </div>
-
-                <span class="momentum-state ${
-                  status==="At Risk"
-                    ? "mixed"
-                    : "holding"
-                }">
-                  ${esc(status)}
-                </span>
-              </div>
-
-              <div class="watch-phase-block">
-                <span class="watch-focus-label">SETUP PHASE</span>
-                <strong>${esc(p)}</strong>
-                <p>${esc(setupReason(c))}</p>
-              </div>
-
-              <div class="watch-phase-block">
-                <span class="watch-focus-label">WHY I AM STILL WATCHING</span>
-                <p>${esc(whyStillWatching(c))}</p>
-              </div>
-
-              <div class="watch-intel-metrics">
-
-                <div>
-                  <span>State</span>
-                  <strong>${esc(c.state||"Selected")}</strong>
-                </div>
-
-                <div>
-                  <span>Vs VWAP</span>
-                  <strong>${pct(c.price_vs_vwap_pct)}</strong>
-                </div>
-
-                <div>
-                  <span>From high</span>
-                  <strong>${pct(c.distance_from_high_pct)}</strong>
-                </div>
-
-                <div>
-                  <span>5m liq</span>
-                  <strong>${
-                    num(c.vol)===null
-                      ?"—"
-                      :num(c.vol).toFixed(2)+"×"
-                  }</strong>
-                </div>
-
-                <div>
-                  <span>15m liq</span>
-                  <strong>${
-                    num(c.volume_accel_15m)===null
-                      ?"—"
-                      :num(c.volume_accel_15m).toFixed(2)+"×"
-                  }</strong>
-                </div>
-
-                <div>
-                  <span>25% model</span>
-                  <strong>${
-                    score(c)===null
-                      ?"—"
-                      :score(c).toFixed(0)+"/100"
-                  }</strong>
-                </div>
-
-              </div>
-
-            </article>
-          `;
-        }).join("")}
-
-      </div>
-    `;
+    const old=document.getElementById("watchlistInsightPanel");
+    if(old) old.remove();
   }
 
   function renderSignalDepth(){
