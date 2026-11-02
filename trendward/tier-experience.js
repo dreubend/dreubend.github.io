@@ -1336,6 +1336,278 @@
 
     });
   }
+
+  function renderOverviewStory(){
+    const section =
+      document.getElementById("section-overview");
+
+    if(!section)return;
+
+    let block =
+      document.getElementById(
+        "trendwardResearchStory"
+      );
+
+    if(!block){
+      block=document.createElement("section");
+      block.id="trendwardResearchStory";
+      block.className="overview-research-story";
+
+      const before =
+        section.querySelector(
+          ".overview-intelligence-v40"
+        );
+
+      if(before){
+        section.insertBefore(block,before);
+      }else{
+        section.appendChild(block);
+      }
+    }
+
+    block.innerHTML=`
+      <article class="panel overview-story-panel">
+
+        <div class="overview-story-heading">
+          <div class="panel-label">
+            WHY TRENDWARD WAS BUILT
+          </div>
+
+          <h2>
+            Looking for the evidence before a move becomes obvious.
+          </h2>
+
+          <p>
+            Lower-priced stocks can move quickly, but a large price move
+            by itself does not explain whether a setup is developing,
+            strengthening, exhausting, or simply producing noise.
+            Trendward was built to study the sequence of evidence around
+            those moves rather than relying on price alone.
+          </p>
+        </div>
+
+        <div class="overview-story-grid">
+
+          <div class="overview-story-copy">
+
+            <div class="overview-story-section">
+              <span class="overview-story-kicker">
+                THE ORIGINAL RESEARCH
+              </span>
+
+              <h3>
+                Built chronologically to reduce hindsight.
+              </h3>
+
+              <p>
+                The core 5-minute model research used 30 engineered,
+                point-in-time market features across 30 chronological
+                trading dates. Twenty-one dates were used for training,
+                four for validation, and the final five dates were kept
+                completely untouched for final testing.
+              </p>
+
+              <p>
+                The feature set was designed to describe both activity
+                and structure: short-term returns, 1-, 3-, 5-, 10- and
+                15-minute liquidity acceleration, dollar volume, VWAP
+                position, range position, distance from the session high,
+                cumulative dollar volume, and changes in those conditions
+                through time.
+              </p>
+            </div>
+
+            <div class="overview-story-section">
+              <span class="overview-story-kicker">
+                MORE THAN ONE QUESTION
+              </span>
+
+              <h3>
+                Different models study different sizes of future move.
+              </h3>
+
+              <p>
+                Trendward does not treat every setup as the same prediction
+                problem. The 5-minute model package contains separate
+                evidence for 10%, 25%, and 50% future-move targets, with
+                additional ranking research for extreme 100% moves.
+              </p>
+
+              <p>
+                Classifiers and ranking models were compared rather than
+                assuming one algorithm would work best everywhere.
+                Validation results were used to choose model blends before
+                those choices were measured against the untouched test
+                period.
+              </p>
+            </div>
+
+            <div class="overview-story-section">
+              <span class="overview-story-kicker">
+                WHY THE LIVE ARCHIVE MATTERS
+              </span>
+
+              <h3>
+                The research does not stop when the model is deployed.
+              </h3>
+
+              <p>
+                Trendward records scanner sessions, candidate states,
+                promotions, price structure, liquidity conditions, and
+                forward outcomes as the system operates. That creates a
+                growing evidence base that can be used to evaluate drift,
+                compare newer market behavior with the original research,
+                and support future retraining.
+              </p>
+
+              <p>
+                The model is not presented as permanently finished.
+                New model versions can be tested against newer resolved
+                outcomes before replacing an existing production model.
+              </p>
+            </div>
+
+          </div>
+
+          <aside class="overview-fact-column">
+
+            <div class="overview-fact-intro">
+              <span class="overview-story-kicker">
+                VERIFIED RESEARCH FACTS
+              </span>
+              <h3>What is behind the scanner</h3>
+            </div>
+
+            <div class="overview-fact-grid">
+
+              <div class="overview-fact">
+                <strong>30</strong>
+                <span>point-in-time model features</span>
+              </div>
+
+              <div class="overview-fact">
+                <strong>30</strong>
+                <span>chronological research dates</span>
+              </div>
+
+              <div class="overview-fact">
+                <strong>21 / 4 / 5</strong>
+                <span>train / validation / untouched test dates</span>
+              </div>
+
+              <div class="overview-fact">
+                <strong>10% · 25% · 50%</strong>
+                <span>primary future-move model targets</span>
+              </div>
+
+            </div>
+
+            <div class="overview-live-facts">
+
+              <div class="overview-live-facts-head">
+                <span class="overview-story-kicker">
+                  LIVE SCANNER RECORD
+                </span>
+                <small>
+                  Current archived production evidence
+                </small>
+              </div>
+
+              <div class="overview-live-stat">
+                <strong>337</strong>
+                <span>recorded scanner sessions</span>
+              </div>
+
+              <div class="overview-live-stat">
+                <strong>10,087</strong>
+                <span>candidate observations</span>
+              </div>
+
+              <div class="overview-live-stat">
+                <strong>328</strong>
+                <span>unique stocks observed</span>
+              </div>
+
+              <div class="overview-live-stat">
+                <strong>3,369</strong>
+                <span>promoted observations</span>
+              </div>
+
+              <div class="overview-live-stat">
+                <strong>1,628</strong>
+                <span>resolved forward outcomes</span>
+              </div>
+
+            </div>
+
+            <p class="overview-fact-note">
+              These live-archive counts describe Trendward's currently
+              retained production history. They are separate from the
+              original chronological model-training dataset and will grow
+              as additional scanner sessions and outcomes are recorded.
+            </p>
+
+          </aside>
+
+        </div>
+
+        <div class="overview-process-strip">
+          <div>
+            <span>1</span>
+            <strong>Detect</strong>
+            <small>
+              Unusual liquidity or market behavior begins to appear.
+            </small>
+          </div>
+
+          <i></i>
+
+          <div>
+            <span>2</span>
+            <strong>Measure</strong>
+            <small>
+              Price, VWAP, high retention, liquidity and model evidence
+              are evaluated together.
+            </small>
+          </div>
+
+          <i></i>
+
+          <div>
+            <span>3</span>
+            <strong>Track</strong>
+            <small>
+              The setup is followed across successive scanner sessions
+              rather than judged from one snapshot.
+            </small>
+          </div>
+
+          <i></i>
+
+          <div>
+            <span>4</span>
+            <strong>Resolve</strong>
+            <small>
+              Forward movement is archived so the setup can be studied
+              after the fact.
+            </small>
+          </div>
+
+          <i></i>
+
+          <div>
+            <span>5</span>
+            <strong>Improve</strong>
+            <small>
+              New evidence can be used to validate and retrain future
+              model versions.
+            </small>
+          </div>
+        </div>
+
+      </article>
+    `;
+  }
   function renderEverything(){
     renderSetupCountBadges();
     renderUpgradeMenu();
@@ -1345,6 +1617,7 @@
     renderWatchlist();
     renderSignals();
     renderOverviewCards();
+    renderOverviewStory();
     renderHelp();
     renderFreeCopy();
     renderMinuteIntelligence();
