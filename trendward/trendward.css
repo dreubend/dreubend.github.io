@@ -2216,3 +2216,347 @@ table {
     margin-left:0;
   }
 }
+
+/* ===== Trendward final Overview layout v50 ===== */
+
+.overview-final-top-grid{
+  display:grid;
+  grid-template-columns:
+    minmax(0,1.35fr)
+    minmax(320px,.65fr);
+  gap:18px;
+  align-items:start;
+}
+
+.overview-final-left,
+.overview-final-right{
+  min-width:0;
+}
+
+.overview-final-right{
+  display:grid;
+  gap:14px;
+}
+
+.overview-final-left
+.overview-story-heading{
+  margin:0;
+  max-width:none;
+}
+
+.overview-setup-strength{
+  margin:0 !important;
+  width:100%;
+}
+
+.overview-final-live{
+  margin:0;
+  padding:20px;
+}
+
+.overview-final-live
+.overview-live-facts{
+  display:block !important;
+  margin:0;
+  padding:0;
+  border:0;
+}
+
+.overview-final-live
+.overview-live-facts-head{
+  margin-bottom:14px;
+}
+
+.overview-final-live
+.overview-live-stat{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  padding:9px 0;
+  border-bottom:
+    1px solid rgba(255,255,255,.05);
+  background:none;
+}
+
+.overview-final-live
+.overview-live-stat strong{
+  font-size:16px;
+}
+
+.overview-final-live
+.overview-live-stat span{
+  max-width:165px;
+  text-align:right;
+}
+
+.overview-story-grid-clean{
+  grid-template-columns:1fr !important;
+  margin-top:26px;
+}
+
+.overview-story-grid-clean
+.overview-story-copy{
+  max-width:850px;
+}
+
+.overview-final-facts{
+  margin-top:16px;
+  padding:24px;
+}
+
+.overview-final-facts
+.overview-fact-column{
+  padding:0;
+  border:0;
+  background:none;
+}
+
+.overview-final-facts
+.overview-live-facts{
+  display:none !important;
+}
+
+.overview-final-facts
+.overview-fact-grid{
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+}
+
+@media(max-width:1000px){
+
+  .overview-final-top-grid{
+    grid-template-columns:1fr;
+  }
+
+  .overview-final-facts
+  .overview-fact-grid{
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+  }
+}
+
+@media(max-width:600px){
+
+  .overview-final-facts
+  .overview-fact-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+/* ===== Overview Probability Profile placement v51 ===== */
+
+.overview-final-right
+.overview-probability-panel{
+  margin:0 !important;
+  width:100%;
+  max-width:none;
+}
+
+.overview-final-right
+.overview-probability-panel
+.chart{
+  min-height:120px;
+}
+
+/* ===== Trendward definitive Overview layout v52 ===== */
+
+.overview-main-layout{
+  display:grid;
+  grid-template-columns:
+    minmax(0,1.65fr)
+    minmax(330px,.75fr);
+  gap:22px;
+  align-items:start;
+}
+
+.overview-main-copy{
+  min-width:0;
+}
+
+.overview-main-copy
+.overview-story-heading{
+  max-width:none;
+}
+
+.overview-main-copy
+.overview-story-copy{
+  max-width:820px;
+  margin-top:28px;
+}
+
+.overview-right-rail{
+  display:grid;
+  gap:14px;
+  min-width:0;
+}
+
+.overview-right-rail > .panel{
+  margin:0;
+  width:100%;
+}
+
+.overview-strength-head,
+.overview-probability-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:15px;
+  margin-top:5px;
+}
+
+.overview-strength-head h3,
+.overview-probability-head h3{
+  margin:0;
+}
+
+.overview-strength-head > strong{
+  color:var(--accent);
+  font-size:18px;
+}
+
+.overview-probability-head > span{
+  padding:5px 8px;
+  border:1px solid var(--border);
+  border-radius:999px;
+  color:var(--accent);
+  font-size:10px;
+  font-weight:850;
+}
+
+.overview-rail-strength > p,
+.overview-rail-probability > p{
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.6;
+}
+
+.overview-strength-stats{
+  display:grid;
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin-top:14px;
+}
+
+.overview-strength-stats > div{
+  padding:10px;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:10px;
+  background:rgba(255,255,255,.018);
+}
+
+.overview-strength-stats span{
+  display:block;
+  margin-bottom:5px;
+  color:var(--muted);
+  font-size:9px;
+}
+
+.overview-strength-stats strong{
+  font-size:14px;
+}
+
+.overview-probability-bars{
+  display:grid;
+  gap:13px;
+  margin-top:16px;
+}
+
+.overview-probability-row > div:first-child{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:6px;
+  font-size:10px;
+}
+
+.overview-probability-row span{
+  color:var(--muted);
+}
+
+.overview-probability-track{
+  height:9px;
+  overflow:hidden;
+  border-radius:999px;
+  background:rgba(255,255,255,.055);
+}
+
+.overview-probability-track i{
+  display:block;
+  height:100%;
+  border-radius:999px;
+  background:
+    linear-gradient(
+      90deg,
+      var(--accent),
+      var(--accent-2)
+    );
+}
+
+.overview-live-record-grid{
+  display:grid;
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin-top:15px;
+}
+
+.overview-live-record-grid > div{
+  padding:11px;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:10px;
+  background:rgba(255,255,255,.018);
+}
+
+.overview-live-record-grid strong{
+  display:block;
+  margin-bottom:4px;
+  font-size:17px;
+}
+
+.overview-live-record-grid span{
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.4;
+}
+
+.overview-separate-research-facts{
+  margin-top:16px;
+  padding:24px;
+}
+
+.overview-separate-research-facts
+.overview-fact-column{
+  padding:0;
+  border:0;
+  background:none;
+}
+
+.overview-separate-research-facts
+.overview-fact-grid{
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+}
+
+@media(max-width:1050px){
+
+  .overview-main-layout{
+    grid-template-columns:1fr;
+  }
+
+  .overview-separate-research-facts
+  .overview-fact-grid{
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+  }
+}
+
+@media(max-width:600px){
+
+  .overview-strength-stats,
+  .overview-live-record-grid,
+  .overview-separate-research-facts
+  .overview-fact-grid{
+    grid-template-columns:1fr;
+  }
+}

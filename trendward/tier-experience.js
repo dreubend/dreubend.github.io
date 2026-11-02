@@ -1715,6 +1715,437 @@
       oldHero.style.display="none";
     }
   }
+
+  function renderOverviewRightRail(){
+    const section =
+      document.getElementById("section-overview");
+
+    const block =
+      document.getElementById("trendwardResearchStory");
+
+    if(!section || !block)return;
+
+    const storyPanel =
+      block.querySelector(".overview-story-panel");
+
+    const storyHeading =
+      block.querySelector(".overview-story-heading");
+
+    const storyCopy =
+      block.querySelector(".overview-story-copy");
+
+    const storyGrid =
+      block.querySelector(".overview-story-grid");
+
+    const factColumn =
+      block.querySelector(".overview-fact-column");
+
+    const liveFacts =
+      block.querySelector(".overview-live-facts");
+
+    const process =
+      block.querySelector(".overview-process-strip");
+
+    if(!storyPanel || !storyHeading || !storyCopy)return;
+
+    /* --------------------------------------------------------
+       Main two-column Overview layout
+    -------------------------------------------------------- */
+
+    let main =
+      block.querySelector(".overview-main-layout");
+
+    if(!main){
+      main=document.createElement("div");
+      main.className="overview-main-layout";
+
+      storyPanel.insertBefore(
+        main,
+        process || storyPanel.firstChild
+      );
+    }
+
+    let left =
+      main.querySelector(".overview-main-copy");
+
+    if(!left){
+      left=document.createElement("div");
+      left.className="overview-main-copy";
+      main.appendChild(left);
+    }
+
+    let right =
+      main.querySelector(".overview-right-rail");
+
+    if(!right){
+      right=document.createElement("aside");
+      right.className="overview-right-rail";
+      main.appendChild(right);
+    }
+
+    if(storyHeading.parentElement !== left){
+      left.appendChild(storyHeading);
+    }
+
+    if(storyCopy.parentElement !== left){
+      left.appendChild(storyCopy);
+    }
+
+    if(storyGrid){
+      storyGrid.style.display="none";
+    }
+
+    /* --------------------------------------------------------
+       SETUP STRENGTH
+    -------------------------------------------------------- */
+
+    const rows=visibleRows();
+
+    const count=rows.length;
+
+    const aboveVwap=
+      rows.filter(c =>
+        num(c.price_vs_vwap_pct)!==null &&
+        num(c.price_vs_vwap_pct)>=0
+      ).length;
+
+    const nearHigh=
+      rows.filter(c =>
+        num(c.distance_from_high_pct)!==null &&
+        num(c.distance_from_high_pct)>=-10
+      ).length;
+
+    const liquid=
+      rows.filter(c =>
+        num(c.vol)!==null &&
+        num(c.vol)>=1
+      ).length;
+
+    const finalists=
+      rows.filter(c =>
+        c.finalist ||
+        c.selected_finalist
+      ).length;
+
+    const modelValues=
+      rows
+        .map(c=>score(c))
+        .filter(v=>v!==null)
+        .sort((a,b)=>a-b);
+
+    const medianModel=
+      modelValues.length
+        ? (
+            modelValues.length % 2
+              ? modelValues[
+                  Math.floor(modelValues.length/2)
+                ]
+              : (
+                  modelValues[
+                    modelValues.length/2-1
+                  ] +
+                  modelValues[
+                    modelValues.length/2
+                  ]
+                ) / 2
+          )
+        : null;
+
+    const strengthScore =
+      count
+        ? (
+            (aboveVwap/count)*25 +
+            (nearHigh/count)*20 +
+            (liquid/count)*25 +
+            (finalists/count)*15 +
+            ((medianModel || 0)/100)*15
+          )
+        : 0;
+
+    let state="Quiet";
+
+    if(strengthScore>=70){
+      state="Explosive";
+    }else if(strengthScore>=55){
+      state="Active";
+    }else if(strengthScore>=35){
+      state="Building";
+    }else if(strengthScore>=20){
+      state="Mixed";
+    }
+
+    const summaries={
+      Explosive:
+        "Liquidity, price structure, and model evidence are broadly aligned across the visible scanner.",
+      Active:
+        "Several visible setups are showing constructive liquidity and price confirmation.",
+      Building:
+        "The scanner is beginning to strengthen. Some setups are improving, but confirmation is not yet broad across the visible universe.",
+      Mixed:
+        "The evidence is split. Some setups are constructive while others lack price or liquidity confirmation.",
+      Quiet:
+        "The visible scanner is not showing broad confirmation yet."
+    };
+
+    let strength =
+      right.querySelector(
+        ".overview-rail-strength"
+      );
+
+    if(!strength){
+      strength=document.createElement("article");
+      strength.className=
+        "panel overview-rail-strength";
+
+      right.appendChild(strength);
+    }
+
+    strength.innerHTML=`
+      <div class="panel-label">
+        SETUP STRENGTH
+      </div>
+
+      <div class="overview-strength-head">
+        <h3>${esc(state)}</h3>
+        <strong>${Math.round(strengthScore)}/100</strong>
+      </div>
+
+      <p>${esc(summaries[state])}</p>
+
+      <div class="overview-strength-stats">
+
+        <div>
+          <span>Visible universe</span>
+          <strong>${count}</strong>
+        </div>
+
+        <div>
+          <span>Above VWAP</span>
+          <strong>${aboveVwap}/${count}</strong>
+        </div>
+
+        <div>
+          <span>Near session high</span>
+          <strong>${nearHigh}/${count}</strong>
+        </div>
+
+        <div>
+          <span>5m liquidity ≥ 1×</span>
+          <strong>${liquid}/${count}</strong>
+        </div>
+
+        <div>
+          <span>Finalists</span>
+          <strong>${finalists}</strong>
+        </div>
+
+        <div>
+          <span>Median 25% model</span>
+          <strong>${
+            medianModel===null
+              ? "—"
+              : medianModel.toFixed(0)+"/100"
+          }</strong>
+        </div>
+
+      </div>
+    `;
+
+    /* --------------------------------------------------------
+       PROBABILITY PROFILE — REAL CURRENT MODEL VALUES
+    -------------------------------------------------------- */
+
+    const featured=featuredRow();
+
+    let probability =
+      right.querySelector(
+        ".overview-rail-probability"
+      );
+
+    if(!probability){
+      probability=document.createElement("article");
+      probability.className=
+        "panel overview-rail-probability";
+
+      right.appendChild(probability);
+    }
+
+    if(featured){
+
+      const p10=
+        num(featured.model_scores?.score10);
+
+      const p25=
+        num(featured.model_scores?.score25)
+        ?? score(featured);
+
+      const p50=
+        num(featured.model_scores?.score50);
+
+      const probabilityRow=(label,value)=>`
+        <div class="overview-probability-row">
+          <div>
+            <span>${label}</span>
+            <strong>${
+              value===null
+                ? "—"
+                : value.toFixed(0)+"/100"
+            }</strong>
+          </div>
+
+          <div class="overview-probability-track">
+            <i style="width:${
+              value===null
+                ? 0
+                : Math.max(
+                    0,
+                    Math.min(100,value)
+                  )
+            }%"></i>
+          </div>
+        </div>
+      `;
+
+      probability.innerHTML=`
+        <div class="panel-label">
+          MODEL
+        </div>
+
+        <div class="overview-probability-head">
+          <h3>Probability profile</h3>
+          <span>${esc(featured.symbol)}</span>
+        </div>
+
+        <p>
+          Current 5-minute model evidence for the highest-ranked
+          visible setup. Scores are model signals, not guarantees.
+        </p>
+
+        <div class="overview-probability-bars">
+          ${probabilityRow("10% move model",p10)}
+          ${probabilityRow("25% move model",p25)}
+          ${probabilityRow("50% move model",p50)}
+        </div>
+      `;
+
+    }else{
+
+      probability.innerHTML=`
+        <div class="panel-label">MODEL</div>
+        <h3>Probability profile</h3>
+        <p>No current model evidence is available.</p>
+      `;
+    }
+
+    /* --------------------------------------------------------
+       LIVE SCANNER RECORD
+    -------------------------------------------------------- */
+
+    let livePanel =
+      right.querySelector(
+        ".overview-rail-live"
+      );
+
+    if(!livePanel){
+      livePanel=document.createElement("article");
+      livePanel.className=
+        "panel overview-rail-live";
+
+      right.appendChild(livePanel);
+    }
+
+    livePanel.innerHTML=`
+      <div class="panel-label">
+        LIVE SCANNER RECORD
+      </div>
+
+      <h3>Current archived production evidence</h3>
+
+      <div class="overview-live-record-grid">
+
+        <div>
+          <strong>337</strong>
+          <span>scanner sessions</span>
+        </div>
+
+        <div>
+          <strong>10,087</strong>
+          <span>candidate observations</span>
+        </div>
+
+        <div>
+          <strong>328</strong>
+          <span>unique stocks</span>
+        </div>
+
+        <div>
+          <strong>3,369</strong>
+          <span>promoted observations</span>
+        </div>
+
+        <div>
+          <strong>1,628</strong>
+          <span>resolved forward outcomes</span>
+        </div>
+
+      </div>
+    `;
+
+    /* --------------------------------------------------------
+       VERIFIED RESEARCH FACTS — separate panel below story
+    -------------------------------------------------------- */
+
+    if(factColumn){
+
+      if(liveFacts){
+        liveFacts.remove();
+      }
+
+      const note =
+        factColumn.querySelector(
+          ".overview-fact-note"
+        );
+
+      if(note){
+        note.textContent =
+          "These figures describe the original chronological model-research design. Live production archive totals are shown separately above.";
+      }
+
+      let factsPanel =
+        block.querySelector(
+          ".overview-separate-research-facts"
+        );
+
+      if(!factsPanel){
+        factsPanel=document.createElement("article");
+        factsPanel.className=
+          "panel overview-separate-research-facts";
+
+        storyPanel.insertAdjacentElement(
+          "afterend",
+          factsPanel
+        );
+      }
+
+      if(
+        factColumn.parentElement !== factsPanel
+      ){
+        factsPanel.appendChild(factColumn);
+      }
+    }
+
+    /* Hide the duplicate lower scanner-environment card.
+       Universe State and price-band panels remain visible. */
+
+    const oldEnvironment =
+      section.querySelector(
+        "#overviewIntelligence .overview-environment"
+      );
+
+    if(oldEnvironment){
+      oldEnvironment.style.display="none";
+    }
+  }
   function renderEverything(){
     renderSetupCountBadges();
     renderUpgradeMenu();
@@ -1725,6 +2156,14 @@
     renderSignals();
     renderOverviewCards();
     renderOverviewStory();
+    renderOverviewRightRail();
+
+    if(
+      typeof window.TRENDWARD_REFLOW_OVERVIEW
+        === "function"
+    ){
+      window.TRENDWARD_REFLOW_OVERVIEW();
+    }
     renderHelp();
     renderFreeCopy();
     renderMinuteIntelligence();
