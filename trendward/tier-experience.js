@@ -302,12 +302,34 @@
     </div>`;
 
     const list = rows.length ? `<div class="watch-current-list">
-      ${rows.map(c=>`<div class="large-row">
-        <strong>${esc(c.symbol)}</strong>
-        <span>${esc(c.state||"Watch")}</span>
-        <span>${score(c)===null?"—":`${score(c).toFixed(0)}/100`}</span>
-        <span class="row-note">${num(c.vol)===null?"":`${num(c.vol).toFixed(2)}× 5m liquidity · `}${num(c.price_vs_vwap_pct)===null?"":`${pct(c.price_vs_vwap_pct)} vs VWAP`}</span>
-      </div>`).join("")}
+      ${rows.map(c=>`
+        <article class="watch-focus-card">
+
+          <div class="watch-focus-head">
+            <div>
+              <strong>${esc(c.symbol)}</strong>
+              <span>${money(c.price)}</span>
+            </div>
+            <span class="state-badge">${esc(c.state||"Watch")}</span>
+          </div>
+
+          <div class="watch-focus-section">
+            <span class="watch-focus-label">WHY I AM STILL WATCHING</span>
+            <p>${esc(plainWhy(c) || "This setup remains active in the current Scanner.")}</p>
+          </div>
+
+          <div class="watch-focus-section">
+            <span class="watch-focus-label">WATCH STATUS</span>
+            <p>Still present in the current Scanner and actively followed by this Watchlist.</p>
+          </div>
+
+          <div class="watch-focus-section watch-focus-exit">
+            <span class="watch-focus-label">WHAT ENDS THE WATCH</span>
+            <p>This stock automatically leaves the Watchlist if it falls out of your tier's current Scanner.</p>
+          </div>
+
+        </article>
+      `).join("")}
     </div>` : `<div class="empty-viz">${isAuto?"No current scanner setups available.":"Select a current Scanner setup to add it to your Watchlist."}</div>`;
 
     full.innerHTML=chooser+list;
