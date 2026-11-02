@@ -270,16 +270,16 @@
       const title = hero.querySelector("h2");
       const lead = hero.querySelector(".lead");
 
-      if(eyebrow) eyebrow.textContent = "WHAT TRENDWARD IS";
+      if(eyebrow) eyebrow.textContent = "BUILT ON MARKET EVIDENCE";
 
       if(title){
         title.textContent =
-          "Market intelligence that explains what is developing, strengthening, or fading.";
+          "Built to study what happens before, during, and after a stock begins to move.";
       }
 
       if(lead){
         lead.textContent =
-          "Trendward combines price behavior, liquidity, model context, structure, and archived scanner evidence so you can understand not only which stocks stand out, but why they stand out and where they appear to be in the setup lifecycle.";
+          "Trendward was developed from chronological market research, point-in-time features, multiple move-target models, and out-of-sample testing. The live scanner then continues recording new candidate observations and resolved outcomes so the evidence base can grow and future model versions can be tested against newer market behavior.";
       }
     }
 
