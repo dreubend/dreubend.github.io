@@ -1834,3 +1834,307 @@
   }
 
 })();
+
+/* ===== Trendward durable dual Timeline sliders v8 ===== */
+(() => {
+
+  function positionLine(primary){
+
+    const panel =
+      primary?.closest(".signal-history-panel");
+
+    if(!panel) return;
+
+    const matrix =
+      panel.querySelector(".signal-matrix");
+
+    const track =
+      panel.querySelector(".signal-track");
+
+    const line =
+      panel.querySelector(".signal-now-line");
+
+    if(!matrix || !track || !line) return;
+
+    const min=Number(primary.min || 0);
+    const max=Number(primary.max || 100);
+    const value=Number(primary.value || min);
+
+    const ratio=
+      Math.max(
+        0,
+        Math.min(
+          1,
+          (value-min) /
+          Math.max(1,max-min)
+        )
+      );
+
+    const matrixRect =
+      matrix.getBoundingClientRect();
+
+    const trackRect =
+      track.getBoundingClientRect();
+
+    const x =
+      (trackRect.left-matrixRect.left) +
+      (trackRect.width*ratio);
+
+    line.style.marginLeft="0";
+    line.style.left=`${x}px`;
+  }
+
+
+  function ensureDualTimeline(){
+
+    const primary =
+      document.getElementById(
+        "signalTimelineSlider"
+      );
+
+    if(!primary) return;
+
+    const panel =
+      primary.closest(
+        ".signal-history-panel"
+      );
+
+    if(!panel) return;
+
+    const matrix =
+      panel.querySelector(
+        ".signal-matrix"
+      );
+
+    if(!matrix) return;
+
+    const topWrap =
+      primary.closest(
+        ".signal-slider-wrap"
+      );
+
+    if(topWrap){
+      topWrap.classList.add(
+        "timeline-slider-top"
+      );
+    }
+
+
+    /* --------------------------------
+       LOWER SLIDER
+    -------------------------------- */
+
+    let lowerWrap =
+      panel.querySelector(
+        ".timeline-slider-bottom-v8"
+      );
+
+    if(!lowerWrap){
+
+      lowerWrap =
+        document.createElement("div");
+
+      lowerWrap.className =
+        "signal-slider-wrap " +
+        "timeline-slider-bottom-v8";
+
+      lowerWrap.innerHTML=`
+        <input
+          id="signalTimelineSliderBottomV8"
+          type="range"
+          min="${primary.min || 0}"
+          max="${primary.max || 100}"
+          step="${primary.step || 1}"
+          value="${primary.value}"
+          aria-label="Historical Timeline lower slider"
+        />
+      `;
+
+      matrix.insertAdjacentElement(
+        "afterend",
+        lowerWrap
+      );
+    }
+
+
+    const lower =
+      lowerWrap.querySelector(
+        'input[type="range"]'
+      );
+
+    if(!lower) return;
+
+    lower.min=primary.min;
+    lower.max=primary.max;
+    lower.step=primary.step;
+    lower.value=primary.value;
+
+
+    /* --------------------------------
+       TOP -> BOTTOM
+    -------------------------------- */
+
+    if(
+      primary.dataset.timelineV8Bound
+      !== "1"
+    ){
+
+      primary.dataset.timelineV8Bound="1";
+
+      primary.addEventListener(
+        "input",
+        () => {
+
+          const currentLower =
+            document.getElementById(
+              "signalTimelineSliderBottomV8"
+            );
+
+          if(currentLower){
+            currentLower.value=
+              primary.value;
+          }
+
+          requestAnimationFrame(
+            () => positionLine(primary)
+          );
+        }
+      );
+    }
+
+
+    /* --------------------------------
+       BOTTOM -> TOP
+    -------------------------------- */
+
+    if(
+      lower.dataset.timelineV8Bound
+      !== "1"
+    ){
+
+      lower.dataset.timelineV8Bound="1";
+
+      lower.addEventListener(
+        "input",
+        () => {
+
+          primary.value=
+            lower.value;
+
+          /*
+            Let the existing Timeline code
+            change the selected historical
+            scanner session and Evidence Stream.
+          */
+          primary.dispatchEvent(
+            new Event(
+              "input",
+              {bubbles:true}
+            )
+          );
+
+          requestAnimationFrame(
+            () => positionLine(primary)
+          );
+        }
+      );
+    }
+
+
+    requestAnimationFrame(
+      () => positionLine(primary)
+    );
+  }
+
+
+  /*
+    Timeline gets rebuilt when scanner data
+    refreshes. Recreate the lower slider after
+    any such DOM replacement.
+  */
+  const signals =
+    document.getElementById(
+      "section-signals"
+    );
+
+  if(signals){
+
+    const observer =
+      new MutationObserver(() => {
+
+        requestAnimationFrame(
+          ensureDualTimeline
+        );
+      });
+
+    observer.observe(
+      signals,
+      {
+        childList:true,
+        subtree:true
+      }
+    );
+  }
+
+
+  window.addEventListener(
+    "trendward:data",
+    () => {
+      setTimeout(
+        ensureDualTimeline,
+        50
+      );
+    }
+  );
+
+
+  window.addEventListener(
+    "trendward:timeline",
+    () => {
+      requestAnimationFrame(
+        ensureDualTimeline
+      );
+    }
+  );
+
+
+  window.addEventListener(
+    "resize",
+    () => {
+
+      const primary =
+        document.getElementById(
+          "signalTimelineSlider"
+        );
+
+      if(primary){
+        requestAnimationFrame(
+          () => positionLine(primary)
+        );
+      }
+    }
+  );
+
+
+  if(
+    document.readyState === "loading"
+  ){
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => setTimeout(
+        ensureDualTimeline,
+        100
+      ),
+      {once:true}
+    );
+
+  }else{
+
+    setTimeout(
+      ensureDualTimeline,
+      100
+    );
+  }
+
+})();

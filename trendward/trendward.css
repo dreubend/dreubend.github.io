@@ -2983,3 +2983,136 @@ input[type="range"]{
       85px minmax(0,1fr);
   }
 }
+
+/* ===== Trendward Timeline dual-slider layout v58 ===== */
+
+
+/* ------------------------------------
+   TOP SLIDER
+   Full width + Latest on same row
+------------------------------------ */
+
+#section-signals
+.signal-slider-wrap.timeline-slider-top{
+  display:flex !important;
+  align-items:center !important;
+
+  width:100% !important;
+
+  gap:14px !important;
+
+  margin:
+    18px 0
+    12px !important;
+
+  padding:
+    14px 16px !important;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:12px;
+
+  background:
+    rgba(255,255,255,.018);
+}
+
+
+#section-signals
+.signal-slider-wrap.timeline-slider-top
+input[type="range"]{
+  flex:1 1 auto !important;
+
+  width:auto !important;
+  min-width:0 !important;
+
+  margin:0 !important;
+
+  grid-column:auto !important;
+}
+
+
+#section-signals
+.signal-slider-wrap.timeline-slider-top
+.ghost-btn{
+  flex:0 0 auto !important;
+
+  grid-column:auto !important;
+
+  margin:0 !important;
+
+  justify-self:auto !important;
+}
+
+
+/* ------------------------------------
+   LOWER SLIDER
+   Match stock-track start exactly
+------------------------------------ */
+
+#section-signals
+.timeline-slider-bottom-v8{
+  order:6;
+
+  display:grid !important;
+
+  grid-template-columns:
+    140px minmax(0,1fr) !important;
+
+  column-gap:10px !important;
+
+  width:100% !important;
+
+  margin:
+    18px 0
+    6px !important;
+
+  padding:0 !important;
+
+  border:0 !important;
+
+  background:none !important;
+}
+
+
+#section-signals
+.timeline-slider-bottom-v8
+input[type="range"]{
+  grid-column:2 !important;
+
+  width:100% !important;
+  min-width:0 !important;
+
+  margin:0 !important;
+}
+
+
+/* Legend follows lower control */
+
+#section-signals
+.signal-legend{
+  order:7;
+}
+
+
+/* Vertical marker position is now JS-driven */
+
+#section-signals
+.signal-now-line{
+  margin-left:0 !important;
+}
+
+
+@media(max-width:760px){
+
+  #section-signals
+  .timeline-slider-bottom-v8{
+    grid-template-columns:
+      85px minmax(0,1fr) !important;
+  }
+
+  #section-signals
+  .signal-slider-wrap.timeline-slider-top{
+    padding:12px !important;
+  }
+}
