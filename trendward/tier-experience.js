@@ -767,6 +767,7 @@
       scanner:["Trendward","Scanner"],
       watchlist:["Trendward","Watchlist"],
       signals:["Trendward","Timeline"],
+      glossary:["Trendward","Glossary"],
       journey:["Trendward","Model Journey"],
       pulse:["Trendward","Market Pulse"],
       minute:["Trendward","1-Minute Intelligence"],
@@ -787,7 +788,7 @@
 
   function currentSectionFromHash(){
     const raw=(location.hash||"#overview").replace("#","");
-    return ["overview","scanner","watchlist","signals","journey","pulse","minute","settings"].includes(raw)
+    return ["overview","scanner","watchlist","signals","journey","pulse","minute","glossary","settings"].includes(raw)
       ? raw : "overview";
   }
 
@@ -2146,6 +2147,273 @@
       oldEnvironment.style.display="none";
     }
   }
+
+  function renderGlossary(){
+    let section =
+      document.getElementById("section-glossary");
+
+    if(!section){
+      section=document.createElement("section");
+      section.id="section-glossary";
+      section.className="section";
+
+      const settings =
+        document.getElementById("section-settings");
+
+      if(settings){
+        settings.parentElement.insertBefore(
+          section,
+          settings
+        );
+      }
+    }
+
+    let nav =
+      document.querySelector(
+        '.nav-item[data-section="glossary"]'
+      );
+
+    if(!nav){
+      const settingsNav =
+        document.querySelector(
+          '.nav-item[data-section="settings"]'
+        );
+
+      nav=document.createElement("a");
+      nav.className="nav-item";
+      nav.href="#glossary";
+      nav.dataset.section="glossary";
+      nav.innerHTML=
+        '<span>&#9432;</span> Glossary';
+
+      if(settingsNav){
+        settingsNav.parentElement.insertBefore(
+          nav,
+          settingsNav
+        );
+      }
+    }
+
+    const common=[
+      ["Scanner",
+       "The ranked set of current Trendward setups visible in your plan."],
+
+      ["Setup",
+       "A stock that has entered Trendward's monitored candidate set because its current evidence is worth evaluating."],
+
+      ["Rank",
+       "The current ordering of a setup inside the Scanner. Rank can change as new evidence arrives."],
+
+      ["Setup Phase",
+       "Trendward's current description of where a setup appears to be in its lifecycle."],
+
+      ["Developing",
+       "A setup with meaningful evidence, but not enough alignment yet for a stronger phase."],
+
+      ["Early Setup",
+       "Liquidity is at or above baseline and price structure has not materially deteriorated."],
+
+      ["Ignition",
+       "Liquidity has expanded while price is showing positive movement."],
+
+      ["Re-acceleration",
+       "Liquidity has accelerated again after the setup was already active."],
+
+      ["Continuation",
+       "Price remains constructive relative to VWAP and the session high while liquidity remains supportive."],
+
+      ["Extended",
+       "The stock has already made a substantial move while retaining relatively strong structure."],
+
+      ["Cooling",
+       "Liquidity or price progress has weakened enough to suggest momentum is fading."],
+
+      ["Rejected / Fading",
+       "Price structure has materially weakened, such as losing VWAP or giving back a large part of the move."],
+
+      ["5m Liquidity",
+       "Short-term activity relative to its recent baseline using the current 5-minute scanner evidence."],
+
+      ["15m Liquidity",
+       "A broader liquidity measure showing whether activity is persisting beyond a single short interval."],
+
+      ["VWAP",
+       "Volume Weighted Average Price. Trendward uses price relative to VWAP as an intraday structure measure."],
+
+      ["VWAP Structure",
+       "How far price is above or below VWAP at the selected scan."],
+
+      ["High Retention",
+       "How close price remains to the session high. Larger negative values mean more of the move has been given back."],
+
+      ["Watchlist",
+       "The current Scanner setups you have chosen, or allowed Trendward, to monitor more closely."],
+
+      ["Scanner Persistence",
+       "The number of consecutive recorded Scanner sessions in which the stock remained present."],
+
+      ["Strong Watch",
+       "Multiple supporting conditions remain aligned and the setup is still constructive."],
+
+      ["Active Watch",
+       "Enough evidence remains constructive to justify continued active monitoring."],
+
+      ["Fragile Watch",
+       "The setup still has useful evidence, but meaningful weakness has appeared."],
+
+      ["At Risk",
+       "The setup has moved into a rejected or fading condition."],
+
+      ["Timeline",
+       "Playback of actual recorded Scanner sessions showing how setups evolved through time."],
+
+      ["Evidence Stream",
+       "The model, liquidity, and structure evidence recorded for the Scanner session currently selected on the Timeline."],
+
+      ["Latest Scan",
+       "The most recent Scanner session currently available to your plan."],
+
+      ["Model Score",
+       "A model-derived 0-100 ranking signal. It is analytical evidence, not a guarantee or literal probability."]
+    ];
+
+    const free=[
+      ["30-Minute Delayed Data",
+       "The Free plan uses a Scanner snapshot delayed by approximately 30 minutes."],
+
+      ["Featured Setup",
+       "The single highest-priority setup exposed in the Free experience."]
+    ];
+
+    const basic=[
+      ["Probability Profile",
+       "A comparison of model evidence associated with different future-move targets."],
+
+      ["10% Model",
+       "Model evidence related to the research target of a future 10% move."],
+
+      ["25% Model",
+       "Model evidence related to the research target of a future 25% move."],
+
+      ["50% Model",
+       "Model evidence related to the research target of a future 50% move."]
+    ];
+
+    const pro=[
+      ["Historical Scanner Timeline",
+       "The real recorded sequence of Scanner sessions used to inspect how setups changed through the day."],
+
+      ["Promotion",
+       "A recorded event showing that a candidate advanced into deeper scanner/model evaluation."],
+
+      ["First Promotion",
+       "The first archived time Trendward recorded a setup as promoted."],
+
+      ["Finalist",
+       "A candidate that advanced into the Scanner's narrower finalist group."],
+
+      ["Selected Finalist",
+       "A finalist selected by the final production selection process."],
+
+      ["Resolved Forward Outcome",
+       "A measured historical result after a setup was recorded, used for later evaluation and model improvement."],
+
+      ["Auto-Current Watchlist",
+       "A Watchlist mode that automatically follows the current Scanner setups available to the plan."]
+    ];
+
+    const premium=[
+      ["Deep 5-Minute Context",
+       "The deepest currently available 5-minute Scanner evidence and candidate coverage."],
+
+      ["Full Scanner Set",
+       "The complete current customer-visible candidate set rather than a smaller tier-limited subset."]
+    ];
+
+    const premier=[
+      ["1-Minute Intelligence",
+       "A finer-grained evidence layer that studies what happens between 5-minute Scanner checkpoints."],
+
+      ["1m / 5m Comparison",
+       "A comparison between the broader 5-minute Scanner state and the minute-level market path."],
+
+      ["Minute-Level Path",
+       "The recorded 1-minute sequence used for deeper Premier analysis."]
+    ];
+
+    let terms=[...common];
+
+    if(tier==="FREE"){
+      terms.push(...free);
+    }
+
+    if(
+      ["BASIC","PRO","PREMIUM","PREMIER"]
+        .includes(tier)
+    ){
+      terms.push(...basic);
+    }
+
+    if(
+      ["PRO","PREMIUM","PREMIER"]
+        .includes(tier)
+    ){
+      terms.push(...pro);
+    }
+
+    if(
+      ["PREMIUM","PREMIER"]
+        .includes(tier)
+    ){
+      terms.push(...premium);
+    }
+
+    if(tier==="PREMIER"){
+      terms.push(...premier);
+    }
+
+    section.innerHTML=`
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">
+            ${esc(tier)} GLOSSARY
+          </div>
+
+          <h2>
+            What Trendward terms mean
+          </h2>
+
+          <p>
+            Plain-English definitions for the metrics,
+            states, model evidence, and historical
+            concepts available in your current plan.
+          </p>
+        </div>
+      </div>
+
+      <article class="panel glossary-panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-label">
+              TRENDWARD GLOSSARY
+            </div>
+            <h3>
+              ${terms.length} terms in this tier
+            </h3>
+          </div>
+        </div>
+
+        <div class="glossary-list">
+          ${terms.map(([term,meaning])=>`
+            <details>
+              <summary>${esc(term)}</summary>
+              <p>${esc(meaning)}</p>
+            </details>
+          `).join("")}
+        </div>
+      </article>
+    `;
+  }
   function renderEverything(){
     renderSetupCountBadges();
     renderUpgradeMenu();
@@ -2157,6 +2425,7 @@
     renderOverviewCards();
     renderOverviewStory();
     renderOverviewRightRail();
+    renderGlossary();
 
     if(
       typeof window.TRENDWARD_REFLOW_OVERVIEW

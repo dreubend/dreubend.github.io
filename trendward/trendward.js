@@ -17,7 +17,7 @@ const legal={about:"<p>Trendward is a developing market-intelligence product fro
 // v5: real-link navigation support. This preserves browser behaviors such as
 // right-click/open-in-new-tab, middle-click, copy link, and bookmarking.
 (function(){
-  const validSections = new Set(["overview","scanner","watchlist","signals","journey","pulse","settings"]);
+  const validSections = new Set(["overview","scanner","watchlist","signals","journey","pulse","glossary","settings"]);
   function sectionFromHash(){
     const section = (window.location.hash || "#overview").slice(1).toLowerCase();
     return validSections.has(section) ? section : "overview";
@@ -37,7 +37,7 @@ const legal={about:"<p>Trendward is a developing market-intelligence product fro
 // ===== Trendward v7 robust startup routing =====
 (function(){
   const validSections = new Set([
-    "overview","scanner","watchlist","signals","journey","pulse","settings"
+    "overview","scanner","watchlist","signals","journey","pulse","glossary","settings"
   ]);
 
   function sectionFromLocation(){
@@ -190,7 +190,7 @@ const legal={about:"<p>Trendward is a developing market-intelligence product fro
 
 // ===== Trendward v12 refresh-safe route authority =====
 (function(){
-  const valid=new Set(["overview","scanner","watchlist","signals","journey","pulse","settings"]);
+  const valid=new Set(["overview","scanner","watchlist","signals","journey","pulse","glossary","settings"]);
   function applyRoute(){
     const raw=(location.hash||"#overview").slice(1).trim().toLowerCase();
     const section=valid.has(raw)?raw:"overview";
