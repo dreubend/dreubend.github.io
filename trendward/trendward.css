@@ -1654,3 +1654,25 @@ table {
     font-size:12px;
   }
 }
+/* ===== Watchlist large top-right status badge v44 ===== */
+
+#section-watchlist .watch-focus-card .watch-focus-head .state-badge{
+  font-size:15px !important;
+  font-weight:900 !important;
+  letter-spacing:.055em !important;
+  padding:12px 18px !important;
+  min-height:40px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:999px !important;
+  white-space:nowrap;
+}
+
+@media(max-width:760px){
+  #section-watchlist .watch-focus-card .watch-focus-head .state-badge{
+    font-size:13px !important;
+    padding:10px 15px !important;
+    min-height:36px;
+  }
+}
