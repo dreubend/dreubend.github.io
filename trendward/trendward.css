@@ -1474,3 +1474,66 @@ table {
     grid-template-columns: 1fr;
   }
 }
+/* ===== TRENDWARD_SCANNER_V41 ===== */
+
+.scanner-phase-block {
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.025);
+  border: 1px solid var(--border);
+}
+
+.scanner-phase-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.scanner-phase-row > span {
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .13em;
+}
+
+.scanner-phase-badge {
+  padding: 5px 8px;
+  border-radius: 999px;
+  color: var(--accent);
+  background: color-mix(
+    in srgb,
+    var(--accent) 10%,
+    transparent
+  );
+  border: 1px solid color-mix(
+    in srgb,
+    var(--accent) 28%,
+    transparent
+  );
+  font-size: 10px;
+}
+
+.scanner-phase-reason {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.scanner-evidence-title {
+  margin-top: 16px;
+}
+
+.scanner-evidence-grid {
+  grid-template-columns:
+    repeat(auto-fit, minmax(105px,1fr));
+}
+
+.scanner-evidence-grid > div {
+  min-width: 0;
+}
+
+.scanner-evidence-grid strong {
+  overflow-wrap: anywhere;
+}

@@ -506,12 +506,169 @@
     });
   }
 
+  function phaseReason(c){
+    const p = phase(c);
+    const move = num(c.move);
+    const liq = num(c.vol);
+    const accel15 = num(c.volume_accel_15m);
+    const vwap = num(c.price_vs_vwap_pct);
+    const high = num(c.distance_from_high_pct);
+
+    if(p === "Rejected / Fading"){
+      if(vwap !== null && vwap <= -5){
+        return `Price is ${Math.abs(vwap).toFixed(1)}% below VWAP, showing meaningful loss of intraday structure.`;
+      }
+
+      if(high !== null && high <= -20){
+        return `Price is ${Math.abs(high).toFixed(1)}% below its session high, showing significant giveback.`;
+      }
+
+      return "Price confirmation has weakened enough for Trendward to treat the setup as fading.";
+    }
+
+    if(p === "Re-acceleration"){
+      return `Liquidity is accelerating again${accel15 !== null ? ` (${accel15.toFixed(2)}× over 15m)` : ""}, suggesting renewed participation after the initial move.`;
+    }
+
+    if(p === "Continuation"){
+      return `Price is holding constructive structure${vwap !== null ? ` at ${pct(vwap)} vs VWAP` : ""}${high !== null ? ` and ${pct(high)} from the session high` : ""}.`;
+    }
+
+    if(p === "Extended"){
+      return `The stock has already moved strongly${move !== null ? ` (${pct(move)} this session)` : ""}, so Trendward sees strength but also greater extension risk.`;
+    }
+
+    if(p === "Ignition"){
+      return `Liquidity has expanded quickly${liq !== null ? ` to ${liq.toFixed(2)}×` : ""} while price is beginning to confirm.`;
+    }
+
+    if(p === "Early Setup"){
+      return "Liquidity and price behavior are beginning to improve, but the move has not yet reached full confirmation.";
+    }
+
+    if(p === "Cooling"){
+      return "Participation or price progress has weakened, so the setup currently has less momentum than stronger scanner candidates.";
+    }
+
+    return "The stock is showing some constructive evidence, but Trendward does not yet have enough confirmation to classify it more strongly.";
+  }
+
+  function evidenceItems(c){
+    const items = [];
+
+    if(c.state){
+      items.push(["State", c.state]);
+    }
+
+    if(num(c.vol) !== null){
+      items.push([
+        "5m Liquidity",
+        `${num(c.vol).toFixed(2)}×`
+      ]);
+    }
+
+    if(num(c.volume_accel_15m) !== null){
+      items.push([
+        "15m Liquidity",
+        `${num(c.volume_accel_15m).toFixed(2)}×`
+      ]);
+    }
+
+    if(num(c.price_vs_vwap_pct) !== null){
+      items.push([
+        "Vs VWAP",
+        pct(c.price_vs_vwap_pct)
+      ]);
+    }
+
+    if(num(c.distance_from_high_pct) !== null){
+      items.push([
+        "From High",
+        pct(c.distance_from_high_pct)
+      ]);
+    }
+
+    if(num(c.spread_pct) !== null){
+      items.push([
+        "Spread",
+        `${num(c.spread_pct).toFixed(2)}%`
+      ]);
+    }
+
+    if(score(c) !== null){
+      items.push([
+        "25% Model",
+        `${score(c).toFixed(0)}/100`
+      ]);
+    }
+
+    if(num(c?.model_scores?.score10) !== null){
+      items.push([
+        "10% Model",
+        `${num(c.model_scores.score10).toFixed(0)}/100`
+      ]);
+    }
+
+    if(num(c?.model_scores?.score50) !== null){
+      items.push([
+        "50% Model",
+        `${num(c.model_scores.score50).toFixed(0)}/100`
+      ]);
+    }
+
+    if(num(c.move) !== null){
+      items.push([
+        "Session Move",
+        pct(c.move)
+      ]);
+    }
+
+    if(num(c.dollar_volume_5m) !== null){
+      items.push([
+        "5m $ Volume",
+        `${Math.round(num(c.dollar_volume_5m)).toLocaleString()}`
+      ]);
+    }
+
+    if(num(c.dollar_volume_15m) !== null){
+      items.push([
+        "15m $ Volume",
+        `${Math.round(num(c.dollar_volume_15m)).toLocaleString()}`
+      ]);
+    }
+
+    items.push([
+      "Structure",
+      structure(c)
+    ]);
+
+    if(c.first_promotion_utc){
+      const d = new Date(c.first_promotion_utc);
+
+      if(!Number.isNaN(d.getTime())){
+        items.push([
+          "First Promotion",
+          d.toLocaleString([],{
+            month:"short",
+            day:"numeric",
+            hour:"numeric",
+            minute:"2-digit"
+          })
+        ]);
+      }
+    }
+
+    return items;
+  }
+
   function enhanceScanner(){
     const list = rows();
-    const cards =
-      [...document.querySelectorAll(
+
+    const cards = [
+      ...document.querySelectorAll(
         "#scannerCards .scanner-card"
-      )];
+      )
+    ];
 
     cards.forEach((card,index) => {
       const c = list[index];
@@ -521,28 +678,26 @@
         .querySelectorAll(".scanner-intelligence-v40")
         .forEach(el => el.remove());
 
-      const promotion = c.first_promotion_utc
-        ? new Date(c.first_promotion_utc)
-        : null;
-
-      const promotionText =
-        promotion &&
-        !Number.isNaN(promotion.getTime())
-          ? promotion.toLocaleString([],{
-              month:"short",
-              day:"numeric",
-              hour:"numeric",
-              minute:"2-digit"
-            })
-          : "Not archived";
+      const setupPhase = phase(c);
+      const evidence = evidenceItems(c);
 
       const block = document.createElement("div");
       block.className = "scanner-intelligence-v40";
 
       block.innerHTML = `
-        <div class="scanner-phase-row">
-          <span>Setup phase</span>
-          <strong>${esc(phase(c))}</strong>
+        <div class="scanner-phase-block">
+
+          <div class="scanner-phase-row">
+            <span>SETUP PHASE</span>
+            <strong class="scanner-phase-badge">
+              ${esc(setupPhase)}
+            </strong>
+          </div>
+
+          <p class="scanner-phase-reason">
+            ${esc(phaseReason(c))}
+          </p>
+
         </div>
 
         <div class="scanner-evidence-title">
@@ -550,60 +705,20 @@
         </div>
 
         <div class="scanner-evidence-grid">
-          <div>
-            <span>State</span>
-            <strong>${esc(c.state || "Watch")}</strong>
-          </div>
 
-          <div>
-            <span>Liquidity</span>
-            <strong>${
-              num(c.vol) === null
-                ? "--"
-                : num(c.vol).toFixed(2) + "×"
-            }</strong>
-          </div>
+          ${evidence.map(([label,value]) => `
+            <div>
+              <span>${esc(label)}</span>
+              <strong>${esc(value)}</strong>
+            </div>
+          `).join("")}
 
-          <div>
-            <span>Structure</span>
-            <strong>${esc(structure(c))}</strong>
-          </div>
-
-          <div>
-            <span>Promotion</span>
-            <strong>${esc(promotionText)}</strong>
-          </div>
-
-          <div>
-            <span>Vs VWAP</span>
-            <strong>${pct(c.price_vs_vwap_pct)}</strong>
-          </div>
-
-          <div>
-            <span>From high</span>
-            <strong>${pct(c.distance_from_high_pct)}</strong>
-          </div>
-
-          <div>
-            <span>25% model</span>
-            <strong>${
-              score(c) === null
-                ? "--"
-                : score(c).toFixed(0) + "/100"
-            }</strong>
-          </div>
-
-          <div>
-            <span>Session move</span>
-            <strong>${pct(c.move)}</strong>
-          </div>
         </div>
       `;
 
       card.appendChild(block);
     });
   }
-
   function renderSignalTimeline(){
     const full =
       document.getElementById("signalsFull");
