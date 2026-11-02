@@ -719,53 +719,186 @@
       card.appendChild(block);
     });
   }
-  function renderSignalTimeline(){
+  let timelineHistory = null;
+  let timelineLoading = false;
+  let timelineHistoryKey = "";
+
+  async function loadTimelineHistory(){
+    const payload = window.TRENDWARD_PUBLIC_PAYLOAD || {};
+    const targetKey =
+      String(payload.scannerScanTime || "") +
+      "|" +
+      String(window.TRENDWARD_FIXED_TIER || "FREE");
+
+    if(
+      timelineHistory &&
+      timelineHistoryKey === targetKey
+    ){
+      return timelineHistory;
+    }
+
+    if(timelineLoading){
+      return null;
+    }
+
+    const base =
+      window.TRENDWARD_CONFIG?.liveDataUrl;
+
+    if(!base){
+      return null;
+    }
+
+    timelineLoading = true;
+
+    try{
+      const url = new URL(
+        base,
+        window.location.href
+      );
+
+      url.pathname = url.pathname.replace(
+        /\/snapshot\/?$/,
+        "/timeline"
+      );
+
+      url.search = "";
+      url.searchParams.set(
+        "max_sessions",
+        "120"
+      );
+
+      const tier =
+        String(
+          window.TRENDWARD_FIXED_TIER || "FREE"
+        ).toUpperCase();
+
+      if(tier === "FREE"){
+        url.searchParams.set(
+          "delay_minutes",
+          "30"
+        );
+      }
+
+      url.searchParams.set(
+        "_",
+        Date.now()
+      );
+
+      const res = await fetch(
+        url.toString(),
+        {
+          cache:"no-store",
+          credentials:"include",
+          headers:{
+            "Accept":"application/json"
+          }
+        }
+      );
+
+      if(!res.ok){
+        throw new Error(
+          `Timeline HTTP ${res.status}`
+        );
+      }
+
+      const history = await res.json();
+
+      if(
+        !history ||
+        history.schemaVersion !==
+          "trendward_timeline_v1" ||
+        !Array.isArray(history.sessions)
+      ){
+        throw new Error(
+          "Unexpected Timeline schema"
+        );
+      }
+
+      timelineHistory = history;
+      timelineHistoryKey = targetKey;
+
+      window.TRENDWARD_TIMELINE_HISTORY =
+        history;
+
+      return history;
+
+    }catch(err){
+      console.warn(
+        "Could not load Trendward Timeline:",
+        err
+      );
+
+      timelineHistory = null;
+      return null;
+
+    }finally{
+      timelineLoading = false;
+    }
+  }
+
+  function formatTimelineTime(raw){
+    const d = raw ? new Date(raw) : null;
+
+    if(!d || Number.isNaN(d.getTime())){
+      return "—";
+    }
+
+    return d.toLocaleTimeString(
+      [],
+      {
+        hour:"numeric",
+        minute:"2-digit"
+      }
+    );
+  }
+
+  async function renderSignalTimeline(){
     const full =
       document.getElementById("signalsFull");
 
     if(!full) return;
 
-    const list = rows();
-    if(!list.length) return;
+    const currentRows = rows();
 
-    const now = scanDate();
+    if(!currentRows.length) return;
 
-    const promotions =
-      list
-        .map(c =>
-          c.first_promotion_utc
-            ? new Date(c.first_promotion_utc)
-            : null
-        )
-        .filter(d =>
-          d && !Number.isNaN(d.getTime())
-        );
+    const history =
+      await loadTimelineHistory();
 
-    let start =
-      promotions.length
-        ? new Date(
-            Math.min(...promotions.map(d => d.getTime()))
-          )
-        : new Date(now.getTime() - 60 * 60 * 1000);
+    if(
+      !history ||
+      !Array.isArray(history.sessions) ||
+      !history.sessions.length
+    ){
+      full.className =
+        "signal-history-v40";
 
-    if(start >= now){
-      start = new Date(now.getTime() - 60 * 60 * 1000);
+      full.innerHTML = `
+        <article class="panel signal-history-panel">
+          <div class="panel-label">
+            HISTORICAL TIMELINE
+          </div>
+          <h3>Recorded scanner history unavailable</h3>
+          <p class="signal-history-note">
+            Timeline requires archived scanner sessions.
+            No historical values are invented.
+          </p>
+        </article>
+      `;
+
+      return;
     }
 
-    const duration =
-      Math.max(1, now.getTime() - start.getTime());
+    const sessions = history.sessions;
+    const currentSymbols =
+      currentRows.map(c => c.symbol);
 
-    const pos = d =>
-      Math.max(
-        0,
-        Math.min(
-          100,
-          (d.getTime() - start.getTime()) /
-          duration * 100
-        )
-      );
+    const firstSession = sessions[0];
+    const lastSession =
+      sessions[sessions.length - 1];
 
-    full.className = "signal-history-v40";
+    full.className =
+      "signal-history-v40";
 
     full.innerHTML = `
       <article class="panel signal-history-panel">
@@ -773,80 +906,123 @@
         <div class="signal-history-header">
           <div>
             <div class="panel-label">
-              HISTORICAL SIGNAL TIMELINE
+              HISTORICAL SCANNER TIMELINE
             </div>
-            <h3>How the visible setups reached the current scan</h3>
+
+            <h3>
+              How the visible setups evolved
+            </h3>
           </div>
 
           <strong id="signalTimelineClock">
-            ${esc(now.toLocaleString())}
+            ${esc(formatTimelineTime(lastSession.scanTime))}
           </strong>
         </div>
 
         <p class="signal-history-note">
-          This timeline uses verified archived promotion timestamps
-          and the latest available scanner snapshot. Missing intraday
-          history is not invented.
+          Each slider position is an actual recorded scanner
+          session. Trendward does not interpolate or invent
+          evidence between scans.
         </p>
 
         <div class="signal-axis">
-          <span>${esc(start.toLocaleTimeString([],{
-            hour:"numeric",
-            minute:"2-digit"
-          }))}</span>
-          <span>${esc(now.toLocaleTimeString([],{
-            hour:"numeric",
-            minute:"2-digit"
-          }))}</span>
+          <span>
+            ${esc(formatTimelineTime(firstSession.scanTime))}
+          </span>
+
+          <span>
+            ${esc(formatTimelineTime(lastSession.scanTime))}
+          </span>
         </div>
 
         <div class="signal-matrix">
-          <div class="signal-now-line" id="signalNowLine"></div>
+          <div
+            class="signal-now-line"
+            id="signalNowLine"
+          ></div>
 
-          ${list.map(c => {
-            const promo =
-              c.first_promotion_utc
-                ? new Date(c.first_promotion_utc)
+          ${currentSymbols.map(symbol => {
+            const appearances = [];
+
+            sessions.forEach(
+              (session,index) => {
+                const candidate =
+                  session.candidates.find(
+                    c => c.symbol === symbol
+                  );
+
+                if(candidate){
+                  appearances.push(index);
+                }
+              }
+            );
+
+            const first =
+              appearances.length
+                ? appearances[0]
                 : null;
 
-            const hasPromo =
-              promo &&
-              !Number.isNaN(promo.getTime());
+            const currentCandidate =
+              currentRows.find(
+                c => c.symbol === symbol
+              );
 
             return `
               <div class="signal-stock-row">
+
                 <div class="signal-symbol">
-                  <strong>${esc(c.symbol)}</strong>
-                  <small>#${esc(c.rank)} · ${esc(phase(c))}</small>
+                  <strong>${esc(symbol)}</strong>
+
+                  <small>
+                    ${
+                      currentCandidate
+                        ? `#${esc(currentCandidate.rank)} · ${esc(phase(currentCandidate))}`
+                        : "Current setup"
+                    }
+                  </small>
                 </div>
 
                 <div class="signal-track">
+
                   ${
-                    hasPromo
-                      ? `<i class="signal-event promotion"
-                           style="left:${pos(promo)}%"
-                           title="First archived promotion"></i>`
+                    first !== null
+                      ? `<i
+                          class="signal-event promotion"
+                          style="left:${
+                            sessions.length === 1
+                              ? 100
+                              : first /
+                                (sessions.length - 1) *
+                                100
+                          }%"
+                          title="First recorded scanner appearance"
+                        ></i>`
                       : ""
                   }
 
-                  <i class="signal-event current"
-                     style="left:100%"
-                     title="Current scanner snapshot"></i>
+                  <i
+                    class="signal-event current"
+                    style="left:100%"
+                    title="Latest recorded scan"
+                  ></i>
+
                 </div>
+
               </div>
             `;
           }).join("")}
         </div>
 
         <div class="signal-slider-wrap">
+
           <input
             id="signalTimelineSlider"
             type="range"
             min="0"
-            max="100"
-            value="100"
+            max="${sessions.length - 1}"
+            value="${sessions.length - 1}"
             step="1"
-            aria-label="Signal timeline position"
+            aria-label="Recorded scanner session"
           />
 
           <button
@@ -854,60 +1030,113 @@
             class="ghost-btn"
             id="signalTimelineNow"
           >
-            Now
+            Latest
           </button>
+
         </div>
 
         <div class="signal-legend">
-          <span><i class="promotion"></i> Archived promotion</span>
-          <span><i class="current"></i> Current scan</span>
+          <span>
+            <i class="promotion"></i>
+            First recorded appearance
+          </span>
+
+          <span>
+            <i class="current"></i>
+            Latest scan
+          </span>
         </div>
 
       </article>
     `;
 
     const slider =
-      document.getElementById("signalTimelineSlider");
+      document.getElementById(
+        "signalTimelineSlider"
+      );
 
     const line =
-      document.getElementById("signalNowLine");
+      document.getElementById(
+        "signalNowLine"
+      );
 
     const clock =
-      document.getElementById("signalTimelineClock");
+      document.getElementById(
+        "signalTimelineClock"
+      );
 
     const update = () => {
-      const value = Number(slider?.value || 100);
+      const index = Math.max(
+        0,
+        Math.min(
+          sessions.length - 1,
+          Number(slider?.value || 0)
+        )
+      );
+
+      const session =
+        sessions[index];
+
+      const pct =
+        sessions.length <= 1
+          ? 100
+          : index /
+            (sessions.length - 1) *
+            100;
 
       if(line){
-        line.style.left = `${value}%`;
+        line.style.left = `${pct}%`;
       }
 
-      const time =
-        new Date(
-          start.getTime() +
-          duration * value / 100
-        );
+      const isLatest =
+        index === sessions.length - 1;
 
       if(clock){
         clock.textContent =
-          value === 100
-            ? `Now · ${now.toLocaleString()}`
-            : time.toLocaleString();
+          `${
+            isLatest
+              ? "Latest · "
+              : ""
+          }${formatTimelineTime(session.scanTime)}`;
       }
+
+      window.TRENDWARD_TIMELINE_SELECTED = {
+        index,
+        total:sessions.length,
+        session,
+        isLatest
+      };
+
+      window.dispatchEvent(
+        new CustomEvent(
+          "trendward:timeline",
+          {
+            detail:
+              window.TRENDWARD_TIMELINE_SELECTED
+          }
+        )
+      );
     };
 
-    slider?.addEventListener("input",update);
+    slider?.addEventListener(
+      "input",
+      update
+    );
 
     document
       .getElementById("signalTimelineNow")
-      ?.addEventListener("click",() => {
-        slider.value = "100";
-        update();
-      });
+      ?.addEventListener(
+        "click",
+        () => {
+          slider.value =
+            String(sessions.length - 1);
+
+          update();
+        }
+      );
 
     update();
   }
-
   function render(){
     hideOldPages();
     updateOverviewHero();

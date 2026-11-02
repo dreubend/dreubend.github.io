@@ -834,42 +834,229 @@
   }
 
   function renderSignalDepth(){
-    const section=document.getElementById("section-signals");
+    const section =
+      document.getElementById("section-signals");
+
     if(!section)return;
-    let panel=document.getElementById("signalEvidencePanel");
+
+    let panel =
+      document.getElementById(
+        "signalEvidencePanel"
+      );
+
     if(!panel){
-      panel=document.createElement("article");
-      panel.id="signalEvidencePanel";
-      panel.className="panel signal-evidence-panel";
+      panel =
+        document.createElement("article");
+
+      panel.id =
+        "signalEvidencePanel";
+
+      panel.className =
+        "panel signal-evidence-panel";
+
       section.appendChild(panel);
     }
 
-    const rows=visibleRows();
+    const selected =
+      window.TRENDWARD_TIMELINE_SELECTED;
+
+    const session =
+      selected?.session || null;
+
+    let rows;
+
+    if(
+      session &&
+      Array.isArray(session.candidates)
+    ){
+      const visibleSymbols =
+        new Set(
+          visibleRows().map(c => c.symbol)
+        );
+
+      rows =
+        session.candidates.filter(
+          c => visibleSymbols.has(c.symbol)
+        );
+    }else{
+      rows = visibleRows();
+    }
+
+    const rawTime =
+      session?.scanTime ||
+      window.TRENDWARD_PUBLIC_PAYLOAD
+        ?.scannerScanTime;
+
+    const d =
+      rawTime ? new Date(rawTime) : null;
+
+    const time =
+      d && !Number.isNaN(d.getTime())
+        ? d.toLocaleTimeString(
+            [],
+            {
+              hour:"numeric",
+              minute:"2-digit"
+            }
+          )
+        : scanTime();
+
+    const isLatest =
+      selected
+        ? selected.isLatest
+        : true;
+
     const events=[];
+
     rows.forEach(c=>{
-      const t=scanTime();
-      events.push({symbol:c.symbol,type:"State",value:c.state||"Watch",note:`Current scanner state at ${t}`});
-      if(num(c.vol)!==null) events.push({symbol:c.symbol,type:"Liquidity",value:`${num(c.vol).toFixed(2)}×`,note:num(c.vol)>=1?"5m activity is at/above baseline":"5m activity is below baseline"});
-      if(num(c.price_vs_vwap_pct)!==null) events.push({symbol:c.symbol,type:"Structure",value:pct(c.price_vs_vwap_pct),note:num(c.price_vs_vwap_pct)>=0?"Price is above VWAP":"Price is below VWAP"});
-      if(c.first_promotion_utc){
-        const d=new Date(c.first_promotion_utc);
-        events.push({symbol:c.symbol,type:"Promotion",value:Number.isNaN(d.getTime())?"Archived":d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}),note:"First archived 5-minute model promotion"});
+      const setupPhase =
+        typeof window.TRENDWARD_SETUP_PHASE ===
+          "function"
+          ? window.TRENDWARD_SETUP_PHASE(c)
+          : (c.state || "Developing");
+
+      const phaseReason =
+        typeof window.TRENDWARD_PHASE_REASON ===
+          "function"
+          ? window.TRENDWARD_PHASE_REASON(c)
+          : "";
+
+      events.push({
+        symbol:c.symbol,
+        type:"Setup phase",
+        value:setupPhase,
+        note:
+          phaseReason ||
+          `Recorded scanner state at ${time}`
+      });
+
+      if(num(c.vol)!==null){
+        events.push({
+          symbol:c.symbol,
+          type:"5m liquidity",
+          value:
+            `${num(c.vol).toFixed(2)}×`,
+          note:
+            num(c.vol)>=1
+              ? "Short-term liquidity was at or above baseline."
+              : "Short-term liquidity was below baseline."
+        });
+      }
+
+      if(
+        num(c.volume_accel_15m)!==null
+      ){
+        events.push({
+          symbol:c.symbol,
+          type:"15m liquidity",
+          value:
+            `${num(c.volume_accel_15m).toFixed(2)}×`,
+          note:
+            num(c.volume_accel_15m)>=1.5
+              ? "Broader liquidity remained elevated."
+              : "Broader liquidity was not strongly elevated."
+        });
+      }
+
+      if(
+        num(c.price_vs_vwap_pct)!==null
+      ){
+        events.push({
+          symbol:c.symbol,
+          type:"VWAP structure",
+          value:
+            pct(c.price_vs_vwap_pct),
+          note:
+            num(c.price_vs_vwap_pct)>=0
+              ? "Price was above VWAP at this scan."
+              : "Price was below VWAP at this scan."
+        });
+      }
+
+      if(
+        num(c.distance_from_high_pct)!==null
+      ){
+        events.push({
+          symbol:c.symbol,
+          type:"High retention",
+          value:
+            pct(c.distance_from_high_pct),
+          note:
+            num(c.distance_from_high_pct)>=-10
+              ? "Price remained relatively close to the session high."
+              : num(c.distance_from_high_pct)<=-20
+                ? "The setup had given back at least 20% from the session high."
+                : "The setup had moved meaningfully away from the session high."
+        });
+      }
+
+      if(score(c)!==null){
+        events.push({
+          symbol:c.symbol,
+          type:"25% model",
+          value:
+            `${score(c).toFixed(0)}/100`,
+          note:
+            "Recorded model evidence at this scanner session."
+        });
       }
     });
 
-    panel.innerHTML=`<div class="panel-header"><div><div class="panel-label">EVIDENCE STREAM</div><h3>What the scanner is saying now</h3></div><span class="mini-badge">CURRENT SNAPSHOT</span></div>
-      <p class="signal-disclaimer">These are current evidence reads from the captured scanner snapshot. Historical change events appear only when the API has an actual timestamp, such as first promotion.</p>
-      <div class="signal-evidence-grid">
-        ${events.map(e=>`
-          <div class="signal-evidence-row">
-            <strong>${esc(e.symbol)}</strong>
-            <span class="signal-type">${esc(e.type)}</span>
-            <b>${esc(e.value)}</b>
-            <small>${esc(e.note)}</small>
-          </div>`).join("")}
-      </div>`;
-  }
+    const heading =
+      isLatest
+        ? "What the scanner is saying now"
+        : `What the scanner was saying at ${time}`;
 
+    const badge =
+      isLatest
+        ? "LATEST SCAN"
+        : `SCAN ${selected.index + 1} OF ${selected.total}`;
+
+    panel.innerHTML=`
+      <div class="panel-header">
+        <div>
+          <div class="panel-label">
+            EVIDENCE STREAM
+          </div>
+          <h3>${esc(heading)}</h3>
+        </div>
+
+        <span class="mini-badge">
+          ${esc(badge)}
+        </span>
+      </div>
+
+      <p class="signal-disclaimer">
+        Evidence below comes from the recorded scanner
+        session selected above. Moving the Timeline changes
+        this view; missing historical values are not invented.
+      </p>
+
+      ${
+        events.length
+          ? `<div class="signal-evidence-grid">
+              ${events.map(e=>`
+                <div class="signal-evidence-row">
+                  <strong>${esc(e.symbol)}</strong>
+                  <span class="signal-type">
+                    ${esc(e.type)}
+                  </span>
+                  <b>${esc(e.value)}</b>
+                  <small>${esc(e.note)}</small>
+                </div>
+              `).join("")}
+            </div>`
+          : `<div class="empty-viz">
+              None of the currently visible setups were
+              present in this recorded scan.
+            </div>`
+      }
+    `;
+  }
+  window.addEventListener(
+    "trendward:timeline",
+    () => renderSignalDepth()
+  );
   function renderJourneyDepth(){
     const section=document.getElementById("section-journey");
     if(!section)return;
