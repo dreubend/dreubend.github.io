@@ -1,4 +1,4 @@
-(() => {
+﻿(() => {
   const tier = String(window.TRENDWARD_FIXED_TIER || "FREE").toUpperCase();
   const LIMITS = {FREE:1, BASIC:4, PRO:8, PREMIUM:11, PREMIER:11};
   const WATCH_MAX = {FREE:1, BASIC:4, PRO:8, PREMIUM:11, PREMIER:11};
@@ -30,8 +30,8 @@
   }
   function num(v){ const n=Number(v); return Number.isFinite(n)?n:null; }
   function esc(v){ return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));}
-  function money(v){ const n=num(v); return n===null?"—":`$${n<1?n.toFixed(4):n.toFixed(2)}`; }
-  function pct(v){ const n=num(v); return n===null?"—":`${n>=0?"+":""}${n.toFixed(1)}%`; }
+  function money(v){ const n=num(v); return n===null?"â€”":`$${n<1?n.toFixed(4):n.toFixed(2)}`; }
+  function pct(v){ const n=num(v); return n===null?"â€”":`${n>=0?"+":""}${n.toFixed(1)}%`; }
   function score(c){ const n=num(c?.model ?? c?.model_scores?.score25); return n===null?null:Math.max(0,Math.min(100,n)); }
   function scanTime(){
     const raw=payload()?.scannerScanTime || payload()?.scannerCapturedAt;
@@ -51,21 +51,21 @@
   function metricSpec(c,key){
     const specs = {
       move:{label:"Session move",short:"Session move",group:"Price & Structure",unit:"%",value:num(c.move),min:-100,max:Math.max(100,Math.ceil(Math.abs(num(c.move)||0)/25)*25),display:pct(c.move),explain:"Captured percentage move for the stock in this scanner snapshot."},
-      liquidity5:{label:"5m liquidity acceleration",short:"5m liquidity",group:"Liquidity",unit:"×",value:num(c.vol),min:0,max:Math.max(6,Math.ceil((num(c.vol)||0)+1)),display:num(c.vol)===null?"—":`${num(c.vol).toFixed(2)}×`,explain:"Recent 5-minute trading activity relative to its baseline. 1× is the baseline."},
-      model25:{label:"25% model score",short:"25% model",group:"Model Intelligence",unit:"/100",value:score(c),min:0,max:100,display:score(c)===null?"—":`${score(c).toFixed(0)}/100`,explain:"Approved 5-minute model evidence for the 25% move target. It is not a guarantee."},
+      liquidity5:{label:"5m liquidity acceleration",short:"5m liquidity",group:"Liquidity",unit:"Ã—",value:num(c.vol),min:0,max:Math.max(6,Math.ceil((num(c.vol)||0)+1)),display:num(c.vol)===null?"â€”":`${num(c.vol).toFixed(2)}Ã—`,explain:"Recent 5-minute trading activity relative to its baseline. 1Ã— is the baseline."},
+      model25:{label:"25% model score",short:"25% model",group:"Model Intelligence",unit:"/100",value:score(c),min:0,max:100,display:score(c)===null?"â€”":`${score(c).toFixed(0)}/100`,explain:"Approved 5-minute model evidence for the 25% move target. It is not a guarantee."},
       price:{label:"Captured price",short:"Price",group:"Price & Structure",unit:"$",value:num(c.price),min:0,max:Math.max(20,Math.ceil((num(c.price)||0)/5)*5),display:money(c.price),explain:"Captured market price for this scanner snapshot."},
       vwap:{label:"Price vs VWAP",short:"Vs VWAP",group:"Price & Structure",unit:"%",value:num(c.price_vs_vwap_pct),min:-50,max:50,display:pct(c.price_vs_vwap_pct),explain:"How far price is above or below the session volume-weighted average price."},
       fromHigh:{label:"Distance from session high",short:"From high",group:"Price & Structure",unit:"%",value:num(c.distance_from_high_pct),min:-100,max:0,display:pct(c.distance_from_high_pct),explain:"How far the captured price sits below the session high. Closer to 0% means stronger high retention."},
-      model10:{label:"10% model score",short:"10% model",group:"Model Intelligence",unit:"/100",value:num(c.model_scores?.score10),min:0,max:100,display:num(c.model_scores?.score10)===null?"—":`${num(c.model_scores?.score10).toFixed(0)}/100`,explain:"Approved 5-minute model evidence for the 10% move target."},
-      model50:{label:"50% model score",short:"50% model",group:"Model Intelligence",unit:"/100",value:num(c.model_scores?.score50),min:0,max:100,display:num(c.model_scores?.score50)===null?"—":`${num(c.model_scores?.score50).toFixed(0)}/100`,explain:"Approved 5-minute model evidence for the 50% move target."},
-      liquidity15:{label:"15m liquidity acceleration",short:"15m liquidity",group:"Liquidity",unit:"×",value:num(c.volume_accel_15m),min:0,max:Math.max(6,Math.ceil((num(c.volume_accel_15m)||0)+1)),display:num(c.volume_accel_15m)===null?"—":`${num(c.volume_accel_15m).toFixed(2)}×`,explain:"Recent 15-minute trading activity relative to its baseline."},
-      spread:{label:"Spread",short:"Spread",group:"Price & Structure",unit:"%",value:num(c.spread_pct),min:0,max:Math.max(5,Math.ceil((num(c.spread_pct)||0)+1)),display:num(c.spread_pct)===null?"—":`${num(c.spread_pct).toFixed(2)}%`,explain:"Bid-ask spread as a percentage. Lower is generally easier to trade."},
-      dollar5:{label:"5m dollar volume",short:"5m $ volume",group:"Liquidity",unit:"$",value:num(c.dollar_volume_5m),min:0,max:Math.max(100000,num(c.dollar_volume_5m)||0),display:num(c.dollar_volume_5m)===null?"—":`$${Math.round(num(c.dollar_volume_5m)).toLocaleString()}`,explain:"Approximate dollars traded over the most recent 5-minute scanner window."},
-      dollar15:{label:"15m dollar volume",short:"15m $ volume",group:"Liquidity",unit:"$",value:num(c.dollar_volume_15m),min:0,max:Math.max(250000,num(c.dollar_volume_15m)||0),display:num(c.dollar_volume_15m)===null?"—":`$${Math.round(num(c.dollar_volume_15m)).toLocaleString()}`,explain:"Approximate dollars traded over the most recent 15-minute scanner window."},
-      rank10:{label:"10% model rank",short:"10% rank",group:"Model Intelligence",unit:"rank",value:num(c.model_ranks?.rank10),min:1,max:Math.max(10,num(c.model_ranks?.rank10)||10),display:num(c.model_ranks?.rank10)===null?"—":`#${Math.round(num(c.model_ranks?.rank10))}`,explain:"Relative model rank within the captured cohort for the 10% move target. Lower rank is stronger."},
-      rank25:{label:"25% model rank",short:"25% rank",group:"Model Intelligence",unit:"rank",value:num(c.model_ranks?.rank25),min:1,max:Math.max(10,num(c.model_ranks?.rank25)||10),display:num(c.model_ranks?.rank25)===null?"—":`#${Math.round(num(c.model_ranks?.rank25))}`,explain:"Relative model rank within the captured cohort for the 25% move target. Lower rank is stronger."},
-      rank50:{label:"50% model rank",short:"50% rank",group:"Model Intelligence",unit:"rank",value:num(c.model_ranks?.rank50),min:1,max:Math.max(10,num(c.model_ranks?.rank50)||10),display:num(c.model_ranks?.rank50)===null?"—":`#${Math.round(num(c.model_ranks?.rank50))}`,explain:"Relative model rank within the captured cohort for the 50% move target. Lower rank is stronger."},
-      firstPromotion:{label:"First promotion time",short:"First promoted",group:"Model Intelligence",unit:"time",value:null,min:0,max:1,display:(()=>{if(!c.first_promotion_utc)return"—";const d=new Date(c.first_promotion_utc);return Number.isNaN(d.getTime())?"—":d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});})(),explain:"First archived time this symbol was promoted by the 5-minute model layer."}
+      model10:{label:"10% model score",short:"10% model",group:"Model Intelligence",unit:"/100",value:num(c.model_scores?.score10),min:0,max:100,display:num(c.model_scores?.score10)===null?"â€”":`${num(c.model_scores?.score10).toFixed(0)}/100`,explain:"Approved 5-minute model evidence for the 10% move target."},
+      model50:{label:"50% model score",short:"50% model",group:"Model Intelligence",unit:"/100",value:num(c.model_scores?.score50),min:0,max:100,display:num(c.model_scores?.score50)===null?"â€”":`${num(c.model_scores?.score50).toFixed(0)}/100`,explain:"Approved 5-minute model evidence for the 50% move target."},
+      liquidity15:{label:"15m liquidity acceleration",short:"15m liquidity",group:"Liquidity",unit:"Ã—",value:num(c.volume_accel_15m),min:0,max:Math.max(6,Math.ceil((num(c.volume_accel_15m)||0)+1)),display:num(c.volume_accel_15m)===null?"â€”":`${num(c.volume_accel_15m).toFixed(2)}Ã—`,explain:"Recent 15-minute trading activity relative to its baseline."},
+      spread:{label:"Spread",short:"Spread",group:"Price & Structure",unit:"%",value:num(c.spread_pct),min:0,max:Math.max(5,Math.ceil((num(c.spread_pct)||0)+1)),display:num(c.spread_pct)===null?"â€”":`${num(c.spread_pct).toFixed(2)}%`,explain:"Bid-ask spread as a percentage. Lower is generally easier to trade."},
+      dollar5:{label:"5m dollar volume",short:"5m $ volume",group:"Liquidity",unit:"$",value:num(c.dollar_volume_5m),min:0,max:Math.max(100000,num(c.dollar_volume_5m)||0),display:num(c.dollar_volume_5m)===null?"â€”":`$${Math.round(num(c.dollar_volume_5m)).toLocaleString()}`,explain:"Approximate dollars traded over the most recent 5-minute scanner window."},
+      dollar15:{label:"15m dollar volume",short:"15m $ volume",group:"Liquidity",unit:"$",value:num(c.dollar_volume_15m),min:0,max:Math.max(250000,num(c.dollar_volume_15m)||0),display:num(c.dollar_volume_15m)===null?"â€”":`$${Math.round(num(c.dollar_volume_15m)).toLocaleString()}`,explain:"Approximate dollars traded over the most recent 15-minute scanner window."},
+      rank10:{label:"10% model rank",short:"10% rank",group:"Model Intelligence",unit:"rank",value:num(c.model_ranks?.rank10),min:1,max:Math.max(10,num(c.model_ranks?.rank10)||10),display:num(c.model_ranks?.rank10)===null?"â€”":`#${Math.round(num(c.model_ranks?.rank10))}`,explain:"Relative model rank within the captured cohort for the 10% move target. Lower rank is stronger."},
+      rank25:{label:"25% model rank",short:"25% rank",group:"Model Intelligence",unit:"rank",value:num(c.model_ranks?.rank25),min:1,max:Math.max(10,num(c.model_ranks?.rank25)||10),display:num(c.model_ranks?.rank25)===null?"â€”":`#${Math.round(num(c.model_ranks?.rank25))}`,explain:"Relative model rank within the captured cohort for the 25% move target. Lower rank is stronger."},
+      rank50:{label:"50% model rank",short:"50% rank",group:"Model Intelligence",unit:"rank",value:num(c.model_ranks?.rank50),min:1,max:Math.max(10,num(c.model_ranks?.rank50)||10),display:num(c.model_ranks?.rank50)===null?"â€”":`#${Math.round(num(c.model_ranks?.rank50))}`,explain:"Relative model rank within the captured cohort for the 50% move target. Lower rank is stronger."},
+      firstPromotion:{label:"First promotion time",short:"First promoted",group:"Model Intelligence",unit:"time",value:null,min:0,max:1,display:(()=>{if(!c.first_promotion_utc)return"â€”";const d=new Date(c.first_promotion_utc);return Number.isNaN(d.getTime())?"â€”":d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});})(),explain:"First archived time this symbol was promoted by the 5-minute model layer."}
     };
     return specs[key] || specs.move;
   }
@@ -78,8 +78,8 @@
     if(m50!==null) parts.push(`50% model ${m50.toFixed(0)}/100`);
     if(vwap!==null) parts.push(`${vwap>=0?Math.abs(vwap).toFixed(1)+"% above":Math.abs(vwap).toFixed(1)+"% below"} VWAP`);
     if(high!==null) parts.push(`${Math.abs(high).toFixed(1)}% below the session high`);
-    if(liq5!==null) parts.push(`5m liquidity ${liq5.toFixed(2)}×`);
-    if(liq15!==null) parts.push(`15m liquidity ${liq15.toFixed(2)}×`);
+    if(liq5!==null) parts.push(`5m liquidity ${liq5.toFixed(2)}Ã—`);
+    if(liq15!==null) parts.push(`15m liquidity ${liq15.toFixed(2)}Ã—`);
     if(spr!==null) parts.push(`spread ${spr.toFixed(2)}%`);
     return parts.length ? `${c.symbol} is ${String(c.state||"being monitored").toLowerCase()}. ${parts.slice(0,tier==="PRO"?5:7).join(", ")}.` : "";
   }
@@ -102,7 +102,7 @@
     const ticks=Array.from({length:5},(_,i)=>s.min+i*span/4);
     const tickText=v=>{
       if(s.unit==="%") return `${Math.round(v)}%`;
-      if(s.unit==="×") return `${v.toFixed(v<10?1:0)}×`;
+      if(s.unit==="Ã—") return `${v.toFixed(v<10?1:0)}Ã—`;
       if(s.unit==="$"){
         if(v>=1_000_000) return `$${(v/1_000_000).toFixed(1)}M`;
         if(v>=1_000) return `$${Math.round(v/1_000)}K`;
@@ -134,8 +134,13 @@
   function renderScanner(){
     const el=document.getElementById("scannerCards"); if(!el)return;
     let rows=visibleRows();
-    if(tier==="FREE"){ const f=featuredRow(); rows=f?[f]:[]; }
-    rows=filteredRows(rows);
+
+    if(tier==="FREE"){
+      const f=featuredRow();
+      rows=f?[f]:[];
+    } else {
+      rows=filteredRows(rows);
+    }
 
     if(!rows.length){
       el.innerHTML=`<div class="panel empty-filter">No visible setups are in this price band.</div>`;
@@ -278,7 +283,7 @@
     controls.innerHTML=`
       <span class="watch-mode">${isAuto?"AUTO-CURRENT":"MANUAL"}</span>
       ${canAuto?`<button class="chip ${isAuto?"active":""}" id="autoCurrentBtn">${isAuto?"Switch to Manual":"Switch to Auto-current"}</button>`:""}
-      ${tier==="PRO"?`<button class="chip upsell-inline" data-upgrade="PREMIUM">Want all current setups? Premium →</button>`:""}
+      ${tier==="PRO"?`<button class="chip upsell-inline" data-upgrade="PREMIUM">Want all current setups? Premium â†’</button>`:""}
     `;
 
     const selected=new Set(watchedSymbols());
@@ -290,7 +295,7 @@
         ${visibleRows().map(c=>{
           const on=selected.has(c.symbol);
           return `<button class="watch-pick ${on?"selected":""}" data-watch-symbol="${esc(c.symbol)}">
-            <span>${esc(c.symbol)}</span><small>${esc(c.state||"Watch")} · ${money(c.price)}</small><b>${on?"Remove":"Select"}</b>
+            <span>${esc(c.symbol)}</span><small>${esc(c.state||"Watch")} Â· ${money(c.price)}</small><b>${on?"Remove":"Select"}</b>
           </button>`;
         }).join("")}
       </div>
@@ -300,8 +305,8 @@
       ${rows.map(c=>`<div class="large-row">
         <strong>${esc(c.symbol)}</strong>
         <span>${esc(c.state||"Watch")}</span>
-        <span>${score(c)===null?"—":`${score(c).toFixed(0)}/100`}</span>
-        <span class="row-note">${num(c.vol)===null?"":`${num(c.vol).toFixed(2)}× 5m liquidity · `}${num(c.price_vs_vwap_pct)===null?"":`${pct(c.price_vs_vwap_pct)} vs VWAP`}</span>
+        <span>${score(c)===null?"â€”":`${score(c).toFixed(0)}/100`}</span>
+        <span class="row-note">${num(c.vol)===null?"":`${num(c.vol).toFixed(2)}Ã— 5m liquidity Â· `}${num(c.price_vs_vwap_pct)===null?"":`${pct(c.price_vs_vwap_pct)} vs VWAP`}</span>
       </div>`).join("")}
     </div>` : `<div class="empty-viz">${isAuto?"No current scanner setups available.":"Select a current Scanner setup to add it to your Watchlist."}</div>`;
 
@@ -334,7 +339,7 @@
     const full=document.getElementById("signalsFull");
     const compact=document.getElementById("signalCards");
     const rows=visibleRows();
-    const item=c=>`${c.state||"Watch"} · ${score(c)===null?"model —":`25% model ${score(c).toFixed(0)}`} · ${num(c.vol)===null?"liquidity —":`5m liquidity ${num(c.vol).toFixed(2)}×`}`;
+    const item=c=>`${c.state||"Watch"} Â· ${score(c)===null?"model â€”":`25% model ${score(c).toFixed(0)}`} Â· ${num(c.vol)===null?"liquidity â€”":`5m liquidity ${num(c.vol).toFixed(2)}Ã—`}`;
     if(compact) compact.innerHTML=rows.slice(0,3).map(c=>`<div class="stack-card"><div class="stack-card-top"><strong>${esc(c.symbol)}</strong><span class="mini-badge">${esc(scanTime())}</span></div><p>${esc(item(c))}</p></div>`).join("");
     if(full) full.innerHTML=rows.map((c,i)=>`<div class="timeline-item"><div class="timeline-time">${esc(scanTime())}</div><div class="timeline-dot-col"><div class="timeline-dot"></div>${i<rows.length-1?'<div class="timeline-line"></div>':''}</div><div class="timeline-content"><strong>${esc(c.symbol)}</strong><p>${esc(item(c))}</p></div></div>`).join("");
   }
@@ -348,7 +353,7 @@
 
     if(watch){
       watch.innerHTML=rows.map(c=>{
-        const context=plainWhy(c) || `${c.state||"Watch"} · ${money(c.price)}`;
+        const context=plainWhy(c) || `${c.state||"Watch"} Â· ${money(c.price)}`;
         return `<div class="stack-card">
           <div class="stack-card-top">
             <strong>${esc(c.symbol)}</strong>
@@ -361,7 +366,7 @@
 
     if(signals){
       signals.innerHTML=rows.map(c=>{
-        const item=`${c.state||"Watch"} · ${score(c)===null?"model —":`25% model ${score(c).toFixed(0)}`} · ${num(c.vol)===null?"liquidity —":`5m liquidity ${num(c.vol).toFixed(2)}×`}`;
+        const item=`${c.state||"Watch"} Â· ${score(c)===null?"model â€”":`25% model ${score(c).toFixed(0)}`} Â· ${num(c.vol)===null?"liquidity â€”":`5m liquidity ${num(c.vol).toFixed(2)}Ã—`}`;
         return `<div class="stack-card">
           <div class="stack-card-top">
             <strong>${esc(c.symbol)}</strong>
@@ -380,8 +385,8 @@
         const context=[
           c.state || "Watch",
           move===null ? null : `${pct(move)} session move`,
-          liq===null ? null : `${liq.toFixed(2)}× 5m liquidity`
-        ].filter(Boolean).join(" · ");
+          liq===null ? null : `${liq.toFixed(2)}Ã— 5m liquidity`
+        ].filter(Boolean).join(" Â· ");
 
         return `<div class="stack-card">
           <div class="stack-card-top">
@@ -397,7 +402,7 @@
     const el=document.getElementById("candidateTable"); if(!el)return;
     let rows=visibleRows();
     if(tier==="FREE"){ const f=featuredRow(); rows=f?[f]:[]; }
-    el.innerHTML=rows.map(c=>`<tr><td><div class="rank">${esc(c.rank)}</div></td><td><span class="symbol">${esc(c.symbol)}</span></td><td>${money(c.price)}</td><td class="${num(c.move)!==null&&num(c.move)<0?"down":"up"}">${pct(c.move)}</td><td>${num(c.vol)===null?"—":num(c.vol).toFixed(2)+"×"}</td><td>${score(c)===null?"—":score(c).toFixed(0)}</td><td><span class="state-badge">${esc(c.state||"Watch")}</span></td></tr>`).join("");
+    el.innerHTML=rows.map(c=>`<tr><td><div class="rank">${esc(c.rank)}</div></td><td><span class="symbol">${esc(c.symbol)}</span></td><td>${money(c.price)}</td><td class="${num(c.move)!==null&&num(c.move)<0?"down":"up"}">${pct(c.move)}</td><td>${num(c.vol)===null?"â€”":num(c.vol).toFixed(2)+"Ã—"}</td><td>${score(c)===null?"â€”":score(c).toFixed(0)}</td><td><span class="state-badge">${esc(c.state||"Watch")}</span></td></tr>`).join("");
   }
 
   function openUpgrade(target){
@@ -491,7 +496,7 @@
       ["Breakout attempts","Archived attempts to extend through resistance or highs"],
       ["Re-acceleration points","Later renewed activity after consolidation"],
       ["MFE / MAE context","Forward favorable/adverse movement around key 1m states"],
-      ["5m ↔ 1m comparison","What the 5-minute scanner saw versus the minute-level path"]
+      ["5m â†” 1m comparison","What the 5-minute scanner saw versus the minute-level path"]
     ];
 
     if(status){
@@ -506,7 +511,7 @@
         el.innerHTML=minute[kind].map(item=>`
           <article class="minute-card">
             <span>${esc(item.label || item.name || "1-minute metric")}</span>
-            <strong>${esc(item.value ?? "—")}</strong>
+            <strong>${esc(item.value ?? "â€”")}</strong>
             <small>${esc(item.note || item.detail || "")}</small>
           </article>`).join("");
       } else {
@@ -585,10 +590,10 @@
     const v=num(c.price_vs_vwap_pct), h=num(c.distance_from_high_pct), l5=num(c.vol), l15=num(c.volume_accel_15m), m=score(c);
     if(v!==null) bits.push(v>=0?`${Math.abs(v).toFixed(1)}% above VWAP`:`${Math.abs(v).toFixed(1)}% below VWAP`);
     if(h!==null) bits.push(`${Math.abs(h).toFixed(1)}% below the session high`);
-    if(l5!==null) bits.push(`5m liquidity ${l5.toFixed(2)}×`);
-    if(l15!==null) bits.push(`15m liquidity ${l15.toFixed(2)}×`);
+    if(l5!==null) bits.push(`5m liquidity ${l5.toFixed(2)}Ã—`);
+    if(l15!==null) bits.push(`15m liquidity ${l15.toFixed(2)}Ã—`);
     if(m!==null) bits.push(`25% model ${m.toFixed(0)}/100`);
-    return bits.join(" · ");
+    return bits.join(" Â· ");
   }
 
   function renderWatchlistDepth(){
@@ -620,9 +625,9 @@
               <div><span>State</span><strong>${esc(c.state||"Watch")}</strong></div>
               <div><span>Vs VWAP</span><strong>${pct(c.price_vs_vwap_pct)}</strong></div>
               <div><span>From high</span><strong>${pct(c.distance_from_high_pct)}</strong></div>
-              <div><span>5m liq</span><strong>${num(c.vol)===null?"—":num(c.vol).toFixed(2)+"×"}</strong></div>
-              <div><span>15m liq</span><strong>${num(c.volume_accel_15m)===null?"—":num(c.volume_accel_15m).toFixed(2)+"×"}</strong></div>
-              <div><span>25% model</span><strong>${score(c)===null?"—":score(c).toFixed(0)+"/100"}</strong></div>
+              <div><span>5m liq</span><strong>${num(c.vol)===null?"â€”":num(c.vol).toFixed(2)+"Ã—"}</strong></div>
+              <div><span>15m liq</span><strong>${num(c.volume_accel_15m)===null?"â€”":num(c.volume_accel_15m).toFixed(2)+"Ã—"}</strong></div>
+              <div><span>25% model</span><strong>${score(c)===null?"â€”":score(c).toFixed(0)+"/100"}</strong></div>
             </div>
             <p>${esc(plainWhy(c))}</p>
           </article>`).join("")}
@@ -645,7 +650,7 @@
     rows.forEach(c=>{
       const t=scanTime();
       events.push({symbol:c.symbol,type:"State",value:c.state||"Watch",note:`Current scanner state at ${t}`});
-      if(num(c.vol)!==null) events.push({symbol:c.symbol,type:"Liquidity",value:`${num(c.vol).toFixed(2)}×`,note:num(c.vol)>=1?"5m activity is at/above baseline":"5m activity is below baseline"});
+      if(num(c.vol)!==null) events.push({symbol:c.symbol,type:"Liquidity",value:`${num(c.vol).toFixed(2)}Ã—`,note:num(c.vol)>=1?"5m activity is at/above baseline":"5m activity is below baseline"});
       if(num(c.price_vs_vwap_pct)!==null) events.push({symbol:c.symbol,type:"Structure",value:pct(c.price_vs_vwap_pct),note:num(c.price_vs_vwap_pct)>=0?"Price is above VWAP":"Price is below VWAP"});
       if(c.first_promotion_utc){
         const d=new Date(c.first_promotion_utc);
@@ -884,11 +889,11 @@
           <div><span>Visible universe</span><strong>${count}</strong></div>
           <div><span>Above VWAP</span><strong>${aboveVwap}/${count}</strong></div>
           <div><span>Near session high</span><strong>${nearHigh}/${count}</strong></div>
-          <div><span>5m liquidity ≥ 1×</span><strong>${liqExpand}/${count}</strong></div>
+          <div><span>5m liquidity â‰¥ 1Ã—</span><strong>${liqExpand}/${count}</strong></div>
           <div><span>Promoted</span><strong>${promoted}</strong></div>
           <div><span>Finalists</span><strong>${finalists}</strong></div>
-          <div><span>Median 25% model</span><strong>${medianModel===null?"—":medianModel.toFixed(0)+"/100"}</strong></div>
-          <div><span>Median 5m liquidity</span><strong>${medianLiq===null?"—":medianLiq.toFixed(2)+"×"}</strong></div>
+          <div><span>Median 25% model</span><strong>${medianModel===null?"â€”":medianModel.toFixed(0)+"/100"}</strong></div>
+          <div><span>Median 5m liquidity</span><strong>${medianLiq===null?"â€”":medianLiq.toFixed(2)+"Ã—"}</strong></div>
         </div>
       </article>
       <article class="panel pulse-buckets">
@@ -897,8 +902,8 @@
         <div class="pulse-band-grid">
           ${[
             ["Under $2",rows.filter(c=>num(c.price)!==null&&num(c.price)<2).length],
-            ["$2–$5",rows.filter(c=>num(c.price)!==null&&num(c.price)>=2&&num(c.price)<5).length],
-            ["$5–$20",rows.filter(c=>num(c.price)!==null&&num(c.price)>=5&&num(c.price)<=20).length]
+            ["$2â€“$5",rows.filter(c=>num(c.price)!==null&&num(c.price)>=2&&num(c.price)<5).length],
+            ["$5â€“$20",rows.filter(c=>num(c.price)!==null&&num(c.price)>=5&&num(c.price)<=20).length]
           ].map(([label,n])=>`<div><span>${label}</span><strong>${n}</strong><i style="width:${Math.max(4,n/count*100)}%"></i></div>`).join("")}
         </div>
       </article>`;
