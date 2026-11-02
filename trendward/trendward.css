@@ -1943,3 +1943,29 @@ table {
     font-size:20px;
   }
 }
+
+/* ===== Trendward Overview spacing refinement v46 ===== */
+
+#section-overview .hero{
+  margin-bottom:10px !important;
+}
+
+#section-overview .hero,
+#section-overview .hero-copy,
+#section-overview .hero-content{
+  padding-bottom:8px !important;
+}
+
+#section-overview .overview-research-story{
+  margin-top:6px !important;
+}
+
+#section-overview .overview-story-panel{
+  margin-top:0 !important;
+}
+
+@media(min-width:1000px){
+  #section-overview .hero{
+    min-height:auto !important;
+  }
+}
