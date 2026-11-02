@@ -1643,61 +1643,70 @@
     const storyPanel =
       block.querySelector(".overview-story-panel");
 
-    const storyGrid =
-      block.querySelector(".overview-story-grid");
+    const storyHeading =
+      block.querySelector(".overview-story-heading");
 
     const factColumn =
       block.querySelector(".overview-fact-column");
 
-    if(storyGrid){
-      storyGrid.classList.add(
-        "overview-story-grid-single"
-      );
+    const liveFacts =
+      block.querySelector(".overview-live-facts");
+
+    let topGrid =
+      block.querySelector(".overview-top-grid");
+
+    if(!topGrid){
+      topGrid=document.createElement("div");
+      topGrid.className="overview-top-grid";
+
+      if(storyPanel){
+        storyPanel.insertBefore(
+          topGrid,
+          storyPanel.firstChild
+        );
+      }
     }
 
-    if(scorePanel && storyPanel){
+    if(storyHeading && topGrid){
+      topGrid.appendChild(storyHeading);
+    }
+
+    if(scorePanel && topGrid){
       scorePanel.classList.add(
-        "overview-environment-score",
         "overview-strength-panel"
       );
 
-      storyPanel.insertAdjacentElement(
-        "afterend",
-        scorePanel
-      );
+      topGrid.appendChild(scorePanel);
     }
 
-    if(factColumn && storyPanel){
-      let factsPanel =
+    if(liveFacts && scorePanel){
+      let livePanel =
         block.querySelector(
-          ".overview-facts-panel"
+          ".overview-live-panel"
         );
 
-      if(!factsPanel){
-        factsPanel =
-          document.createElement("article");
+      if(!livePanel){
+        livePanel=document.createElement(
+          "article"
+        );
 
-        factsPanel.className =
-          "panel overview-facts-panel";
-      }
+        livePanel.className =
+          "panel overview-live-panel";
 
-      factsPanel.appendChild(
-        factColumn
-      );
-
-      if(scorePanel){
         scorePanel.insertAdjacentElement(
           "afterend",
-          factsPanel
-        );
-      }else{
-        storyPanel.insertAdjacentElement(
-          "afterend",
-          factsPanel
+          livePanel
         );
       }
+
+      livePanel.appendChild(liveFacts);
     }
 
+    if(factColumn){
+      factColumn.classList.add(
+        "overview-research-facts"
+      );
+    }
     if(oldHeroPanel){
       oldHeroPanel.style.display="none";
     }

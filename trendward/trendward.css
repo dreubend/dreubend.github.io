@@ -2141,3 +2141,78 @@ table {
     grid-template-columns:1fr;
   }
 }
+
+/* ===== Trendward Overview top evidence / strength layout v49 ===== */
+
+.overview-top-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);
+  gap:20px;
+  align-items:stretch;
+  margin-bottom:18px;
+}
+
+.overview-top-grid .overview-story-heading{
+  margin:0;
+  padding:22px;
+  border:1px solid var(--border);
+  border-radius:15px;
+  background:rgba(255,255,255,.018);
+  max-width:none;
+}
+
+.overview-top-grid .overview-strength-panel{
+  margin:0 !important;
+  height:100%;
+}
+
+.overview-live-panel{
+  width:calc(34% - 7px);
+  margin-left:auto;
+  margin-top:0;
+  padding:20px;
+}
+
+.overview-live-panel .overview-live-facts{
+  display:block;
+  margin:0;
+  padding:0;
+  border:0;
+}
+
+.overview-live-panel .overview-live-facts-head{
+  margin-bottom:14px;
+}
+
+.overview-live-panel .overview-live-stat{
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  padding:9px 0;
+  border-bottom:1px solid rgba(255,255,255,.05);
+  background:none;
+}
+
+.overview-live-panel .overview-live-stat strong{
+  font-size:16px;
+}
+
+.overview-live-panel .overview-live-stat span{
+  max-width:170px;
+  text-align:right;
+}
+
+.overview-research-facts .overview-live-facts{
+  display:none !important;
+}
+
+@media(max-width:1000px){
+  .overview-top-grid{
+    grid-template-columns:1fr;
+  }
+
+  .overview-live-panel{
+    width:100%;
+    margin-left:0;
+  }
+}
