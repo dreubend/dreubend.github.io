@@ -766,7 +766,7 @@
       overview:["Trendward","Overview"],
       scanner:["Trendward","Scanner"],
       watchlist:["Trendward","Watchlist"],
-      signals:["Trendward","Signals"],
+      signals:["Trendward","Timeline"],
       journey:["Trendward","Model Journey"],
       pulse:["Trendward","Market Pulse"],
       minute:["Trendward","1-Minute Intelligence"],
