@@ -3116,3 +3116,180 @@ input[type="range"]{
     padding:12px !important;
   }
 }
+
+/* ===== Trendward mobile header cleanup v59 ===== */
+
+@media(max-width:760px){
+
+  .topbar{
+    display:grid !important;
+
+    grid-template-columns:
+      auto minmax(0,1fr);
+
+    grid-template-areas:
+      "menu actions"
+      "title title";
+
+    gap:14px 12px;
+
+    align-items:center;
+
+    min-height:0 !important;
+
+    padding:
+      18px 0
+      16px;
+  }
+
+
+  /* Hamburger */
+  .topbar .mobile-menu{
+    grid-area:menu;
+
+    display:grid !important;
+    place-items:center;
+
+    width:48px;
+    height:48px;
+
+    margin:0 !important;
+    padding:0 !important;
+
+    position:static !important;
+
+    border:1px solid var(--border);
+    border-radius:14px;
+
+    background:
+      rgba(255,255,255,.025);
+
+    font-size:22px;
+  }
+
+
+  /* Account / plan controls */
+  .topbar .top-actions{
+    grid-area:actions;
+
+    display:flex !important;
+    align-items:center;
+    justify-content:flex-end;
+
+    gap:7px !important;
+
+    min-width:0;
+    width:100%;
+  }
+
+
+  /* Title block */
+  .topbar > div:not(.top-actions){
+    min-width:0;
+  }
+
+  .topbar > div:not(.top-actions):has(h1){
+    grid-area:title;
+
+    width:100%;
+
+    padding-left:0;
+  }
+
+
+  .topbar h1{
+    margin:0 !important;
+
+    font-size:24px !important;
+    line-height:1.1;
+
+    white-space:normal;
+    overflow-wrap:anywhere;
+  }
+
+
+  /* Smaller plan control */
+  .topbar .header-tier,
+  .topbar .plan-badge{
+    flex:0 1 auto;
+
+    min-width:0 !important;
+
+    padding:
+      8px 10px !important;
+
+    font-size:9px !important;
+
+    white-space:nowrap;
+  }
+
+
+  /* Username should never force overflow */
+  .topbar .auth-small{
+    flex:0 1 auto;
+
+    min-width:0;
+
+    max-width:105px;
+
+    padding:
+      8px 10px !important;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    white-space:nowrap;
+  }
+
+
+  /* Logout stays compact */
+  .topbar #logoutBtn,
+  .topbar [data-logout]{
+    flex:0 0 auto;
+
+    padding:
+      8px 10px !important;
+
+    white-space:nowrap;
+  }
+
+
+  .topbar .time-wrap{
+    display:none !important;
+  }
+
+}
+
+
+/* Very narrow phones */
+@media(max-width:430px){
+
+  .topbar{
+    gap:12px 8px;
+  }
+
+  .topbar .top-actions{
+    gap:5px !important;
+  }
+
+  .topbar .header-tier,
+  .topbar .plan-badge{
+    padding:
+      7px 8px !important;
+  }
+
+  .topbar .auth-small{
+    max-width:88px;
+
+    padding:
+      7px 8px !important;
+  }
+
+  .topbar #logoutBtn,
+  .topbar [data-logout]{
+    padding:
+      7px 8px !important;
+  }
+
+}
