@@ -1369,21 +1369,44 @@
       <article class="panel overview-story-panel">
 
         <div class="overview-story-heading">
-          <div class="panel-label">
-            WHY TRENDWARD WAS BUILT
+
+          <div class="overview-story-intro">
+            <div class="panel-label">
+              BUILT ON MARKET EVIDENCE
+            </div>
+
+            <h2>
+              Built to study what happens before, during, and after a stock begins to move.
+            </h2>
+
+            <p>
+              Trendward was developed from chronological market research,
+              point-in-time features, multiple move-target models, and
+              out-of-sample testing. The live scanner then continues
+              recording new candidate observations and resolved outcomes
+              so the evidence base can grow and future model versions can
+              be tested against newer market behavior.
+            </p>
           </div>
 
-          <h2>
-            Looking for the evidence before a move becomes obvious.
-          </h2>
+          <div class="overview-story-purpose">
+            <div class="panel-label">
+              WHY TRENDWARD WAS BUILT
+            </div>
 
-          <p>
-            Lower-priced stocks can move quickly, but a large price move
-            by itself does not explain whether a setup is developing,
-            strengthening, exhausting, or simply producing noise.
-            Trendward was built to study the sequence of evidence around
-            those moves rather than relying on price alone.
-          </p>
+            <h3>
+              Looking for the evidence before a move becomes obvious.
+            </h3>
+
+            <p>
+              Lower-priced stocks can move quickly, but a large price move
+              by itself does not explain whether a setup is developing,
+              strengthening, exhausting, or simply producing noise.
+              Trendward was built to study the sequence of evidence around
+              those moves rather than relying on price alone.
+            </p>
+          </div>
+
         </div>
 
         <div class="overview-story-grid">
@@ -1607,6 +1630,37 @@
 
       </article>
     `;
+
+    const oldHero =
+      section.querySelector(".hero-grid");
+
+    const oldHeroPanel =
+      section.querySelector(".hero-panel");
+
+    const scorePanel =
+      section.querySelector(".score-panel");
+
+    const factColumn =
+      block.querySelector(".overview-fact-column");
+
+    if(scorePanel && factColumn){
+      scorePanel.classList.add(
+        "overview-environment-score"
+      );
+
+      factColumn.insertBefore(
+        scorePanel,
+        factColumn.firstChild
+      );
+    }
+
+    if(oldHeroPanel){
+      oldHeroPanel.style.display="none";
+    }
+
+    if(oldHero){
+      oldHero.style.display="none";
+    }
   }
   function renderEverything(){
     renderSetupCountBadges();
