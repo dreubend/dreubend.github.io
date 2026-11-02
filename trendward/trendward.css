@@ -2595,3 +2595,199 @@ table {
     grid-template-columns:1fr;
   }
 }
+
+/* ===== Trendward 3-column Watchlist + Timeline v54 ===== */
+
+
+/* ---------------------------------------------------------
+   WATCHLIST — three current setups across like Scanner
+--------------------------------------------------------- */
+
+#section-watchlist .watch-current-list{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+  align-items:start;
+}
+
+#section-watchlist .watch-current-list > *{
+  min-width:0;
+  margin:0;
+}
+
+/*
+   Older Watchlist rows become vertical cards when placed
+   inside the three-column Watchlist grid.
+*/
+#section-watchlist .watch-current-list .large-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px 12px;
+  align-items:start;
+
+  height:100%;
+  padding:16px;
+
+  border:1px solid var(--border);
+  border-radius:14px;
+
+  background:rgba(255,255,255,.022);
+}
+
+#section-watchlist .watch-current-list .large-row > strong{
+  font-size:17px;
+}
+
+#section-watchlist .watch-current-list .large-row .row-note{
+  grid-column:1 / -1;
+  line-height:1.55;
+}
+
+
+/*
+   Current richer Watchlist cards also use three columns.
+   These selectors are intentionally scoped only to Watchlist.
+*/
+#section-watchlist .watch-focus-grid,
+#section-watchlist .watch-intel-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+  align-items:start;
+}
+
+#section-watchlist .watch-focus-card,
+#section-watchlist .watch-intel-card{
+  min-width:0;
+  height:100%;
+}
+
+
+/* ---------------------------------------------------------
+   TIMELINE — Evidence Stream three columns
+--------------------------------------------------------- */
+
+#section-signals .signal-evidence-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  align-items:stretch;
+}
+
+#section-signals .signal-evidence-row{
+  min-width:0;
+  height:100%;
+
+  padding:14px;
+
+  border:1px solid var(--border);
+  border-radius:12px;
+
+  background:rgba(255,255,255,.022);
+}
+
+#section-signals .signal-evidence-row strong{
+  font-size:15px;
+}
+
+#section-signals .signal-evidence-row small{
+  line-height:1.5;
+}
+
+
+/* ---------------------------------------------------------
+   HISTORICAL TIMELINE — slider at top
+--------------------------------------------------------- */
+
+#section-signals .signal-history-panel{
+  display:flex;
+  flex-direction:column;
+}
+
+/* Heading first */
+#section-signals .signal-history-header{
+  order:1;
+}
+
+/* Slider immediately beneath heading */
+#section-signals .signal-slider-wrap{
+  order:2;
+
+  margin:
+    18px 0
+    12px 0 !important;
+
+  width:100%;
+
+  padding:14px 16px;
+
+  border:1px solid var(--border);
+  border-radius:12px;
+
+  background:rgba(255,255,255,.018);
+}
+
+#section-signals .signal-slider-wrap input{
+  width:100%;
+}
+
+/* Explanation follows slider */
+#section-signals .signal-history-note{
+  order:3;
+  margin-top:4px;
+}
+
+/* Timeline scale + stocks after controls */
+#section-signals .signal-axis{
+  order:4;
+}
+
+#section-signals .signal-matrix{
+  order:5;
+}
+
+#section-signals .signal-legend{
+  order:6;
+}
+
+
+/*
+   Remove the old left indentation that made sense when the
+   slider lived underneath the stock-label column.
+*/
+#section-signals .signal-slider-wrap{
+  margin-left:0 !important;
+}
+
+#section-signals .signal-legend{
+  margin-left:0 !important;
+}
+
+
+/* ---------------------------------------------------------
+   Responsive
+--------------------------------------------------------- */
+
+@media(max-width:1100px){
+
+  #section-watchlist .watch-current-list,
+  #section-watchlist .watch-focus-grid,
+  #section-watchlist .watch-intel-grid,
+  #section-signals .signal-evidence-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+@media(max-width:700px){
+
+  #section-watchlist .watch-current-list,
+  #section-watchlist .watch-focus-grid,
+  #section-watchlist .watch-intel-grid,
+  #section-signals .signal-evidence-grid{
+    grid-template-columns:1fr;
+  }
+
+  #section-signals .signal-slider-wrap{
+    padding:12px;
+  }
+}
