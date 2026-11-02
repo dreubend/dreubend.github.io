@@ -2791,3 +2791,66 @@ table {
     padding:12px;
   }
 }
+
+/* ===== Timeline Evidence Stream card readability v55 ===== */
+
+#section-signals .signal-evidence-row{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  grid-template-rows:auto auto auto;
+  gap:5px 14px !important;
+  align-items:start !important;
+
+  padding:18px !important;
+  min-height:150px;
+}
+
+#section-signals .signal-evidence-row > strong{
+  grid-column:1;
+  grid-row:1;
+
+  font-size:17px !important;
+  line-height:1.2;
+}
+
+#section-signals .signal-evidence-row .signal-type{
+  grid-column:1;
+  grid-row:2;
+
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.08em;
+  line-height:1.35;
+
+  color:var(--accent);
+}
+
+#section-signals .signal-evidence-row > b{
+  grid-column:2;
+  grid-row:1 / span 2;
+
+  align-self:center;
+  justify-self:end;
+
+  font-size:14px;
+  line-height:1.3;
+  white-space:nowrap;
+}
+
+#section-signals .signal-evidence-row > small{
+  grid-column:1 / -1;
+  grid-row:3;
+
+  display:block;
+  margin-top:10px;
+
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.65;
+}
+
+@media(max-width:700px){
+  #section-signals .signal-evidence-row{
+    min-height:auto;
+  }
+}
