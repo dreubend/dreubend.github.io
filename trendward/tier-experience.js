@@ -980,6 +980,14 @@
   window.addEventListener("trendward:data", () => {
     renderEverything();
   });
+  /* ===== TRENDWARD_SCANNER_DIRECT_RERENDER_V39 ===== */
+  window.addEventListener("trendward:data", () => {
+    renderScanner();
+    setupPriceFilters();
+  });
+
+  window.TRENDWARD_RENDER_SCANNER = renderScanner;
   window.TRENDWARD_RENDER_ALL = renderEverything;
 
 })();
+
