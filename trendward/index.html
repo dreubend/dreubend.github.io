@@ -1,93 +1,391 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="Trendward &mdash; AI market intelligence for lower-priced U.S. equities." />
-  <title>Trendward Free | Daily Market Snapshot</title>
-  <link rel="stylesheet" href="trendward.css?v=55" />
-  <link rel="canonical" href="https://reubendecker.com/trendward/" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Trendward | AI Market Intelligence</title>
+
+  <meta
+    name="description"
+    content="Trendward is an AI-assisted market intelligence platform built to identify unusual liquidity, developing momentum, and price confirmation in lower-priced U.S.-listed stocks."
+  >
+
+  <link rel="canonical" href="https://reubendecker.com/trendward/">
+  <link rel="stylesheet" href="portfolio.css?v=1">
 </head>
-<body class="tier-free">
-  <div class="app-shell">
-    <div class="mobile-backdrop" id="mobileBackdrop" aria-hidden="true"></div>
-    <aside class="sidebar" id="sidebar">
-      <div class="brand-wrap">
-        <div class="brand-mark">T</div>
-        <div><div class="brand-name">Trendward</div><div class="brand-kicker">AI MARKET INTELLIGENCE</div></div>
-      </div>
-      <nav class="nav">
-        <a class="nav-item active" href="#overview" data-section="overview"><span>&#9673;</span> Overview</a>
-        <a class="nav-item" href="#scanner" data-section="scanner"><span>&#8961;</span> Scanner</a>
-        <a class="nav-item" href="#watchlist" data-section="watchlist"><span>&#9678;</span> Watchlist</a>
-        <a class="nav-item" href="#signals" data-section="signals"><span>&#8644;</span> Timeline</a>
-        <a class="nav-item" href="#journey" data-section="journey"><span>&#8984;</span> Model Journey</a>
-        <a class="nav-item" href="#pulse" data-section="pulse"><span>&#8779;</span> Market Pulse</a>
-        <a class="nav-item" href="#settings" data-section="settings"><span>&#9881;</span> Settings</a>
-      </nav>
-      <div class="sidebar-bottom"><div class="tier-mini"><span>Preview tier</span><strong id="sidebarTier">FREE</strong></div><a class="back-link" href="/">&larr; reubendecker.com</a>
-      </div>
-    </aside>
-    <main class="main">
-      <header class="topbar">
-        <button class="mobile-menu" id="mobileMenu" aria-label="Open menu">&#9776;</button>
-        <div><div class="eyebrow">FREE &middot; DAILY SNAPSHOT</div><h1>Market Intelligence Dashboard</h1></div>
-        <div class="top-actions"><div class="status-pill" id="dataStatus"><span class="live-dot"></span> Demo data</div><span class="plan-badge" id="topPlanBadge">FREE</span><button class="ghost-btn auth-small" id="loginBtn">Log in</button><button class="primary-btn auth-small" id="signupBtn">Sign up</button></div>
-      </header>
-      <section class="notice illustrative-preview-banner"><strong>Illustrative product preview.</strong> Sample interface data is shown unless a customer-safe live feed is configured. This page does not place trades or provide investment advice.</section>
-      
-      <section class="section active" id="section-overview">
-            <div class="hero-grid">
-          <article class="hero-panel panel">
-            <div class="panel-top"><div><div class="eyebrow">TRENDWARD</div><h2>One strong setup. One clear read.</h2><p class="lead">A simple daily view of the strongest lower-priced setup Trendward is tracking, with only the context needed to understand why it matters.</p></div><div class="hero-orb"></div></div>
-            <div class="hero-actions"><a class="primary-btn action-link" href="#scanner" data-section-link="scanner">Open scanner preview</a><a class="ghost-btn action-link" href="#journey" data-section-link="journey">See model journey</a></div>
-          </article>
-          <article class="panel score-panel"><div class="panel-label">Current preview state</div><div class="score-ring"><div><div class="score-number">82</div><div class="score-caption">Setup strength</div></div></div><div class="score-meta"><div><span>Liquidity</span><strong>High</strong></div><div><span>Price action</span><strong>Constructive</strong></div><div><span>Model state</span><strong>Developing</strong></div></div></article>
-        </div>
-        <div class="kpi-grid" id="kpiGrid"><article class="kpi-card"><div class="kpi-label">Featured setups</div><div class="kpi-value">1</div><div class="kpi-sub">Focused daily view</div></article><article class="kpi-card"><div class="kpi-label">Model detail</div><div class="kpi-value">Snapshot</div><div class="kpi-sub">Current state only</div></article><article class="kpi-card"><div class="kpi-label">Journey depth</div><div class="kpi-value">Limited</div><div class="kpi-sub">Upgrade for history</div></article><article class="kpi-card"><div class="kpi-label">Research mode</div><div class="kpi-value">Simple</div><div class="kpi-sub">Low-noise experience</div></article></div>
-        <div class="content-grid">
-          <article class="panel span-2"><div class="panel-header"><div><div class="panel-label">SCANNER</div><h3>Top candidates</h3></div><a class="text-btn action-link" href="#scanner" data-section-link="scanner">View scanner &rarr;</a></div><div class="table-wrap"><table><thead><tr><th>Rank</th><th>Symbol</th><th>Price</th><th>5m move</th><th>Vol accel.</th><th>Model</th><th>State</th></tr></thead><tbody id="candidateTable"></tbody></table></div><div class="tier-lock" id="candidateLock"></div></article>
-          <article class="panel"><div class="panel-header"><div><div class="panel-label">MODEL</div><h3>Probability profile</h3></div></div><div id="probabilityChart" class="chart"></div><div class="tier-lock" id="probabilityLock"></div></article>
-        </div>
-        <div class="content-grid">
-          <article class="panel"><div class="panel-header"><div><div class="panel-label">WATCHLIST</div><h3>Developing setups</h3></div></div><div id="watchlistCards" class="stack-list"></div></article>
-          <article class="panel"><div class="panel-header"><div><div class="panel-label">SIGNALS</div><h3>Latest state changes</h3></div></div><div id="signalCards" class="stack-list"></div></article>
-          <article class="panel"><div class="panel-header"><div><div class="panel-label">CATALYSTS</div><h3>Why the scanner cares</h3></div></div><div id="catalystCards" class="stack-list"></div></article>
-        </div>
-      </section>
-      <section class="section" id="section-scanner"><div class="section-heading"><div><div class="eyebrow">SCANNER EXPERIENCE</div><h2>Featured setup</h2><p>One current setup with price, liquidity, and a simple strength view.</p></div><div class="filter-row"><button class="chip active">All</button><button class="chip">Under $2</button><button class="chip">$2&ndash;$5</button><button class="chip">$5&ndash;$20</button></div></div><div id="scannerCards" class="scanner-grid"></div></section>
-      <section class="section" id="section-watchlist"><div class="section-heading"><div><div class="eyebrow">WATCHLIST</div><h2>What I&rsquo;m following</h2><p>Your selected current Scanner setups, with the context that explains whether they are strengthening, holding, mixed, or cooling.</p></div></div><div class="panel"><div id="watchlistFull" class="large-list"></div></div></section>
-      <section class="section" id="section-signals"><div class="section-heading"><div><div class="eyebrow">TIMELINE</div><h2>How the visible setups evolved</h2><p>Move through recorded scanner history to see how setup phases, liquidity, price structure, model evidence, and scanner events changed over time.</p></div></div><div id="signalsFull" class="timeline"></div></section>
-      <section class="section" id="section-journey">
-        <div class="section-heading"><div><div class="eyebrow">MODEL JOURNEY</div><h2>How the setup developed</h2><p>Follow the verified path from current scanner appearance through promotion, finalist context, and resolved outcomes when available.</p></div></div>
-        <div class="journey-grid"><article class="panel span-2"><div class="panel-header"><div><div class="panel-label">PROGRESSION</div><h3>Model probability through the setup</h3></div></div><div id="journeyChart" class="chart large-chart"></div><div class="tier-lock" id="journeyLock"></div></article><article class="panel"><div class="panel-header"><div><div class="panel-label">MILESTONES</div><h3>Setup journey</h3></div></div><div class="journey-steps"><div class="journey-step complete"><span>1</span><div><strong>Discovered</strong><small>Abnormal liquidity appears</small></div></div><div class="journey-step complete"><span>2</span><div><strong>Ignition</strong><small>Price starts confirming</small></div></div><div class="journey-step complete"><span>3</span><div><strong>Promoted</strong><small>Model context strengthens</small></div></div><div class="journey-step"><span>4</span><div><strong>Outcome context</strong><small>Forward path is measured</small></div></div></div></article></div>
-        <div class="content-grid"><article class="panel span-2"><div class="panel-header"><div><div class="panel-label">FORWARD EXCURSION</div><h3>Illustrative MFE / MAE envelope</h3></div></div><div id="outcomeChart" class="chart"></div><div class="tier-lock" id="outcomeLock"></div><div class="chart-note">Historical MFE/MAE describes price movement after a reference point; it is not realized P&amp;L.</div></article><article class="panel"><div class="panel-label">PROVENANCE</div><h3>Context matters</h3><div class="info-list"><div><span>Observation type</span><strong>Archived demo</strong></div><div><span>Model view</span><strong>Historical</strong></div><div><span>Execution</span><strong>None</strong></div><div><span>Purpose</span><strong>Research</strong></div></div></article></div>
-      </section>
-      <section class="section" id="section-pulse"><div class="section-heading"><div><div class="eyebrow">MARKET PULSE</div><h2>What the scanner environment looks like</h2><p>See breadth, liquidity, high/VWAP retention, model strength, and the overall state of the monitored scanner universe.</p></div></div><section class="market-strip pulse-market-strip" id="marketStrip"></section><div class="kpi-grid"><article class="kpi-card"><div class="kpi-label">Liquidity expansion</div><div class="kpi-value">31%</div><div class="kpi-sub">of preview universe</div></article><article class="kpi-card"><div class="kpi-label">Price confirming</div><div class="kpi-value">18%</div><div class="kpi-sub">above scanner threshold</div></article><article class="kpi-card"><div class="kpi-label">Developing setups</div><div class="kpi-value">7</div><div class="kpi-sub">illustrative candidates</div></article><article class="kpi-card"><div class="kpi-label">High conviction</div><div class="kpi-value">2</div><div class="kpi-sub">illustrative states</div></article></div><article class="panel"><div class="panel-header"><div><div class="panel-label">UNIVERSE STATE</div><h3>Momentum breadth</h3></div></div><div id="breadthChart" class="chart large-chart"></div></article></section>
-      <section class="section" id="section-settings"><div class="section-heading"><div><div class="eyebrow">SETTINGS</div><h2>Core preferences</h2><p>Appearance and account basics.</p></div></div><div class="settings-grid"><article class="panel plan-page-card">
-  <div class="panel-label">SUBSCRIPTION</div>
-  <h3 id="settingsPlanTitle">Current plan</h3>
-  <p class="settings-copy">Your subscription controls which Trendward setups and intelligence are available. Plan changes are managed from the options below.</p>
-  <div class="plan-links">
-    <a href="/trendward/" data-plan-link="FREE">Free</a>
-    <a href="/trendward/basic/" data-plan-link="BASIC">Basic</a>
-    <a href="/trendward/pro/" data-plan-link="PRO">Pro</a>
-    <a href="/trendward/premium/" data-plan-link="PREMIUM">Premium</a>
-    <a href="/trendward/premier/" data-plan-link="PREMIER">Premier &middot; $75</a>
+
+<body>
+
+<header class="site-header">
+  <a class="brand" href="/trendward/">
+    <span class="brand-mark">T</span>
+    <span>Trendward</span>
+  </a>
+
+  <nav>
+    <a href="#about">About</a>
+    <a href="#approach">Approach</a>
+    <a href="#product">Product</a>
+    <a href="#technology">Technology</a>
+  </nav>
+
+  <a class="header-cta" href="https://trendward.ai/">
+    Open Trendward
+  </a>
+</header>
+
+
+<main>
+
+<section class="hero">
+
+  <div class="hero-copy">
+
+    <div class="eyebrow">
+      AI MARKET INTELLIGENCE
+    </div>
+
+    <h1>
+      Finding the market setups
+      <span>worth paying attention to.</span>
+    </h1>
+
+    <p class="hero-lead">
+      Trendward is a market intelligence platform I built to identify
+      unusual liquidity, developing momentum, and price confirmation
+      across lower-priced U.S.-listed stocks.
+    </p>
+
+    <div class="hero-actions">
+      <a class="button primary" href="https://trendward.ai/">
+        Launch Trendward →
+      </a>
+
+      <a class="button secondary" href="#approach">
+        How it works
+      </a>
+    </div>
+
+    <p class="hero-note">
+      Built by Reuben Decker · Reuben Decker LLC
+    </p>
+
   </div>
-</article><article class="panel"><div class="panel-label">APPEARANCE</div><h3>Accent color</h3><p class="settings-copy">Move the slider to change the accent used across navigation, charts, highlights, and controls.</p><div class="accent-row"><span>Hue</span><strong id="accentValue">190&deg;</strong></div><input id="accentSlider" type="range" min="0" max="360" value="190" aria-label="Accent color" /><div class="accent-spectrum"></div></article><article class="panel"><div class="panel-label">ACCOUNT</div><h3>Trendward account</h3><p class="settings-copy">Your authenticated Trendward account controls your active subscription tier and available features.</p><div id="accountState" class="account-state">Not signed in</div><button class="ghost-btn" id="settingsLoginBtn">Open login</button></article><article class="panel"><div class="panel-label">DATA</div><h3>Live data connection</h3><p class="settings-copy">Trendward connects to the customer-safe scanner API and applies your account tier to the available data.</p><code class="config-code">window.TRENDWARD_CONFIG.liveDataUrl</code></article></div></section>
-      <footer class="footer"><div><strong>Trendward</strong><span>by Reuben Decker LLC</span></div><div class="footer-links"><a href="#" data-footer-modal="about">About</a><a href="#" data-footer-modal="terms">Terms</a><a href="#" data-footer-modal="billing">Billing &amp; Refunds</a><a href="#" data-footer-modal="privacy">Privacy</a><a href="#" data-footer-modal="risk">Risk Disclosure</a></div><p>Preview only. Trendward provides analytical and research tools. Nothing on this page is investment advice, a recommendation, or a guarantee of future results.</p></footer>
-    </main>
+
+
+  <div class="signal-card">
+
+    <div class="signal-top">
+      <span>THE TRENDWARD APPROACH</span>
+      <span class="live-dot">●</span>
+    </div>
+
+    <div class="signal-stage">
+      <span class="stage-number">01</span>
+      <div>
+        <strong>Potential Energy</strong>
+        <p>
+          Catalysts, structure, float, liquidity conditions,
+          and other reasons a stock may be capable of repricing.
+        </p>
+      </div>
+    </div>
+
+    <div class="signal-line"></div>
+
+    <div class="signal-stage">
+      <span class="stage-number">02</span>
+      <div>
+        <strong>Ignition</strong>
+        <p>
+          Abnormal volume, dollar-volume acceleration,
+          relative liquidity, and changing market activity.
+        </p>
+      </div>
+    </div>
+
+    <div class="signal-line"></div>
+
+    <div class="signal-stage">
+      <span class="stage-number">03</span>
+      <div>
+        <strong>Price Confirmation</strong>
+        <p>
+          VWAP retention, resistance breaks, price progress,
+          higher lows, and evidence that the market agrees.
+        </p>
+      </div>
+    </div>
+
   </div>
-  <div class="modal-backdrop" id="modalBackdrop" hidden><div class="modal" id="authModal"><button class="modal-close" data-close-modal>&times;</button><div class="eyebrow">TRENDWARD ACCOUNT</div><h2 id="authTitle">Log in</h2><p class="modal-copy">Sign in to access your Trendward account and subscription.</p><form id="authForm"><label>Email<input type="email" id="authEmail" name="email" required autocomplete="email"></label><label id="nameLabel" hidden>Username<input type="text" id="authName" name="username" autocomplete="username"></label><label>Password<input type="password" id="authPassword" name="password" minlength="12" required autocomplete="current-password"></label><button class="primary-btn full" id="authSubmit" type="submit">Log in</button></form><div class="modal-note">Your password is securely verified by the Trendward authentication service.</div></div><div class="modal legal-modal" id="legalModal" hidden><button class="modal-close" data-close-modal>&times;</button><div class="eyebrow">TRENDWARD</div><h2 id="legalTitle">About</h2><div id="legalBody" class="legal-body"></div></div></div>
-  <script>window.TRENDWARD_FIXED_TIER = "FREE";</script>
-  <script src="config.js?v=26"></script>
-  <script src="trendward.js?v=28"></script>
-  <script src="live-data.js?v=34"></script>
-  <script src="tier-experience.js?v=51"></script>
-<script src="/trendward/auth.js?v=26"></script>
-  <script src="/trendward/trendward-restructure.js?v=8"></script>
+
+</section>
+
+
+<section class="section" id="about">
+
+  <div class="section-label">WHY I BUILT IT</div>
+
+  <div class="two-column">
+
+    <div>
+      <h2>
+        More than a stock screener.
+      </h2>
+    </div>
+
+    <div class="section-copy">
+      <p>
+        Traditional screeners can produce long lists of stocks and
+        isolated metrics. I wanted something that could help answer a
+        more useful question:
+      </p>
+
+      <blockquote>
+        What is changing right now, and is the setup becoming more
+        interesting or less interesting?
+      </blockquote>
+
+      <p>
+        Trendward combines market data, engineered features, machine
+        learning, and rule-based market context to continuously narrow
+        the field and surface the setups that deserve deeper attention.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+
+<section class="section dark-section" id="approach">
+
+  <div class="section-label">HOW IT WORKS</div>
+
+  <h2>
+    From a large universe to a focused watchlist.
+  </h2>
+
+  <div class="process-grid">
+
+    <article class="process-card">
+      <span>01</span>
+      <h3>Discover</h3>
+      <p>
+        Trendward scans the eligible market for changes in price,
+        liquidity, volume acceleration, dollar volume, and market
+        structure.
+      </p>
+    </article>
+
+    <article class="process-card">
+      <span>02</span>
+      <h3>Analyze</h3>
+      <p>
+        Candidates are evaluated using engineered point-in-time
+        features, model probabilities, scanner context, and structural
+        evidence.
+      </p>
+    </article>
+
+    <article class="process-card">
+      <span>03</span>
+      <h3>Confirm</h3>
+      <p>
+        Price behavior matters. Trendward looks for constructive
+        response around VWAP, highs, resistance, and continued price
+        progress.
+      </p>
+    </article>
+
+    <article class="process-card">
+      <span>04</span>
+      <h3>Monitor</h3>
+      <p>
+        Stronger candidates remain under observation so their setup
+        phase, persistence, evidence, and weakening conditions can be
+        followed over time.
+      </p>
+    </article>
+
+  </div>
+
+</section>
+
+
+<section class="section" id="product">
+
+  <div class="section-label">THE PRODUCT</div>
+
+  <div class="two-column product-heading">
+
+    <div>
+      <h2>
+        Intelligence designed around decisions, not data overload.
+      </h2>
+    </div>
+
+    <div class="section-copy">
+      <p>
+        The interface is organized around a small number of questions:
+        What is strongest? What am I watching? Why is it still worth
+        watching? And how did the setup get here?
+      </p>
+    </div>
+
+  </div>
+
+  <div class="feature-grid">
+
+    <article class="feature-card">
+      <div class="feature-kicker">SCANNER</div>
+      <h3>Find emerging setups</h3>
+      <p>
+        Focuses attention on the strongest candidates based on current
+        liquidity, price action, model evidence, and scanner state.
+      </p>
+    </article>
+
+    <article class="feature-card">
+      <div class="feature-kicker">WATCHLIST</div>
+      <h3>Know why it still matters</h3>
+      <p>
+        Tracks active setups with scanner persistence, setup phase,
+        supporting evidence, and the conditions that would weaken the
+        thesis.
+      </p>
+    </article>
+
+    <article class="feature-card">
+      <div class="feature-kicker">TIMELINE</div>
+      <h3>See how the setup evolved</h3>
+      <p>
+        Replays real recorded scanner sessions so changes in liquidity,
+        price structure, model evidence, and scanner state can be
+        examined over time.
+      </p>
+    </article>
+
+    <article class="feature-card">
+      <div class="feature-kicker">MODEL CONTEXT</div>
+      <h3>Use ML as evidence</h3>
+      <p>
+        Machine-learning probabilities supplement the broader market
+        context rather than replacing price action or market structure.
+      </p>
+    </article>
+
+  </div>
+
+</section>
+
+
+<section class="section dark-section" id="technology">
+
+  <div class="section-label">UNDER THE HOOD</div>
+
+  <div class="two-column">
+
+    <div>
+      <h2>
+        Built as a real data and machine-learning system.
+      </h2>
+    </div>
+
+    <div class="section-copy">
+      <p>
+        Trendward is also an ongoing data science and software
+        engineering project. The system combines live market data,
+        feature engineering, model inference, historical observations,
+        APIs, authentication, and a production web application.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="tech-grid">
+
+    <div>
+      <span>DATA & ANALYSIS</span>
+      <strong>Python</strong>
+    </div>
+
+    <div>
+      <span>API</span>
+      <strong>FastAPI</strong>
+    </div>
+
+    <div>
+      <span>MACHINE LEARNING</span>
+      <strong>LightGBM + XGBoost</strong>
+    </div>
+
+    <div>
+      <span>MARKET CONNECTION</span>
+      <strong>Interactive Brokers</strong>
+    </div>
+
+    <div>
+      <span>HISTORICAL STATE</span>
+      <strong>SQLite</strong>
+    </div>
+
+    <div>
+      <span>PRODUCTION</span>
+      <strong>Nginx + Linux VPS</strong>
+    </div>
+
+  </div>
+
+</section>
+
+
+<section class="cta-section">
+
+  <div class="cta-inner">
+    <div>
+      <div class="section-label">EXPLORE THE PRODUCT</div>
+
+      <h2>
+        Trendward now has its own home.
+      </h2>
+
+      <p>
+        The live application, account system, scanner, Watchlist,
+        Timeline, and tiered intelligence are available at Trendward.ai.
+      </p>
+    </div>
+
+    <a class="button primary large" href="https://trendward.ai/">
+      Open Trendward.ai →
+    </a>
+  </div>
+
+</section>
+
+</main>
+
+
+<footer>
+
+  <div>
+    <strong>Trendward</strong>
+    <span>by Reuben Decker LLC</span>
+  </div>
+
+  <div class="footer-links">
+    <a href="https://trendward.ai/">trendward.ai</a>
+    <a href="/">reubendecker.com</a>
+  </div>
+
+  <p class="disclaimer">
+    Trendward provides analytical and research tools. Nothing presented
+    here is investment advice, a recommendation, or a guarantee of
+    future results.
+  </p>
+
+</footer>
+
 </body>
 </html>
-
-
