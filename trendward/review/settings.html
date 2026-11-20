@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trendward Settings</title><link rel="stylesheet" href="assets/trendward.css"></head>
+<body data-page="settings">
+<header class="topbar">
+  <a class="brand" href="scanner.html">
+    <span class="logo-bars"><i></i><i></i><i></i></span>
+    <span>Trendward</span>
+  </a>
+  <nav class="main-nav">
+    <a href="scanner.html" data-nav="scanner"><span class="nav-icon">◎</span>Scanner</a>
+    <a href="watchlist.html" data-nav="watchlist"><span class="nav-icon">☆</span>Watchlist</a>
+    <a href="historical.html" data-nav="historical"><span class="nav-icon">◷</span>AI Historical Analytics</a>
+    <a href="settings.html" data-nav="settings"><span class="nav-icon">⚙</span>Settings</a>
+  </nav>
+  <div class="top-actions">
+    <div class="env-chip"><span class="env-dot"></span>Environment: Selective Risk-On</div>
+    <div class="tier-chip">♛ PREMIER</div>
+  </div>
+</header>
+<main class="page">
+<div class="settings-layout">
+  <section class="card settings-panel"><div class="eyebrow">Appearance</div><h2>Accent color</h2><p>This controls the primary interactive color used across Scanner, Watchlist, AI Historical Analytics, tabs, highlighted rows, borders, chart accents, and glow effects.</p>
+    <div class="hue-preview"></div>
+    <div class="slider-row"><strong>Hue</strong><input id="accentSlider" type="range" min="0" max="360" value="170"><strong id="accentValue">170°</strong></div>
+    <div class="settings-demo"><div class="demo-box accented"><strong class="accent">Selected setup</strong><p>Active state, glow and borders follow your chosen hue.</p></div><div class="demo-box"><span class="score-pill">92</span><p>Semantic green/red/orange still stay consistent for gains, losses, and warnings.</p></div></div>
+    <button class="chip-btn reset-btn" id="resetAccent">Reset accent</button>
+  </section>
+  <section class="card settings-panel"><div class="eyebrow">Product structure</div><h2>Shared Trendward workspace</h2><p>The three primary intelligence pages deliberately share the same layout grammar: top navigation, ranked/curated archive on the left, selected setup intelligence on the right, progression context below, and About/Glossary in the footer.</p>
+    <div class="kv"><div><span>Scanner</span><strong>What is changing now?</strong></div><div><span>Watchlist</span><strong>What am I monitoring?</strong></div><div><span>AI Historical Analytics</span><strong>What did Trendward see before?</strong></div></div>
+  </section>
+</div>
+
+<footer class="footer">
+  <div><strong>Trendward</strong> · Reuben Decker LLC</div>
+  <div class="footer-links">
+    <button data-modal="about">About</button>
+    <button data-modal="glossary">Glossary</button>
+    <button>Terms</button>
+    <button>Billing & Refunds</button>
+    <button>Privacy</button>
+    <button>Risk Disclosure</button>
+  </div>
+  <div>Analytical and research tools · Not investment advice</div>
+</footer>
+<div class="modal-backdrop" id="infoModal">
+  <section class="modal">
+    <div class="modal-head"><h2 id="modalTitle">About Trendward</h2><button class="close-modal" data-close-modal>×</button></div>
+    <div class="modal-body" id="modalBody"></div>
+  </section>
+</div></main><script src="assets/trendward.js"></script></body></html>
