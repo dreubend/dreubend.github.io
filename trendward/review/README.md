@@ -38,3 +38,7 @@ Lower intelligence cards now flow across the full page beneath the two primary c
 
 ## V2.8 watchlist table normalization
 The Watchlist table now uses the same font size, row height, symbol sizing, badge sizing, and score-pill sizing as Scanner and AI Historical Analytics.
+
+
+## V2.9 mobile responsive pass
+Phone layouts now use compact navigation, 2-column pulse metrics, horizontal-scroll tables with sticky rank/symbol columns, full-width detail cards/charts, vertical Model Journey steps, single-column lower intelligence cards, and mobile-friendly footer/modals. Desktop behavior is unchanged above 820px.
