@@ -46,3 +46,7 @@ Phone layouts now use compact navigation, 2-column pulse metrics, horizontal-scr
 
 ## V2.10 historical analog outcomes
 The AI Historical Analytics 'Historical Outcomes & Analogs' card now uses clearer labels and a labeled outcome-distribution breakdown instead of the ambiguous unlabeled color strip.
+
+
+## V2.11 tiered modular intelligence
+Scanner, Watchlist, and AI Historical Analytics now support optional page-specific intelligence modules. Pro unlocks the core add-on set, Premium unlocks deeper context, and Premier unlocks the complete catalog. Users can add/remove modules, choices persist locally, and Settings includes a review-only tier preview. Existing curated default page content remains intact.
