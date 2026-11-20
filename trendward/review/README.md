@@ -42,3 +42,7 @@ The Watchlist table now uses the same font size, row height, symbol sizing, badg
 
 ## V2.9 mobile responsive pass
 Phone layouts now use compact navigation, 2-column pulse metrics, horizontal-scroll tables with sticky rank/symbol columns, full-width detail cards/charts, vertical Model Journey steps, single-column lower intelligence cards, and mobile-friendly footer/modals. Desktop behavior is unchanged above 820px.
+
+
+## V2.10 historical analog outcomes
+The AI Historical Analytics 'Historical Outcomes & Analogs' card now uses clearer labels and a labeled outcome-distribution breakdown instead of the ambiguous unlabeled color strip.
