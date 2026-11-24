@@ -1,0 +1,55 @@
+Trendward V2.16 Staging Validation
+
+Checks: 50
+Failures: 0
+
+PASS  required index.html
+PASS  required scanner.html
+PASS  required watchlist.html
+PASS  required historical.html
+PASS  required settings.html
+PASS  required assets/trendward-v216.css
+PASS  required assets/trendward-v216.js
+PASS  required INTEGRATION_NOTES.md
+PASS  required CORE_VS_ADDON_VERIFICATION.txt
+PASS  scanner.html v216 css
+PASS  scanner.html v216 js
+PASS  scanner.html no live-data
+PASS  scanner.html no auth
+PASS  scanner.html static mode
+PASS  watchlist.html v216 css
+PASS  watchlist.html v216 js
+PASS  watchlist.html no live-data
+PASS  watchlist.html no auth
+PASS  watchlist.html static mode
+PASS  historical.html v216 css
+PASS  historical.html v216 js
+PASS  historical.html no live-data
+PASS  historical.html no auth
+PASS  historical.html static mode
+PASS  settings.html v216 css
+PASS  settings.html v216 js
+PASS  settings.html no live-data
+PASS  settings.html no auth
+PASS  settings.html static mode
+PASS  scanner.html nav Scanner
+PASS  scanner.html nav Watchlist
+PASS  scanner.html nav AI Historical Analysis
+PASS  scanner.html nav Settings
+PASS  watchlist.html nav Scanner
+PASS  watchlist.html nav Watchlist
+PASS  watchlist.html nav AI Historical Analysis
+PASS  watchlist.html nav Settings
+PASS  historical.html nav Scanner
+PASS  historical.html nav Watchlist
+PASS  historical.html nav AI Historical Analysis
+PASS  historical.html nav Settings
+PASS  settings.html nav Scanner
+PASS  settings.html nav Watchlist
+PASS  settings.html nav AI Historical Analysis
+PASS  settings.html nav Settings
+PASS  hue persistence key
+PASS  addon catalog
+PASS  accent variable
+PASS  legacy cyan follows accent
+PASS  mobile breakpoint

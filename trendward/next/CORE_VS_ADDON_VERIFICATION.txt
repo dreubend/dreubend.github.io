@@ -1,0 +1,56 @@
+V2.13 CORE VS OPTIONAL DEPTH VERIFICATION
+
+Core remains complete and usable. Optional layers do not duplicate required Core information.
+
+SCANNER CORE
+- Ticker/price/score/phase
+- VWAP relationship
+- liquidity/RVOL acceleration
+- catalyst summary + basic structure
+- risk/invalidation
+- Model Journey
+- basic historical analog outcomes
+- basic AI reasoning/model confidence
+- core alerts/watchlist actions
+
+SCANNER OPTIONAL DEPTH
+- Structural: detailed shelf/ATM capacity, warrants, convertibles, float history, issuance timeline
+- Historical: multidimensional cohort segmentation, best matches, time-to-peak/failure, deeper distributions
+- AI: confidence decomposition, cross-model alignment, what changed/what differs
+- Short-side: borrow/short context where licensed
+- Power user: compound alerts/custom conditions/layouts
+
+WATCHLIST CORE
+- curated watch queue
+- score/phase/trigger/VWAP/setup age
+- selected-stock chart
+- catalyst summary/basic structure
+- risk/invalidation
+- setup journey
+- historical context
+- next trigger
+- core alerts
+- notes
+
+WATCHLIST OPTIONAL DEPTH
+- Structural: detailed supply/filing history
+- Historical: deeper cohorts/best matches/timing
+- AI: what changed since add, strengthening/weakening drivers
+- Short-side: borrow/short pressure
+- Power user: compound alert conditions/custom monitoring logic
+
+HISTORICAL CORE
+- analog count and basic outcomes
+- outcome distribution
+- MFE/MAE summary
+- catalyst/structure context
+- replay timeline
+- historical progression
+- historical Model Journey
+
+HISTORICAL OPTIONAL DEPTH
+- Advanced historical: phase/catalyst/float/RVOL/time-of-day segmentation, best-match analogs, time-to-peak/failure, deeper MFE/MAE
+- Structural: point-in-time historical supply/filing reconstruction
+- AI: richer evidence decomposition and scenario explanations
+- Historical short-side: point-in-time borrow/short context where licensed
+- Replay tools: custom cohorts/saved comparisons
