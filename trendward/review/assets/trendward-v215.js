@@ -9,3 +9,65 @@ const addonData={
 };
 function openAddons(){const modal=document.getElementById('addonModal');const host=document.getElementById('addonGrid');if(!modal||!host)return;host.innerHTML=(addonData[page]||[]).map(x=>`<article class="addon-card"><span class="enhances">Enhances: ${x[1]}</span><h3>${x[0]}</h3><p>${x[2]}</p><button class="btn">Optional add-on</button></article>`).join('');modal.classList.add('open')}
 document.querySelectorAll('[data-open-addons]').forEach(b=>b.addEventListener('click',openAddons));document.querySelectorAll('[data-close-modal]').forEach(b=>b.addEventListener('click',()=>b.closest('.modal-backdrop').classList.remove('open')));document.querySelectorAll('.modal-backdrop').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
+
+
+// ============================================================
+// V2.15 — shared accent color control
+// ============================================================
+const HUE_STORAGE_KEY = "trendward-hue";
+
+function clampHue(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 178;
+  return Math.max(0, Math.min(360, n));
+}
+
+function applyTrendwardHue(value) {
+  const hue = clampHue(value);
+  const root = document.documentElement;
+
+  root.style.setProperty("--hue", hue);
+  root.style.setProperty("--accent", `hsl(${hue} 90% 48%)`);
+  root.style.setProperty("--accent-2", `hsl(${hue} 95% 62%)`);
+  root.style.setProperty("--accent-3", `hsl(${hue} 78% 38%)`);
+  root.style.setProperty("--accent-soft", `hsl(${hue} 90% 48% / .12)`);
+  root.style.setProperty("--accent-glow", `hsl(${hue} 95% 55% / .24)`);
+
+  localStorage.setItem(HUE_STORAGE_KEY, String(hue));
+
+  document.querySelectorAll("[data-hue-value]").forEach(el => {
+    el.textContent = `${Math.round(hue)}°`;
+  });
+
+  document.querySelectorAll('input[type="range"][data-accent-slider], #accentHue, #hueSlider').forEach(el => {
+    if (String(el.value) !== String(hue)) el.value = hue;
+  });
+}
+
+function initTrendwardHue() {
+  const saved = localStorage.getItem(HUE_STORAGE_KEY);
+  const initial = saved !== null ? saved : 178;
+  applyTrendwardHue(initial);
+
+  const sliders = document.querySelectorAll(
+    'input[type="range"][data-accent-slider], #accentHue, #hueSlider'
+  );
+
+  sliders.forEach(slider => {
+    slider.value = clampHue(initial);
+
+    const onHueInput = (event) => {
+      applyTrendwardHue(event.target.value);
+    };
+
+    slider.addEventListener("input", onHueInput);
+    slider.addEventListener("change", onHueInput);
+  });
+
+  document.querySelectorAll("[data-reset-hue]").forEach(btn => {
+    btn.addEventListener("click", () => applyTrendwardHue(178));
+  });
+}
+
+document.addEventListener("DOMContentLoaded", initTrendwardHue);
+

@@ -5,3 +5,7 @@ High-fidelity visual rebuild based on the approved Scanner, Watchlist and AI His
 
 ## V2.14 cache-safe asset fix
 All review pages now reference versioned CSS/JS filenames (`trendward-v214.css` and `trendward-v214.js`) so GitHub Pages/browser caches cannot mix new HTML with an older stylesheet. Historical page layout remains the verified V2.13 high-fidelity composition.
+
+
+## V2.15 settings color control
+The Settings accent hue slider now updates shared CSS variables across all pages, persists the selected hue with localStorage, supports reset, and uses cache-safe v215 asset filenames.
