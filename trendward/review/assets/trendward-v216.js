@@ -27,6 +27,7 @@ function applyTrendwardHue(value) {
   const root = document.documentElement;
 
   root.style.setProperty("--hue", hue);
+  document.body?.setAttribute("data-accent-hue", String(Math.round(hue)));
   root.style.setProperty("--accent", `hsl(${hue} 90% 48%)`);
   root.style.setProperty("--accent-2", `hsl(${hue} 95% 62%)`);
   root.style.setProperty("--accent-3", `hsl(${hue} 78% 38%)`);

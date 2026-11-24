@@ -9,3 +9,7 @@ All review pages now reference versioned CSS/JS filenames (`trendward-v214.css` 
 
 ## V2.15 settings color control
 The Settings accent hue slider now updates shared CSS variables across all pages, persists the selected hue with localStorage, supports reset, and uses cache-safe v215 asset filenames.
+
+
+## V2.16 full accent theming
+The Settings hue now controls the visible workspace accent across navigation, logo bars, selected table rows, buttons, chart tabs, active watchlist states, panel highlights, and other non-semantic cyan/teal UI. Positive green, risk red, warning amber, and historical purple remain semantic and do not shift with the user-selected accent.
