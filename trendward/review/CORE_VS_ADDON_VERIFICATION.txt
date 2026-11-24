@@ -1,0 +1,56 @@
+Trendward V2.12 Core vs Optional Verification
+
+SCANNER
+Core already contains:
+  - VWAP relationship
+  - 5m/15m liquidity acceleration
+  - distance from session high
+  - catalyst summary
+  - float
+  - basic shelf/ATM flag
+  - risk/invalidation
+  - Model Journey
+  - basic historical analog outcomes
+  - Why Trendward Cares / scanner thesis
+Verified optional deeper layers:
+  - Structural Intelligence -> Catalyst & Structure: Detailed shelf capacity and remaining availability; warrants; convertibles; float-change history; point-in-time filing timeline; supply-risk score.
+  - Advanced Historical Intelligence -> Historical Analogs: Outcome breakdowns by phase, catalyst type, float bucket, RVOL/volume acceleration, time of day and environment; best-matching individual analogs; time-to-peak/failure; deeper MFE/MAE distributions.
+  - Advanced AI Intelligence -> Why Trendward Cares: Cross-model confidence decomposition; agreement/disagreement across heuristic, model, analog and tape evidence; what changed most recently; what differs from closest analogs; scenario-based explanation.
+  - Short-Side Intelligence -> Risk / Invalidation: Short interest and borrow context where licensed; squeeze/covering structure; changes in short-side pressure. Core invalidation levels remain included.
+  - Power User Tools -> Scanner controls: Compound alerts; custom scanner conditions; saved layouts; custom columns; personalized ranking filters. Core alerts remain included.
+
+WATCHLIST
+Core already contains:
+  - reason on watchlist
+  - next trigger / alert levels
+  - risk/invalidation
+  - catalyst & structure summary
+  - basic historical analogs
+  - active alert rules
+  - notes
+  - setup journey
+Verified optional deeper layers:
+  - Advanced AI Intelligence -> Why It's On My Watchlist: What changed since the symbol was added; confidence-driver decomposition; strengthening/weakening reasons; scenario branches for the next decision point.
+  - Structural Intelligence -> Catalyst & Structure: Detailed warrants/convertibles; float-change history; filing timeline; supply-risk scoring; deeper issuance context beyond the Core summary.
+  - Advanced Historical Intelligence -> Historical Analogs: Best-matching individual analogs; time-to-peak/failure; outcomes segmented by catalyst, phase, float, RVOL and environment; deeper excursion distributions.
+  - Short-Side Intelligence -> Risk / Invalidation: Borrow and short-interest context; squeeze structure; short-side pressure changes. Core support/invalidation remains included.
+  - Power User Tools -> Alert Rules: Compound alerts; multi-condition triggers; alert escalation; custom remove conditions; saved watchlist layouts and advanced watch logic.
+
+HISTORICAL
+Core already contains:
+  - historical archive
+  - replay fidelity
+  - What Trendward Saw
+  - Replay Confidence / Caveats
+  - historical Model Journey
+  - AI takeaway
+  - catalyst & structure summary
+  - analog counts and milestone outcomes
+  - MFE/MAE
+  - labeled outcome distribution
+Verified optional deeper layers:
+  - Advanced Historical Intelligence -> Historical Outcomes & Analogs: Multi-dimensional cohort breakdowns by phase, catalyst, float, RVOL/volume acceleration, time of day and market environment; best matches; time-to-peak/failure; percentile MFE/MAE distributions.
+  - Structural Intelligence -> Catalyst & Structure: Point-in-time warrants, convertibles, shelf/ATM capacity, float evolution, issuance timeline and supply changes as they existed at the historical event.
+  - Advanced AI Intelligence -> What Trendward Saw / AI Takeaway: Evidence-weight decomposition; what differed from the analog cohort; confidence/caveat attribution; counterfactual scenarios and richer AI explanation without future-data leakage.
+  - Replay Research Tools -> Replay / Archive: Custom cohort builder; compare two cohorts; filter by phase/catalyst/float/RVOL/environment; save research views; export permitted derived research outputs.
+  - Historical Short-Side Intelligence -> Historical Risk Context: Point-in-time short-interest/borrow context where licensed; squeeze structure and short-side pressure around historical setups.
